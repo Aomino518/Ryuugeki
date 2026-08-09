@@ -60,35 +60,51 @@ void Player::Move()
 		return;
 	}
 
+	auto input = Input::GetInstance();
+
 	inputDir = { 0.0f, 0.0f };
 	rot_ = { 0.0f, 0.0f, 0.0f };
 
 	// 移動入力
-	if (Input::GetInstance()->IsPress(DIK_W)) {
+	if (input->IsPress(DIK_W)) {
 		inputDir.y += 1.0f;
 	}
 
-	if (Input::GetInstance()->IsPress(DIK_S)) {
+	if (input->IsPress(DIK_S)) {
 		inputDir.y -= 1.0f;
 	}
 
-	if (Input::GetInstance()->IsPress(DIK_A)) {
+	if (input->IsPress(DIK_A)) {
 		inputDir.x -= 1.0f;
-		rot_.z = 0.5f;
 	}
 
-	if (Input::GetInstance()->IsPress(DIK_D)) {
+	if (input->IsPress(DIK_D)) {
 		inputDir.x += 1.0f;
+	}
+
+	//=========================================
+	// コントローラーの左スティック
+	//=========================================
+	Vector2 leftStick = input->GetXbLeftStickVector();
+
+	inputDir.x += leftStick.x;
+	inputDir.y += leftStick.y;
+
+	if (inputDir.x > 0.01f) {
 		rot_.z = -0.5f;
+	} else if (inputDir.x < -0.01f) {
+		rot_.z = 0.5f;
 	}
 
 	modelPlayer_->SetRotate(rot_);
 
+	float length = sqrtf(inputDir.x * inputDir.x + inputDir.y * inputDir.y);
 	// 入力方向正規化
-	if (inputDir.x != 0.0f || inputDir.y != 0.0f) {
-		float length = sqrtf(inputDir.x * inputDir.x + inputDir.y * inputDir.y);
-		inputDir.x /= length;
-		inputDir.y /= length;
+	if (length > 0.0f) {
+		if (length > 1.0f) {
+			inputDir.x /= length;
+			inputDir.y /= length;
+		}
 
 		velocity_.x += inputDir.x * acceleration;
 		velocity_.y += inputDir.y * acceleration;
@@ -117,7 +133,7 @@ void Player::Move()
 
 	for (auto& bullet : bullets_) {
 		if (!bullet->GetIsShot()) {
-			if (Input::GetInstance()->IsPress(DIK_SPACE)) {
+			if (Input::GetInstance()->IsPress(DIK_SPACE) || input->GetXbRightTrigger() > 0.1f) {
 
 				if (bulletCooldown_ <= 0) {
 					if (!bullet->GetIsShot()) {

@@ -157,6 +157,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="SeekerEngine\3D\AccelerationField.cpp" />
     <ClCompile Include="SeekerEngine\2D\AccelerationField2D.cpp" />
     <ClCompile Include="SeekerEngine\Editor\Editor.cpp" />
@@ -327,6 +328,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PlayerController.h" />
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h" />
     <ClInclude Include="SeekerEngine\Editor\Editor.h" />
     <ClInclude Include="SeekerEngine\Effect\Emitter2DManager.h" />

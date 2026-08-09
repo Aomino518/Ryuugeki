@@ -71,7 +71,7 @@ void GameOverScene::Update()
 		}
 		break;
 	case ScenePhase::MAIN:
-		if (Input::GetInstance()->IsPress(DIK_SPACE)) {
+		if (Input::GetInstance()->IsPress(DIK_SPACE) || Input::GetInstance()->IsXbBtnPress(XINPUT_GAMEPAD_A)) {
 			soundMgr->PlaySE("se_selected");
 			fade_.Start(Fade::Status::FadeOut, 1.0f);
 			phase_ = ScenePhase::FADEOUT;

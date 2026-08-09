@@ -78,6 +78,7 @@
     <ClCompile Include="SeekerEngine\Core\StartupManager.cpp" />
     <ClCompile Include="SeekerEngine\Audio\SoundManager.cpp" />
     <ClCompile Include="Game\Scenes\TitleScene.cpp" />
+    <ClCompile Include="PlayerController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h" />
@@ -230,6 +231,7 @@
     <ClInclude Include="SeekerEngine\Core\StartupManager.h" />
     <ClInclude Include="SeekerEngine\Audio\SoundManager.h" />
     <ClInclude Include="Game\Scenes\TitleScene.h" />
+    <ClInclude Include="PlayerController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\hlsl\DebugShape3D.hlsli" />

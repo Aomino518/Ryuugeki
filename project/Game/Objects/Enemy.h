@@ -1,6 +1,7 @@
 #pragma once
 #include "SeekerEngine.h"
 #include "SceneIncludes.h"
+#include "EnemyBullet.h"
 
 enum class EnemyPattern {
 	Straight,
@@ -18,9 +19,12 @@ public:
 
 	void Draw();
 
+	void DebugDraw();
+
 	Vector3 GetPosition() const { return model_->GetTranslate(); }
 	bool GetIsAlive() const { return isAlive_; }
 	Sphere GetSphere() const { return sphere_; }
+	std::unique_ptr<EnemyBullet>& GetBullet() { return bullet_; }
 
 	bool GetIsMoveStop() const { return isMoveStop_; }
 	void SetIsMoveStop(bool flag) { isMoveStop_ = flag; }
@@ -28,6 +32,8 @@ public:
 private:
 	Transform transform_{};
 	std::unique_ptr<Entity3D> model_;
+	// 敵の弾
+	std::unique_ptr<EnemyBullet> bullet_;
 
 	float speed = 0.3f;
 	float amplitude = 0.5f;
@@ -38,6 +44,9 @@ private:
 	EnemyPattern pattern_;
 	Sphere sphere_;
 
+	// 弾の発射周期
+	float shotInterval_ = 180.0f;
+	float timer_ = shotInterval_;
+
 	bool isMoveStop_ = false;
 };
-

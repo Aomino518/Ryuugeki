@@ -34,6 +34,7 @@ void PlayScene::Init()
 	auto texMgr = TextureManager::GetInstance();
 	texReticle_ = texMgr->Load("resources/sprites/ui_reticle.png");
 	texUiPlayOperate_ = texMgr->Load("resources/sprites/ui_play_operate.png");
+	auto texUiController = texMgr->Load("resources/sprites/controllerPlayScene.png");
 
 	//===========================
 	// モデルロード
@@ -55,6 +56,11 @@ void PlayScene::Init()
 	sprUiPlayOperate_->Init();
 	sprUiPlayOperate_->Create(texUiPlayOperate_, { 845.0f, 668.0f }, Color::WHITE);
 	Editor::GetInstance()->RegisterSprite("sprUiPlayOperate", sprUiPlayOperate_.get());
+
+	sprUiConroller_ = std::make_unique<Sprite>();
+	sprUiConroller_->Init();
+	sprUiConroller_->Create(texUiController, { 845.0f, 668.0f }, Color::WHITE);
+	Editor::GetInstance()->RegisterSprite("sprUiConroller", sprUiConroller_.get());
 
 	//===========================
 	// モデル
@@ -127,15 +133,19 @@ void PlayScene::Update()
 		enemyMgr_->SetIsMoveStop(false);
 	}
 #endif
+	UpdateReticle();
+	Vector3 aimTarget = CalculateAimTarget();
+	player_->SetAimTarget(aimTarget);
 
 	player_->Update();
+	isController_ = player_->GetIsConroller();
 	modelSkydome_->Update();
 	enemyMgr_->Update();
 
 	// スプライトの更新処理
-	UpdateReticle();
 	sprReticle_->Update();
 	sprUiPlayOperate_->Update();
+	sprUiConroller_->Update();
 	fade_.Update();
 
     ImGuiManager::GetInstance()->BeginFrame();
@@ -145,6 +155,49 @@ void PlayScene::Update()
     ImGuiManager::GetInstance()->Stats();
 	ImGuiManager::GetInstance()->DrawSoundWindow();
     ImGuiManager::GetInstance()->DrawLoggerWindow();
+
+	//================================
+	// 照準のデバッグ表示
+	//================================
+	Vector3 playerPosition =
+		player_->GetModel()->GetTranslate();
+
+	// すでに上で計算したaimTargetを使う
+	Vector3 difference{
+		aimTarget.x - playerPosition.x,
+		aimTarget.y - playerPosition.y,
+		aimTarget.z - playerPosition.z
+	};
+
+	float targetDistance = sqrtf(
+		difference.x * difference.x +
+		difference.y * difference.y +
+		difference.z * difference.z
+	);
+
+	ImGui::Begin("Aim Debug");
+
+	ImGui::Text(
+		"Player Position : %.2f, %.2f, %.2f",
+		playerPosition.x,
+		playerPosition.y,
+		playerPosition.z
+	);
+
+	ImGui::Text(
+		"Target Position : %.2f, %.2f, %.2f",
+		aimTarget.x,
+		aimTarget.y,
+		aimTarget.z
+	);
+
+	ImGui::Text(
+		"Target Distance : %.2f",
+		targetDistance
+	);
+
+	ImGui::End();
+
     ImGuiManager::GetInstance()->EndFrame();
 }
 
@@ -156,9 +209,19 @@ void PlayScene::Draw()
 	enemyMgr_->Draw();
 	modelSkydome_->Draw();
 
+	player_->DebugDraw();
+	enemyMgr_->DebugDraw();
+	DebugDraw::Draw();
+
 	// Sprite
 	sprReticle_->Draw();
-	sprUiPlayOperate_->Draw();
+
+	if (!isController_) {
+		sprUiPlayOperate_->Draw();
+	} else {
+		sprUiConroller_->Draw();
+	}
+
 	fade_.Draw();
 
     ImGuiManager::GetInstance()->Draw();
@@ -203,9 +266,16 @@ void PlayScene::UpdateReticle()
 
 	// 前方向取得
 	Vector3 forward = GetForwardFromTransform(playerTransform.rotate);
+	float length = sqrtf(forward.x * forward.x + forward.y * forward.y + forward.z * forward.z);
+
+	if (length > 0.0001f) {
+		forward.x /= length;
+		forward.y /= length;
+		forward.z /= length;
+	}
 
 	// 3Dレティクル位置
-	Vector3 reticleWorldPos = playerTransform.translate + forward * 100.0f;
+	reticleWorldPosition_ = playerTransform.translate + forward * 50.0f;
 
 	// View / Projection
 	Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
@@ -219,12 +289,126 @@ void PlayScene::UpdateReticle()
 			100.0f);
 
 	// 3Dから2D
-	Vector3 clip = TransformToVector3(reticleWorldPos, viewMatrix * projectionMatrix);
+	Vector3 clip = TransformToVector3(reticleWorldPosition_, viewMatrix * projectionMatrix);
 
-	Vector2 screen;
-	screen.x = (clip.x + 1.0f) * 0.5f * Graphics::GetWidth();
-	screen.y = (1.0f - clip.y) * 0.5f * Graphics::GetHeight();
+	reticleScreenPosition_.x = (clip.x + 1.0f) * 0.5f * Graphics::GetWidth();
+	reticleScreenPosition_.y = (1.0f - clip.y) * 0.5f * Graphics::GetHeight();
 
 	// UI反映
-	sprReticle_->SetPosition(screen);
+	sprReticle_->SetPosition(reticleScreenPosition_);
+}
+
+Vector3 PlayScene::CalculateAimTarget()
+{
+	Camera* camera = CameraManager::GetInstance()->GetCamera("MainCamera");
+
+	if (!camera) {
+		return reticleWorldPosition_;
+	}
+
+	Transform cameraTransform = camera->GetTransform();
+
+	Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
+	Matrix4x4 viewMatrix = Inverse(cameraMatrix);
+
+	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(
+		0.45f,
+		static_cast<float>(Graphics::GetWidth()) /
+		static_cast<float>(Graphics::GetHeight()),
+		0.1f,
+		100.0f
+	);
+
+	Matrix4x4 viewProjectionMatrix = viewMatrix * projectionMatrix;
+
+	Vector3 playerPosition = player_->GetModel()->GetTranslate();
+
+	Vector3 aimTarget = reticleWorldPosition_;
+	float nearestScreenDistance = kReticleRadius;
+
+	for (const auto& enemy : enemyMgr_->GetEnemies()) {
+		if (!enemy->GetIsAlive()) {
+			continue;
+		}
+
+		Vector3 enemyPosition = enemy->GetPosition();
+
+		Vector3 toEnemy{
+			enemyPosition.x - playerPosition.x,
+			enemyPosition.y - playerPosition.y,
+			enemyPosition.z - playerPosition.z
+		};
+
+		float distance = sqrtf(toEnemy.x * toEnemy.x + toEnemy.y * toEnemy.y + toEnemy.z * toEnemy.z);
+
+		// 自機から50.0fより遠い敵は狙わない
+		if (distance > kAimDistance) {
+			continue;
+		}
+
+		Vector3 enemyNdc = TransformToVector3(enemyPosition, viewProjectionMatrix);
+
+		Vector2 enemyScreenPosition{};
+
+		enemyScreenPosition.x = (enemyNdc.x + 1.0f) * 0.5f * Graphics::GetWidth();
+
+		enemyScreenPosition.y = (1.0f - enemyNdc.y) * 0.5f * Graphics::GetHeight();
+
+		float dx = enemyScreenPosition.x - reticleScreenPosition_.x;
+
+		float dy = enemyScreenPosition.y - reticleScreenPosition_.y;
+
+		float screenDistance = sqrtf(dx * dx + dy * dy);
+
+		if (screenDistance <= nearestScreenDistance) {
+			nearestScreenDistance = screenDistance;
+
+			// レティクル内にいる敵の中心を照準地点にする
+			aimTarget = enemyPosition;
+		}
+	}
+
+	return aimTarget;
+}
+
+void PlayScene::UpdateAimCamera()
+{
+	auto camMgr = CameraManager::GetInstance();
+
+	if (camMgr->GetIsDebug()) {
+		return;
+	}
+
+	Camera* camera = camMgr->GetCamera("MainCamera");
+
+	if (!camera) {
+		return;
+	}
+
+	Input* input = Input::GetInstance();
+
+	Vector2 rightStick = input->GetXbRightStickVector();
+
+	// スティックのデットゾーン
+	if (fabsf(rightStick.x) < rightStickDeadZone_) {
+		rightStick.x = 0.0f;
+	}
+
+	if (fabsf(rightStick.y) < rightStickDeadZone_) {
+		rightStick.y = 0.0f;
+	}
+
+	cameraYaw_ += rightStick.x * cameraSensitivity_;
+	cameraPitch_ += rightStick.y * cameraSensitivity_;
+
+	// 真上、真下過ぎない制限
+	cameraPitch_ = std::clamp(cameraPitch_, -1.2f, 1.2f);
+
+	Vector3 cameraRotate = {
+		cameraPitch_,
+		cameraYaw_,
+		0.0f
+	};
+	
+	camera->SetRotate(cameraRotate);
 }

@@ -15,6 +15,8 @@ public:
 	// 描画
 	void Draw();
 
+	void DebugDraw();
+
 	// Getter
 	Vector3 GetPosition() const { return modelPlayer_->GetTranslate(); }
 	Vector3 GetRotate() const { return rot_; }
@@ -22,11 +24,12 @@ public:
 	Entity3D* GetModel() const { return modelPlayer_.get(); }
 	std::vector<std::unique_ptr<Bullet>>& GetBullets() { return bullets_; }
 	Sphere GetSphere() const { return sphere_; }
+	bool GetIsConroller() const { return isController_; }
 
 	// Setter
 	void SetPosition(const Vector3& pos) { modelPlayer_->SetTranslate(pos); }
 	void SetIsAlive(bool isAlive) { isAlive_ = isAlive; }
-
+	void SetAimTarget(const Vector3& target) { aimTarget_ = target; }
 private:
 	// モデル
 	std::unique_ptr<Entity3D> modelPlayer_;
@@ -54,5 +57,8 @@ private:
 
 	// 弾丸
 	std::vector<std::unique_ptr<Bullet>> bullets_;
+	Vector3 aimTarget_{};
+
+	bool isController_ = false;
 };
 

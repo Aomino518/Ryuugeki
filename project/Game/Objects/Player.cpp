@@ -6,6 +6,7 @@ void Player::Init(const Vector3& position) {
 	modelPlayer_ = std::make_unique<Entity3D>();
 	modelPlayer_->Init();
 	modelPlayer_->SetModel("player");
+	Editor::GetInstance()->RegisterModel("player", modelPlayer_.get());
 	rot_ = modelPlayer_->GetRotate();
 
 	bullets_.resize(bulletMax_);
@@ -15,7 +16,7 @@ void Player::Init(const Vector3& position) {
 	}
 
 	modelPlayer_->SetTranslate(position);
-	sphere_ = { position, 3.0f };
+	sphere_ = { Vector3{position.x, position.y, position.z - 0.5f}, Vector3{3.0f, 2.0f, 3.0f} };
 }
 
 void Player::Update() {
@@ -51,6 +52,16 @@ void Player::Draw() {
 	if (isAlive_) {
 		modelPlayer_->Draw();
 	}
+
+}
+
+void Player::DebugDraw()
+{
+	DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
+
+	for (int i = 0; i < bulletMax_; i++) {
+		bullets_[i]->DebugDraw();
+	}
 }
 
 void Player::Move()
@@ -68,24 +79,33 @@ void Player::Move()
 	// 移動入力
 	if (input->IsPress(DIK_W)) {
 		inputDir.y += 1.0f;
+		isController_ = false;
 	}
 
 	if (input->IsPress(DIK_S)) {
 		inputDir.y -= 1.0f;
+		isController_ = false;
 	}
 
 	if (input->IsPress(DIK_A)) {
 		inputDir.x -= 1.0f;
+		isController_ = false;
 	}
 
 	if (input->IsPress(DIK_D)) {
 		inputDir.x += 1.0f;
+		isController_ = false;
 	}
 
 	//=========================================
 	// コントローラーの左スティック
 	//=========================================
 	Vector2 leftStick = input->GetXbLeftStickVector();
+	bool isLeftStickInput = leftStick.x != 0.0f || leftStick.y != 0.0f;
+
+	if (isLeftStickInput) {
+		isController_ = true;
+	}
 
 	inputDir.x += leftStick.x;
 	inputDir.y += leftStick.y;
@@ -133,12 +153,17 @@ void Player::Move()
 
 	for (auto& bullet : bullets_) {
 		if (!bullet->GetIsShot()) {
+			if (Input::GetInstance()->IsPress(DIK_SPACE)) {
+				isController_ = false;
+			} else if (input->GetXbRightTrigger() > 0.1f) {
+				isController_ = true;
+			}
+
 			if (Input::GetInstance()->IsPress(DIK_SPACE) || input->GetXbRightTrigger() > 0.1f) {
 
 				if (bulletCooldown_ <= 0) {
 					if (!bullet->GetIsShot()) {
-						bullet->SetPosition(pos);
-						bullet->SetIsShot(true);
+						bullet->Fire(pos, aimTarget_);
 						bulletCooldown_ = 10;
 						break;
 					}

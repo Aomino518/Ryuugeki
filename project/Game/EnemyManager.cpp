@@ -98,6 +98,13 @@ void EnemyManager::Update() {
 				continue;
 			}
 
+			auto& enemyBullet = enemy->GetBullet();
+
+			if (IsCollision(player->GetSphere(), enemyBullet->GetSphere())) {
+				player->SetIsAlive(false);
+				enemyBullet->SetIsShot(false);
+			}
+
 			if (IsCollision(player->GetSphere(), enemy->GetSphere())) {
 				player->SetIsAlive(false);
 				it = enemies_.erase(it);
@@ -122,6 +129,13 @@ void EnemyManager::Update() {
 void EnemyManager::Draw() {
 	for (auto& enemy : enemies_) {
 		enemy->Draw();
+	}
+}
+
+void EnemyManager::DebugDraw()
+{
+	for (auto& enemy : enemies_) {
+		enemy->DebugDraw();
 	}
 }
 

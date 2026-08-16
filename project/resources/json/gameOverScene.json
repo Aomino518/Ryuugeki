@@ -125,7 +125,7 @@
                 "w": 1.0,
                 "x": 1.0,
                 "y": 1.0,
-                "z": 0.6753916144371033
+                "z": 0.21767878532409668
             },
             "transform": {
                 "rotate": {
@@ -147,9 +147,9 @@
         }
     },
     "windowState": {
-        "showCamera": true,
-        "showSound": true,
-        "showStats": true
+        "showCamera": false,
+        "showSound": false,
+        "showStats": false
     },
     "worldField": null,
     "worldField2D": null

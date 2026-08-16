@@ -21,9 +21,13 @@ public:
 	// 描画
 	void Draw();
 
+	void DebugDraw();
+
 	bool GetIsFinished() const { return isFinished_; }
 
 	void SetIsMoveStop(bool flag);
+
+	std::vector<std::unique_ptr<Enemy>>& GetEnemies() { return enemies_; }
 
 private:
 	// メンバ関数

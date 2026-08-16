@@ -32,6 +32,8 @@ private:
 	// メンバ関数
 	void UpdatePlay(); // プレイ中の更新処理
 	void UpdateReticle(); // エイムの更新処理
+	Vector3 CalculateAimTarget();
+	void UpdateAimCamera();
 
 	// メンバ変数
 	bool isClear = false;
@@ -44,6 +46,7 @@ private:
 	// スプライト
 	std::unique_ptr<Sprite> sprReticle_;
 	std::unique_ptr<Sprite> sprUiPlayOperate_;
+	std::unique_ptr<Sprite> sprUiConroller_;
 
 	// モデル
 	std::unique_ptr<Entity3D> modelSkydome_;
@@ -55,6 +58,22 @@ private:
 	Fade fade_;
 	std::shared_ptr<Player> player_;
 	std::unique_ptr<EnemyManager> enemyMgr_;
+
+	// レティクルの位置
+	Vector3 reticleWorldPosition_{};
+	Vector2 reticleScreenPosition_{};
+
+	static constexpr float kAimDistance = 50.0f;
+	static constexpr float kReticleRadius = 32.0f;
+
+	bool isController_ = false;
+
+	// 右スティックによる照準角度
+	float cameraYaw_ = 0.0f;
+	float cameraPitch_ = 0.0f;
+
+	float cameraSensitivity_ = 0.035f;
+	float rightStickDeadZone_ = 0.15f;
 
 #ifdef _DEBUG
 	// ゲーム一時停止

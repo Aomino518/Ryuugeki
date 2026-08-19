@@ -183,7 +183,7 @@ void DebugDraw3D::DrawBoxSolid(const Vector3& center, const Vector3& halfSize, c
 
 void DebugDraw3D::DrawSphereWire(const Vector3& center, const Vector3& radius, const Vector4& color)
 {
-	uint32_t subdivision = 16;
+	uint32_t subdivision = 8;
 
 	const float kLonEvery = 2.0f * std::numbers::pi_v<float> / float(subdivision);
 	const float kLatEvery = std::numbers::pi_v<float> / float(subdivision);
@@ -237,7 +237,7 @@ void DebugDraw3D::DrawSphereWire(const Vector3& center, const Vector3& radius, c
 
 void DebugDraw3D::DrawSphereSolid(const Vector3& center, const Vector3& radius, const Vector4& color)
 {
-	uint32_t subdivision = 16;
+	uint32_t subdivision = 8;
 	const float kLonEvery = 2.0f * std::numbers::pi_v<float> / float(subdivision);
 	const float kLatEvery = std::numbers::pi_v<float> / float(subdivision);
 

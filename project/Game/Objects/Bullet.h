@@ -16,6 +16,10 @@ public:
 	// 描画
 	void Draw();
 
+	void DebugDraw();
+
+	void SetDebugHit();
+
 	// Getter
 	Vector3 GetPosition() const { return model_->GetTranslate(); }
 	bool GetIsShot() const { return isShot_; }
@@ -26,6 +30,7 @@ public:
 	void SetIsShot(bool isShot) { isShot_ = isShot; }
 
 	bool BulletIsCollision(const Enemy& enemy) const;
+	void Fire(const Vector3& startPosition, const Vector3& targetPosition);
 
 private:
 	// モデル
@@ -35,5 +40,13 @@ private:
 	bool isShot_ = false;
 	float speed_ = 3.0f;
 	Sphere sphere_;
+	float maxDistance_ = 100.0f;
+	// 発射方向
+	Vector3 direction_{};
+	// 発射した地点
+	Vector3 startPosition_{};
+
+	bool debugIsHit_ = false;
+	int debugHitTimer_ = 0;
 };
 

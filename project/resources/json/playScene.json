@@ -63,6 +63,32 @@
         }
     },
     "models": {
+        "player": {
+            "blendMode": 1,
+            "material": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "transform": {
+                "rotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": -10.0
+                }
+            }
+        },
         "starSkyDome": {
             "blendMode": 1,
             "material": {
@@ -113,8 +139,34 @@
                     "z": 1.0
                 },
                 "translate": {
-                    "x": 641.504150390625,
-                    "y": 359.083984375,
+                    "x": 511.7823486328125,
+                    "y": 238.976318359375,
+                    "z": 0.0
+                }
+            }
+        },
+        "sprUiConroller": {
+            "blendMode": 1,
+            "material": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "transform": {
+                "rotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 304.0,
+                    "y": 64.0,
+                    "z": 1.0
+                },
+                "translate": {
+                    "x": 980.0,
+                    "y": 661.77001953125,
                     "z": 0.0
                 }
             }
@@ -147,9 +199,9 @@
         }
     },
     "windowState": {
-        "showCamera": true,
-        "showSound": true,
-        "showStats": true
+        "showCamera": false,
+        "showSound": false,
+        "showStats": false
     },
     "worldField": null,
     "worldField2D": null

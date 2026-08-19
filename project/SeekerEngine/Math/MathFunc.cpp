@@ -396,13 +396,30 @@ bool IsCollision(const AABB& aabb, const Vector3& point)
 }
 
 bool IsCollision(const Sphere& s1, const Sphere& s2) {
-	float distance = Length(s2.center - s1.center);
+	const Vector3 distance = s2.center - s1.center;
 
-	if (distance <= s1.radius + s2.radius) {
-		return true;
+	const Vector3 combinedRadius = {
+		s1.radius.x + s2.radius.x,
+		s1.radius.y + s2.radius.y,
+		s1.radius.z + s2.radius.z
+	};
+
+	// 0除算防止
+	if (combinedRadius.x <= 0.0f ||
+		combinedRadius.y <= 0.0f ||
+		combinedRadius.z <= 0.0f) {
+		return false;
 	}
 
-	return false;
+	const float normalizedDistance =
+		(distance.x * distance.x) /
+		(combinedRadius.x * combinedRadius.x) +
+		(distance.y * distance.y) /
+		(combinedRadius.y * combinedRadius.y) +
+		(distance.z * distance.z) /
+		(combinedRadius.z * combinedRadius.z);
+
+	return normalizedDistance <= 1.0f;
 }
 
 float Lerp(const float start, const float end, float t)

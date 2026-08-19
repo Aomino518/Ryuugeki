@@ -9,7 +9,7 @@
 
 struct Sphere {
 	Vector3 center;
-	float radius;
+	Vector3 radius;
 };
 
 // 加算

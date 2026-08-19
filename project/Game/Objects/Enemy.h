@@ -21,6 +21,8 @@ public:
 
 	void DebugDraw();
 
+	void SetIsDebugHit();
+
 	Vector3 GetPosition() const { return model_->GetTranslate(); }
 	bool GetIsAlive() const { return isAlive_; }
 	Sphere GetSphere() const { return sphere_; }
@@ -47,6 +49,9 @@ private:
 	// 弾の発射周期
 	float shotInterval_ = 180.0f;
 	float timer_ = shotInterval_;
+
+	bool debugIsHit_ = false;
+	int debugHitTimer_ = 0;
 
 	bool isMoveStop_ = false;
 };

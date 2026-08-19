@@ -33,7 +33,6 @@ private:
 	void UpdatePlay(); // プレイ中の更新処理
 	void UpdateReticle(); // エイムの更新処理
 	Vector3 CalculateAimTarget();
-	void UpdateAimCamera();
 
 	// メンバ変数
 	bool isClear = false;
@@ -50,6 +49,7 @@ private:
 
 	// モデル
 	std::unique_ptr<Entity3D> modelSkydome_;
+	std::unique_ptr<Entity3D> modelTerrain_;
 
 	// シーンフェーズ
 	ScenePhase phase_ = ScenePhase::FADEIN;
@@ -68,12 +68,33 @@ private:
 
 	bool isController_ = false;
 
-	// 右スティックによる照準角度
-	float cameraYaw_ = 0.0f;
-	float cameraPitch_ = 0.0f;
-
 	float cameraSensitivity_ = 0.035f;
 	float rightStickDeadZone_ = 0.15f;
+
+	// 右スティックで動かす照準位置
+	Vector2 aimOffset_ = { 0.0f, 0.0f };
+
+	// 左スティックによる先行量
+	Vector2 moveAimOffset_ = { 0.0f, 0.0f };
+
+	// レティクル操作速度
+	float aimSpeed_ = 12.0f;
+
+	// 自機移動によるレティクル先行距離
+	float moveAimDistance_ = 100.0f;
+
+	// レティクルが中央へ戻る強さ
+	float aimReturnSpeed_ = 0.12f;
+
+	// レティクルが動ける画面範囲
+	float reticleLimitX_ = 400.0f;
+	float reticleLimitY_ = 250.0f;
+
+	// 自機から照準地点までの距離
+	float aimDistance_ = 50.0f;
+
+	// 敵を狙っていると判定するピクセル半径
+	float reticleHitRadius_ = 45.0f;
 
 #ifdef _DEBUG
 	// ゲーム一時停止

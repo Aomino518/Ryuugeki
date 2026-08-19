@@ -17,6 +17,8 @@ public:
 
 	void DebugDraw();
 
+	void SetIsDebugHit();
+
 	// Getter
 	Vector3 GetPosition() const { return modelPlayer_->GetTranslate(); }
 	Vector3 GetRotate() const { return rot_; }
@@ -60,5 +62,8 @@ private:
 	Vector3 aimTarget_{};
 
 	bool isController_ = false;
+
+	bool debugIsHit_ = false;
+	int debugHitTimer_ = 0;
 };
 

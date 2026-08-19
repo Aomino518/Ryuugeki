@@ -21,6 +21,13 @@ void Player::Init(const Vector3& position) {
 
 void Player::Update() {
 	auto camMgr = CameraManager::GetInstance();
+	if (debugHitTimer_ > 0) {
+		debugHitTimer_--;
+
+		if (debugHitTimer_ <= 0) {
+			debugIsHit_ = false;
+		}
+	}
 
 	if (isAlive_) {
 		Move();
@@ -57,11 +64,21 @@ void Player::Draw() {
 
 void Player::DebugDraw()
 {
-	DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
+	if (!debugIsHit_) {
+		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
+	} else  if (!isAlive_ && debugHitTimer_ > 0) {
+		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::RED, DebugDrawMode::Wireframe);
+	}
 
 	for (int i = 0; i < bulletMax_; i++) {
 		bullets_[i]->DebugDraw();
 	}
+}
+
+void Player::SetIsDebugHit()
+{
+	debugIsHit_ = true;
+	debugHitTimer_ = 10;
 }
 
 void Player::Move()

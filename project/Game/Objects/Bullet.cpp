@@ -12,6 +12,13 @@ void Bullet::Init(const Vector3& position) {
 
 void Bullet::Update() {
 	auto camMgr = CameraManager::GetInstance();
+	if (debugHitTimer_ > 0) {
+		debugHitTimer_--;
+
+		if (debugHitTimer_ <= 0) {
+			debugIsHit_ = false;
+		}
+	}
 
 	if (isShot_) {
 		Vector3 pos = model_->GetTranslate();
@@ -21,7 +28,7 @@ void Bullet::Update() {
 
 		sphere_.center = pos;
 		model_->SetTranslate(pos);
-		
+
 		Vector3 movedVector{
 			pos.x - startPosition_.x,
 			pos.y - startPosition_.y,
@@ -52,9 +59,17 @@ void Bullet::Draw() {
 
 void Bullet::DebugDraw()
 {
-	if (isShot_) {
+	if (!debugIsHit_ && isShot_) {
 		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
+	} else if (debugHitTimer_ > 0) {
+		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::RED, DebugDrawMode::Wireframe);
 	}
+}
+
+void Bullet::SetDebugHit()
+{
+	debugIsHit_ = true;
+	debugHitTimer_ = 10;
 }
 
 bool Bullet::BulletIsCollision(const Enemy& enemy) const

@@ -18,6 +18,8 @@ public:
 
 	void DebugDraw();
 
+	void SetDebugHit();
+
 	// Getter
 	Vector3 GetPosition() const { return model_->GetTranslate(); }
 	bool GetIsShot() const { return isShot_; }
@@ -43,5 +45,8 @@ private:
 	Vector3 direction_{};
 	// 発射した地点
 	Vector3 startPosition_{};
+
+	bool debugIsHit_ = false;
+	int debugHitTimer_ = 0;
 };
 

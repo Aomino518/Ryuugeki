@@ -15,6 +15,8 @@ public:
 
 	void DebuDraw();
 
+	void SetIsDebugHit();
+
 	void Fire(const Vector3& position);
 
 	bool GetIsShot() const { return isShot_; }
@@ -33,5 +35,8 @@ private:
 	bool isShot_ = false;
 	float speed_ = 0.5f;
 	Sphere sphere_;
+
+	bool debugIsHit_ = false;
+	int debugHitTimer_ = 0;
 };
 

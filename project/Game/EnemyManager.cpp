@@ -79,7 +79,9 @@ void EnemyManager::Update() {
 				}
 
 				if (IsCollision(bullet->GetSphere(), enemy->GetSphere())) {
+					bullet->SetDebugHit();
 					bullet->SetIsShot(false);
+					enemy->SetIsDebugHit();
 					it = enemies_.erase(it);
 					break;
 				} else {
@@ -101,7 +103,9 @@ void EnemyManager::Update() {
 			auto& enemyBullet = enemy->GetBullet();
 
 			if (IsCollision(player->GetSphere(), enemyBullet->GetSphere())) {
+				player->SetIsDebugHit();
 				player->SetIsAlive(false);
+				enemyBullet->SetIsDebugHit();
 				enemyBullet->SetIsShot(false);
 			}
 

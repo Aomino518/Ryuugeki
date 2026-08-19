@@ -18,6 +18,13 @@ void Enemy::Init(EnemyPattern pattern, const Vector3& position) {
 
 void Enemy::Update() {
 	auto camMgr = CameraManager::GetInstance();
+	if (debugHitTimer_ > 0) {
+		debugHitTimer_--;
+
+		if (debugHitTimer_ <= 0) {
+			debugIsHit_ = false;
+		}
+	}
 
 	if (!isMoveStop_) {
 		transform_ = model_->GetTransform();
@@ -90,6 +97,16 @@ void Enemy::Draw() {
 
 void Enemy::DebugDraw()
 {
-	DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
+	if (!debugIsHit_) {
+		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
+	} else  if (!isAlive_ && debugHitTimer_ > 0) {
+		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::RED, DebugDrawMode::Wireframe);
+	}
 	bullet_->DebuDraw();
+}
+
+void Enemy::SetIsDebugHit()
+{
+	debugIsHit_ = true;
+	debugHitTimer_ = 10;
 }

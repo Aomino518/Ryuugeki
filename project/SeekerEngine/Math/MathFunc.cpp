@@ -474,3 +474,9 @@ Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t)
 {
 	return v1 + (v2 - v1) * t;
 }
+
+float LerpRateConvert(float timer, float duration)
+{
+	float t = timer / duration;
+	return std::clamp(t, 0.0f, 1.0f);
+}

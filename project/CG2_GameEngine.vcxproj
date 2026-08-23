@@ -225,6 +225,7 @@
     <ClCompile Include="SeekerEngine\Core\StartupManager.cpp" />
     <ClCompile Include="SeekerEngine\Audio\SoundManager.cpp" />
     <ClCompile Include="Game\Scenes\TitleScene.cpp" />
+    <ClCompile Include="SeekerEngine\Utility\GameTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\hlsl\DebugShape3D.PS.hlsl">
@@ -481,6 +482,7 @@
     <ClInclude Include="SeekerEngine\Core\StartupManager.h" />
     <ClInclude Include="SeekerEngine\Audio\SoundManager.h" />
     <ClInclude Include="Game\Scenes\TitleScene.h" />
+    <ClInclude Include="SeekerEngine\Utility\GameTime.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\hlsl\DebugShape3D.hlsli">

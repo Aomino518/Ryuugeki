@@ -65,5 +65,8 @@ private:
 
 	bool debugIsHit_ = false;
 	int debugHitTimer_ = 0;
+	static constexpr float deadZone_ = 0.15f;
+	static constexpr float maxTiltAngle_ = 2.0f;
+	static constexpr float interpolationSpeed_ = 5.0f;
 };
 

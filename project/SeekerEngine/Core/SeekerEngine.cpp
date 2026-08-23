@@ -28,6 +28,7 @@
 #include "DebugDraw2D.h"
 #include "DebugDraw3D.h"
 #include "Particle2DManager.h"
+#include "GameTime.h"
 
 void SeekerEngine::Init()
 {
@@ -75,10 +76,12 @@ void SeekerEngine::Init()
 	Particle2DManager::GetInstance()->Init(dxcCompiler_, rsParticle2D_.Get());
 	LightManager::GetInstance()->Init();
 	ImGuiManager::GetInstance()->Init();
+	Time::Init();
 }
 
 void SeekerEngine::Update()
 {
+	Time::Update();
 	Input::GetInstance()->Update();
 	DebugDraw::Update();
 	LightManager::GetInstance()->Update();

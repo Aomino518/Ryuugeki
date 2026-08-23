@@ -3,57 +3,27 @@
 #include "Enemy.h"
 
 void EnemyManager::Init(std::shared_ptr<Player> player) {
-	frameCount_ = 0;
 	enemies_.clear();
+	spawnList_.clear();
 	player_ = player;
-	// 出現スケジュール
-	spawnList_ = {
-		{60,   EnemyPattern::Straight, {-10, 0, 100} },
-		{120,  EnemyPattern::Straight, {0, 0, 100}   },
-		{180,  EnemyPattern::Straight, {10, 0, 100}  },
-		{260,  EnemyPattern::SinWave,  {-12, 3, 100} },
-		{340,  EnemyPattern::SinWave,  {12, 3, 100}  },
-		{420,  EnemyPattern::ZigZag,   {-15, 0, 100} },
-		{480,  EnemyPattern::ZigZag,   {15, 0, 100}  },
-		{600,  EnemyPattern::SlowFast, {0, 10, 100}  },
-		{750,  EnemyPattern::Straight, {-15, -8, 100}},
-		{750,  EnemyPattern::Straight, {-5, -8, 100} },
-		{750,  EnemyPattern::Straight, {5, -8, 100}  },
-		{750,  EnemyPattern::Straight, {15, -8, 100} },
-		{950,  EnemyPattern::ZigZag,   {-12, 0, 100} },
-		{970,  EnemyPattern::ZigZag,   {0, 0, 100}   },
-		{990,  EnemyPattern::ZigZag,   {12, 0, 100}  },
-		{1150, EnemyPattern::SlowFast, {8, 10, 100}  },
-		{1200, EnemyPattern::SlowFast, {-8, 10, 100} },
-		{1400, EnemyPattern::SinWave,  {-20, 0, 100} },
-		{1420, EnemyPattern::SinWave,  {-10, 0, 100} },
-		{1440, EnemyPattern::SinWave,  {10, 0, 100}  },
-		{1460, EnemyPattern::SinWave,  {20, 0, 100}  },
-		{1650, EnemyPattern::Straight, {0, 10, 100}  },
-		{1800, EnemyPattern::Straight, {-18, -6, 100}},
-		{1800, EnemyPattern::Straight, {0, -6, 100}  },
-		{1800, EnemyPattern::Straight, {18, -6, 100} },
-		{1900, EnemyPattern::ZigZag,   {-12, 0, 100} },
-		{1920, EnemyPattern::ZigZag,   {12, 0, 100}  },
-		{2100, EnemyPattern::SlowFast, {0, 5, 100}   },
-		{2180, EnemyPattern::SinWave,  {-10, 0, 100} },
-		{2180, EnemyPattern::SinWave,  {10, 0, 100}  },
-		{2400, EnemyPattern::Straight, {0, 0, 100}   },
-	};
+
+	if (!LoadSpawnSchedule("resources/json/enemySpawn.json")) {
+		Logger::Write(Logger::LogLevel::Error, "敵の出現スケジュールを読み込めませんでした");
+	}
 }
 
 void EnemyManager::Update() {
 	if (!isStopFrame_) {
-		frameCount_++;
+		elapsedTime_ += Time::GetDeltaTime();
 	}
 
-	if (frameCount_ >= 2700) {
+	if (elapsedTime_ >= endTime_ && enemies_.empty()) {
 		isFinished_ = true;
 	}
 
 	// 出現チェック
 	for (auto it = spawnList_.begin(); it != spawnList_.end();) {
-		if (frameCount_ >= it->spawnFrame) {
+		if (elapsedTime_ >= it->spawnTime) {
 			SpawnEnemy(*it);
 			it = spawnList_.erase(it);
 		} else {
@@ -151,8 +121,100 @@ void EnemyManager::SetIsMoveStop(bool flag)
 	}
 }
 
+bool EnemyManager::LoadSpawnSchedule(const std::string& filePath)
+{
+	std::ifstream file(filePath);
+
+	if (!file.is_open()) {
+		return false;
+	}
+
+	json root;
+	file >> root;
+
+	for (const json& enemyJson : root.at("enemies")) {
+		EnemySpawnData data{};
+
+		data.spawnTime = enemyJson.at("spawnTime").get<float>();
+		const std::string patternName = enemyJson.at("pattern").get<std::string>();
+		data.enemyPattern = ConvertEnemyPattern(patternName);
+		const json& positionJson = enemyJson.at("position");
+		data.position = {
+			positionJson.at("x").get<float>(),
+			positionJson.at("y").get<float>(),
+			positionJson.at("z").get<float>()
+		};
+
+		Logger::Write(
+			Logger::LogLevel::Debug,
+			std::format(
+				"敵スケジュール読込: "
+				"time={:.3f}, pattern={}, "
+				"position=({:.2f}, {:.2f}, {:.2f})",
+				data.spawnTime,
+				patternName,
+				data.position.x,
+				data.position.y,
+				data.position.z));
+
+		spawnList_.push_back(data);
+	}
+
+	return true;
+}
+
+EnemyPattern EnemyManager::ConvertEnemyPattern(const std::string& patternName) const
+{
+	if (patternName == "Straight") {
+		return EnemyPattern::Straight;
+	}
+
+	if (patternName == "SinWave") {
+		return EnemyPattern::SinWave;
+	}
+
+	if (patternName == "ZigZag") {
+		return EnemyPattern::ZigZag;
+	}
+
+	if (patternName == "SlowFast") {
+		return EnemyPattern::SlowFast;
+	}
+
+	throw std::runtime_error("未対応のEnemyPatternです: " + patternName);
+}
+
 void EnemyManager::SpawnEnemy(const EnemySpawnData& data)
 {
+	auto player = player_.lock();
+	if (!player) {
+		Logger::Write(Logger::LogLevel::Error, "敵生成時にplayerを取得できませんでした");
+		return;
+	}
+
+	const Vector3 playerPos = player->GetPosition();
+	const Vector3 spawnPos = {
+		data.position.x,
+		data.position.y,
+		playerPos.z - data.position.z
+	};
+
+	Logger::Write(
+		Logger::LogLevel::Debug,
+		std::format(
+			"敵生成: player=({:.2f}, {:.2f}, {:.2f}), "
+			"offset=({:.2f}, {:.2f}, {:.2f}), "
+			"spawn=({:.2f}, {:.2f}, {:.2f})",
+			playerPos.x,
+			playerPos.y,
+			playerPos.z,
+			data.position.x,
+			data.position.y,
+			data.position.z,
+			spawnPos.x,
+			spawnPos.y,
+			spawnPos.z));
+
 	auto enemy = std::make_unique<Enemy>();
 	enemy->Init(data.enemyPattern, data.position);
 	enemies_.push_back(std::move(enemy));

@@ -144,3 +144,12 @@ Matrix4x4& operator*=(Matrix4x4& lhs, const Matrix4x4& rhs);
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 // 線形補間関数Vector4
 Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t);
+
+
+/// <summary>
+/// 0.0から1.0の補間率に変換する関数
+/// </summary>
+/// <param name="timer">タイマー</param>
+/// <param name="duration">目標時間</param>
+/// <returns>変換された補間率</returns>
+float LerpRateConvert(float timer, float duration);

@@ -118,6 +118,16 @@ void Player::Move()
 	// コントローラーの左スティック
 	//=========================================
 	Vector2 leftStick = input->GetXbLeftStickVector();
+
+	// デッドゾーン処理
+	if (std::fabs(leftStick.x) < deadZone_) {
+		leftStick.x = 0.0f;
+	}
+
+	if (std::fabs(leftStick.y) < deadZone_) {
+		leftStick.y = 0.0f;
+	}
+
 	bool isLeftStickInput = leftStick.x != 0.0f || leftStick.y != 0.0f;
 
 	if (isLeftStickInput) {
@@ -127,11 +137,15 @@ void Player::Move()
 	inputDir.x += leftStick.x;
 	inputDir.y += leftStick.y;
 
-	if (inputDir.x > 0.01f) {
-		rot_.z = -0.5f;
-	} else if (inputDir.x < -0.01f) {
-		rot_.z = 0.5f;
-	}
+	// 機体の傾きを補間
+	// スティックを倒した量から目標角度を決める
+	float targetRotX = leftStick.y * maxTiltAngle_;
+	float targetRotY = leftStick.x * maxTiltAngle_;
+	float t = interpolationSpeed_ * Time::GetDeltaTime();
+	t = std::clamp(t, 0.0f, 1.0f);
+
+	rot_.x = Lerp(rot_.x, -targetRotX, t);
+	rot_.y = Lerp(rot_.y, targetRotY, t);
 
 	modelPlayer_->SetRotate(rot_);
 
@@ -160,8 +174,8 @@ void Player::Move()
 	pos.x += velocity_.x;
 	pos.y += velocity_.y;
 	// 移動範囲制限
-	pos.x = std::clamp(pos.x, -33.0f, 33.0f);
-	pos.y = std::clamp(pos.y, -20.0f, 20.0f);
+	pos.x = std::clamp(pos.x, -16.0f, 16.0f);
+	pos.y = std::clamp(pos.y, -10.0f, 10.0f);
 	modelPlayer_->SetTranslate(pos);
 
 	if (bulletCooldown_ > 0) {

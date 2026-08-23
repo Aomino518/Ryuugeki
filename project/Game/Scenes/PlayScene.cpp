@@ -23,7 +23,7 @@ void PlayScene::Init()
 
 	// カメラの初期位置設定
 	auto camera = camMgr->GetCamera("MainCamera");
-	Vector3 camPos = { 0.0f, 0.0f, -105.0f };
+	Vector3 camPos = { 0.0f, 0.0f, -60.0f };
 	Vector3 camRot = { 0.0f, 0.0f, 0.0f };
 	camera->SetTranslate(camPos);
 	camera->SetRotate(camRot);
@@ -82,7 +82,7 @@ void PlayScene::Init()
 	// クラス
 	//===========================
 	player_ = std::make_shared<Player>();
-	player_->Init({ 0.0f, 0.0f, -10.0f });
+	player_->Init(Vector3{0.0f, 0.0f, -10.0f});
 
 	enemyMgr_ = std::make_unique<EnemyManager>();
 	enemyMgr_->Init(player_);
@@ -121,6 +121,9 @@ void PlayScene::Update()
 	}
 
 	// カメラの更新処理
+	Camera* mainCamera = camMgr->GetCamera("MainCamera");
+	Vector3 camPos = { 0.0f, 0.0f, player_->GetPosition().z - 50.0f};
+	mainCamera->SetTranslate(camPos);
 	camMgr->Update();
 
 	// モデルの更新処理
@@ -135,25 +138,35 @@ void PlayScene::Update()
 		isGameStop_ = !isGameStop_;
 	}
 
-	/*if (isGameStop_) {
+	if (isGameStop_) {
 		enemyMgr_->SetIsMoveStop(true);
 	} else {
 		enemyMgr_->SetIsMoveStop(false);
-	}*/
+	}
 #endif
 	UpdateReticle();
 	Vector3 aimTarget = CalculateAimTarget();
 	player_->SetAimTarget(aimTarget);
+
+	if (isMovePlayer_) {
+		playerMoveTimer_ += Time::GetDeltaTime();
+		// 0.0fから1.0fの補間率に変換
+		float t = LerpRateConvert(playerMoveTimer_, playerMoveDuration_);
+		Vector3 playerPos = player_->GetPosition();
+		playerPos.z = Lerp(startPos, endPos, t);
+		player_->SetPosition(playerPos);
+
+		if (t >= 1.0f) {
+			isMovePlayer_ = false;
+		}
+	}
 	player_->Update();
 
 	isController_ = player_->GetIsConroller();
 	modelSkydome_->Update();
-	//enemyMgr_->Update();
+	enemyMgr_->Update();
 
 	modelTerrain_->SetCamera(camMgr->GetActiveCamera());
-	Vector3 terrainPos = modelTerrain_->GetTranslate();
-	terrainPos.z -= 0.1f;
-	modelTerrain_->SetTranslate(terrainPos);
 	modelTerrain_->Update();
 
 	// スプライトの更新処理
@@ -228,7 +241,7 @@ void PlayScene::Draw()
     /*-- 描画処理 --*/
 	// Model
 	player_->Draw();
-	//enemyMgr_->Draw();
+	enemyMgr_->Draw();
 	modelSkydome_->Draw();
 	modelTerrain_->Draw();
 
@@ -326,26 +339,52 @@ void PlayScene::UpdateReticle()
 		-leftStick.y * moveAimDistance_
 	};
 
-	// 急に動かず、少し遅れて追従
-	moveAimOffset_.x += (targetMoveOffset.x - moveAimOffset_.x) * 0.15f;
+	constexpr float reticleFollowSpeed = 0.3f;
+	moveAimOffset_.x += (targetMoveOffset.x - moveAimOffset_.x) * reticleFollowSpeed;
 
-	moveAimOffset_.y += (targetMoveOffset.y - moveAimOffset_.y) * 0.15f;
+	moveAimOffset_.y += (targetMoveOffset.y - moveAimOffset_.y) * reticleFollowSpeed;
 
 	//=========================================
-	// レティクルの移動範囲
+	// プレイヤー正面を2D座標へ変換
 	//=========================================
-	aimOffset_.x = std::clamp(aimOffset_.x, -reticleLimitX_, reticleLimitX_);
+	Camera* camera = CameraManager::GetInstance()->GetCamera("MainCamera");
 
-	aimOffset_.y = std::clamp(aimOffset_.y, -reticleLimitY_, reticleLimitY_);
+	if (!camera) {
+		return;
+	}
 
-	Vector2 screenCenter{
-		static_cast<float>(Graphics::GetWidth()) * 0.5f,
-		static_cast<float>(Graphics::GetHeight()) * 0.5f
+	Transform cameraTransform = camera->GetTransform();
+	Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
+	Matrix4x4 viewMatrix = Inverse(cameraMatrix);
+	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(
+		0.45f,
+		static_cast<float>(Graphics::GetWidth()) /
+		static_cast<float>(Graphics::GetHeight()),
+		0.1f,
+		1000.0f
+	);
+
+	Matrix4x4 viewProjectionMatrix = viewMatrix * projectionMatrix;
+
+	Vector3 playerPos = player_->GetModel()->GetTranslate();
+
+	Vector3 playerFrontPos{
+		playerPos.x,
+		playerPos.y,
+		playerPos.z + aimDistance_
 	};
 
+	Vector3 playerFrontNdc = TransformToVector3(playerPos, viewProjectionMatrix);
+
+	Vector2 playerFrontScreenPos = {
+		(playerFrontNdc.x + 1.0f) * 0.5f * static_cast<float>(Graphics::GetWidth()),
+		(1.0f - playerFrontNdc.y) * 0.5f * static_cast<float>(Graphics::GetHeight()),
+	};
+
+	// プレイヤー正面+左右スティックの照準量
 	reticleScreenPosition_ = {
-		screenCenter.x + aimOffset_.x + moveAimOffset_.x,
-		screenCenter.y + aimOffset_.y + moveAimOffset_.y
+		playerFrontScreenPos.x + aimOffset_.x + moveAimOffset_.x,
+		playerFrontScreenPos.y + aimOffset_.y + moveAimOffset_.y
 	};
 
 	// 画面外へ出ないようにする
@@ -356,7 +395,7 @@ void PlayScene::UpdateReticle()
 		margin,
 		static_cast<float>(Graphics::GetWidth()) - margin
 	);
-
+	
 	reticleScreenPosition_.y = std::clamp(
 		reticleScreenPosition_.y,
 		margin,
@@ -392,11 +431,9 @@ Vector3 PlayScene::CalculateAimTarget()
 		1000.0f
 	);
 
-	Matrix4x4 viewProjectionMatrix =
-		viewMatrix * projectionMatrix;
+	Matrix4x4 viewProjectionMatrix = viewMatrix * projectionMatrix;
 
-	Matrix4x4 inverseViewProjection =
-		Inverse(viewProjectionMatrix);
+	Matrix4x4 inverseViewProjection = Inverse(viewProjectionMatrix);
 
 	float screenWidth = static_cast<float>(Graphics::GetWidth());
 

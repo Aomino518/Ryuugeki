@@ -38,7 +38,7 @@ private:
 
 	// メンバ変数
 	bool isShot_ = false;
-	float speed_ = 3.0f;
+	float speed_ = 5.0f;
 	Sphere sphere_;
 	float maxDistance_ = 100.0f;
 	// 発射方向

@@ -63,7 +63,6 @@ private:
 	Vector3 reticleWorldPosition_{};
 	Vector2 reticleScreenPosition_{};
 
-	static constexpr float kAimDistance = 50.0f;
 	static constexpr float kReticleRadius = 32.0f;
 
 	bool isController_ = false;
@@ -81,20 +80,22 @@ private:
 	float aimSpeed_ = 12.0f;
 
 	// 自機移動によるレティクル先行距離
-	float moveAimDistance_ = 100.0f;
+	float moveAimDistance_ = 20.0f;
 
 	// レティクルが中央へ戻る強さ
 	float aimReturnSpeed_ = 0.12f;
-
-	// レティクルが動ける画面範囲
-	float reticleLimitX_ = 400.0f;
-	float reticleLimitY_ = 250.0f;
 
 	// 自機から照準地点までの距離
 	float aimDistance_ = 50.0f;
 
 	// 敵を狙っていると判定するピクセル半径
 	float reticleHitRadius_ = 45.0f;
+
+	bool isMovePlayer_ = true;
+	float playerMoveTimer_ = 0.0f;
+	float playerMoveDuration_ = 120.0f;
+	float startPos = -10.0f;
+	float endPos = 500.0f;
 
 #ifdef _DEBUG
 	// ゲーム一時停止

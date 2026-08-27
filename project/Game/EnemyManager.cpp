@@ -6,6 +6,8 @@ void EnemyManager::Init(std::shared_ptr<Player> player) {
 	enemies_.clear();
 	spawnList_.clear();
 	player_ = player;
+	boss_ = std::make_unique<Boss>();
+	isBossSpawned_ = false;
 
 	if (!LoadSpawnSchedule("resources/json/enemySpawn.json")) {
 		Logger::Write(Logger::LogLevel::Error, "敵の出現スケジュールを読み込めませんでした");
@@ -17,8 +19,10 @@ void EnemyManager::Update() {
 		elapsedTime_ += Time::GetDeltaTime();
 	}
 
-	if (elapsedTime_ >= endTime_ && enemies_.empty()) {
-		isFinished_ = true;
+	auto player = player_.lock();
+	if (!isBossSpawned_ && elapsedTime_ >= 40.0f) {
+		boss_->Init(Vector3{0.0f, 0.0f, 250.0f}, player->GetPosition());
+		isBossSpawned_ = true;
 	}
 
 	// 出現チェック
@@ -31,7 +35,6 @@ void EnemyManager::Update() {
 		}
 	}
 
-	auto player = player_.lock();
 	if (!player) {
 		return;
 	}
@@ -98,6 +101,8 @@ void EnemyManager::Update() {
 			++it;
 		}
 	}
+
+	boss_->Update(player->GetPosition());
 }
 
 void EnemyManager::Draw() {
@@ -111,6 +116,8 @@ void EnemyManager::DebugDraw()
 	for (auto& enemy : enemies_) {
 		enemy->DebugDraw();
 	}
+
+	boss_->DrawDebug();
 }
 
 void EnemyManager::SetIsMoveStop(bool flag)
@@ -196,7 +203,7 @@ void EnemyManager::SpawnEnemy(const EnemySpawnData& data)
 	const Vector3 spawnPos = {
 		data.position.x,
 		data.position.y,
-		playerPos.z - data.position.z
+		playerPos.z + data.position.z
 	};
 
 	Logger::Write(

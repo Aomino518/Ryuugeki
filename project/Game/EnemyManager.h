@@ -1,5 +1,6 @@
 #pragma once
 #include "Enemy.h"
+#include "Boss.h"
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -45,10 +46,12 @@ private:
 	std::vector<std::unique_ptr<Enemy>> enemies_;
 	std::vector<EnemySpawnData> spawnList_;
 	std::weak_ptr<Player> player_;
+	std::unique_ptr<Boss> boss_;
 
 	float elapsedTime_ = 0.0f;
 	float endTime_ = 140.0f;
 	bool isFinished_ = false;
 	bool isStopFrame_ = false;
+	bool isBossSpawned_ = false;
 };
 

@@ -1,18 +1,19 @@
 #pragma once
 #include "SeekerEngine.h"
-#include "Bullet.h"
 #include "Entity3D.h"
+#include "Weapon.h"
 
 class Player
 {
 public:
-	// 初期化
+	/// <summary>
+	/// 初期化処理関数
+	/// </summary>
+	/// <param name="position">初期位置</param>
 	void Init(const Vector3& position);
 
-	// 更新
 	void Update();
 
-	// 描画
 	void Draw();
 
 	void DebugDraw();
@@ -24,7 +25,7 @@ public:
 	Vector3 GetRotate() const { return rot_; }
 	bool GetIsAlive() const { return isAlive_; }
 	Entity3D* GetModel() const { return modelPlayer_.get(); }
-	std::vector<std::unique_ptr<Bullet>>& GetBullets() { return bullets_; }
+	std::vector<std::unique_ptr<Bullet>>& GetBullets() { return weapon_.GetBullets(); }
 	Sphere GetSphere() const { return sphere_; }
 	bool GetIsConroller() const { return isController_; }
 
@@ -33,11 +34,42 @@ public:
 	void SetIsAlive(bool isAlive) { isAlive_ = isAlive; }
 	void SetAimTarget(const Vector3& target) { aimTarget_ = target; }
 private:
+	// メンバ関数
+	/// <summary>
+	/// 移動入力値を返す関数
+	/// </summary>
+	/// <returns>入力値</returns>
+	Vector2 GetMovementInput();
+
+	/// <summary>
+	/// 移動の更新処理
+	/// </summary>
+	void UpdateMovement();
+	/// <summary>
+	/// 回転の更新処理
+	/// </summary>
+	/// <param name="input">入力値</param>
+	void UpdateRotation(const Vector2& input);
+	/// <summary>
+	/// 速度の更新処理
+	/// </summary>
+	/// <param name="input">入力値</param>
+	void UpdateVelocity(const Vector2& input);
+	/// <summary>
+	/// 位置の更新処理
+	/// </summary>
+	void UpdatePosition();
+	/// <summary>
+	/// 射撃の更新処理
+	/// </summary>
+	void UpdateShooting();
+	/// <summary>
+	/// カメラの更新処理
+	/// </summary>
+	void UpdateCamera();
+	
 	// モデル
 	std::unique_ptr<Entity3D> modelPlayer_;
-
-	// メンバ関数
-	void Move();
 
 	// メンバ変数
 	// 速度
@@ -50,15 +82,12 @@ private:
 	// 生存フラグ
 	bool isAlive_ = true;
 	// 入力方向
-	Vector2 inputDir = { 0.0f, 0.0f };
 	Vector3 rot_ = { 0.0f, 0.0f, 0.0f };
-	int bulletCooldown_ = 0;
-	int bulletMax_ = 10;
 	// 当たり判定
 	Sphere sphere_;
 
-	// 弾丸
-	std::vector<std::unique_ptr<Bullet>> bullets_;
+	Weapon weapon_;
+
 	Vector3 aimTarget_{};
 
 	bool isController_ = false;
@@ -66,7 +95,7 @@ private:
 	bool debugIsHit_ = false;
 	int debugHitTimer_ = 0;
 	static constexpr float deadZone_ = 0.15f;
-	static constexpr float maxTiltAngle_ = 2.0f;
+	static constexpr float maxTiltAngle_ = 0.3f;
 	static constexpr float interpolationSpeed_ = 5.0f;
 };
 

@@ -1,7 +1,12 @@
 #include "Player.h"
 #include "Vector3.h"
 #include "SceneIncludes.h"
+#include "InputUtility.h"
 
+/// <summary>
+/// 初期化処理関数
+/// </summary>
+/// <param name="position">初期位置</param>
 void Player::Init(const Vector3& position) {
 	modelPlayer_ = std::make_unique<Entity3D>();
 	modelPlayer_->Init();
@@ -9,18 +14,14 @@ void Player::Init(const Vector3& position) {
 	Editor::GetInstance()->RegisterModel("player", modelPlayer_.get());
 	rot_ = modelPlayer_->GetRotate();
 
-	bullets_.resize(bulletMax_);
-	for (int i = 0; i < bulletMax_; i++) {
-		bullets_[i] = std::make_unique<Bullet>();
-		bullets_[i]->Init(position);
-	}
+	// 武器の初期化
+	weapon_.Init(position);
 
 	modelPlayer_->SetTranslate(position);
 	sphere_ = { Vector3{position.x, position.y, position.z - 0.5f}, Vector3{3.0f, 2.0f, 3.0f} };
 }
 
 void Player::Update() {
-	auto camMgr = CameraManager::GetInstance();
 	if (debugHitTimer_ > 0) {
 		debugHitTimer_--;
 
@@ -30,36 +31,22 @@ void Player::Update() {
 	}
 
 	if (isAlive_) {
-		Move();
+		UpdateMovement();
+		UpdateShooting();
 		Vector3 pos = modelPlayer_->GetTranslate();
 		sphere_.center = pos;
 	}
-
-	for(auto& bullet : bullets_) {
-		bullet->Update();
-	}
-
-	if (!camMgr->GetIsDebug()) {
-		Camera* camera = camMgr->GetActiveCamera();
-
-		modelPlayer_->SetCamera(camera);
-	}
-
+	UpdateCamera();
+	weapon_.Update();
 	modelPlayer_->Update();
 }
 
 void Player::Draw() {
-
-	for (auto& bullet : bullets_) {
-		if (bullet->GetIsShot()) {
-			bullet->Draw();
-		}
-	}
+	weapon_.Draw();
 
 	if (isAlive_) {
 		modelPlayer_->Draw();
 	}
-
 }
 
 void Player::DebugDraw()
@@ -70,9 +57,7 @@ void Player::DebugDraw()
 		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::RED, DebugDrawMode::Wireframe);
 	}
 
-	for (int i = 0; i < bulletMax_; i++) {
-		bullets_[i]->DebugDraw();
-	}
+	weapon_.DebugDraw();
 }
 
 void Player::SetIsDebugHit()
@@ -81,36 +66,33 @@ void Player::SetIsDebugHit()
 	debugHitTimer_ = 10;
 }
 
-void Player::Move()
+/// <summary>
+/// 移動入力値を返す関数
+/// </summary>
+/// <returns>入力値</returns>
+Vector2 Player::GetMovementInput()
 {
-	auto camMgr = CameraManager::GetInstance();
-	if (camMgr->GetIsDebug()) {
-		return;
-	}
-
 	auto input = Input::GetInstance();
-
-	inputDir = { 0.0f, 0.0f };
-	rot_ = { 0.0f, 0.0f, 0.0f };
+	Vector2 direction{};
 
 	// 移動入力
 	if (input->IsPress(DIK_W)) {
-		inputDir.y += 1.0f;
+		direction.y += 1.0f;
 		isController_ = false;
 	}
 
 	if (input->IsPress(DIK_S)) {
-		inputDir.y -= 1.0f;
+		direction.y -= 1.0f;
 		isController_ = false;
 	}
 
 	if (input->IsPress(DIK_A)) {
-		inputDir.x -= 1.0f;
+		direction.x -= 1.0f;
 		isController_ = false;
 	}
 
 	if (input->IsPress(DIK_D)) {
-		inputDir.x += 1.0f;
+		direction.x += 1.0f;
 		isController_ = false;
 	}
 
@@ -118,58 +100,90 @@ void Player::Move()
 	// コントローラーの左スティック
 	//=========================================
 	Vector2 leftStick = input->GetXbLeftStickVector();
+	leftStick = InputUtility::ApplyDeadZone(leftStick, deadZone_);
 
-	// デッドゾーン処理
-	if (std::fabs(leftStick.x) < deadZone_) {
-		leftStick.x = 0.0f;
-	}
-
-	if (std::fabs(leftStick.y) < deadZone_) {
-		leftStick.y = 0.0f;
-	}
-
-	bool isLeftStickInput = leftStick.x != 0.0f || leftStick.y != 0.0f;
-
-	if (isLeftStickInput) {
+	if (leftStick.x != 0.0f || leftStick.y != 0.0f) {
+		direction.x += leftStick.x;
+		direction.y += leftStick.y;
 		isController_ = true;
 	}
 
-	inputDir.x += leftStick.x;
-	inputDir.y += leftStick.y;
+	return direction;
+}
 
-	// 機体の傾きを補間
+/// <summary>
+/// 移動の更新処理
+/// </summary>
+void Player::UpdateMovement()
+{
+	if (CameraManager::GetInstance()->GetIsDebug()) {
+		return;
+	}
+
+	const Vector2 inputDirection = GetMovementInput();
+
+	UpdateRotation(inputDirection);
+	UpdateVelocity(inputDirection);
+	UpdatePosition();
+}
+
+/// <summary>
+/// 回転の更新処理
+/// </summary>
+/// <param name="input">入力値</param>
+void Player::UpdateRotation(const Vector2& input)
+{
 	// スティックを倒した量から目標角度を決める
-	float targetRotX = leftStick.y * maxTiltAngle_;
-	float targetRotY = leftStick.x * maxTiltAngle_;
+	float targetRotX = input.y * maxTiltAngle_;
+	float targetRotY = input.x * maxTiltAngle_;
+
+	// 目標角度までの時間を0.0 ~ 1.0にする
 	float t = interpolationSpeed_ * Time::GetDeltaTime();
 	t = std::clamp(t, 0.0f, 1.0f);
 
+	// 傾きを補間
 	rot_.x = Lerp(rot_.x, -targetRotX, t);
 	rot_.y = Lerp(rot_.y, targetRotY, t);
 
 	modelPlayer_->SetRotate(rot_);
+}
 
-	float length = sqrtf(inputDir.x * inputDir.x + inputDir.y * inputDir.y);
+/// <summary>
+/// 速度の更新処理
+/// </summary>
+/// <param name="input">入力値</param>
+void Player::UpdateVelocity(const Vector2& input)
+{
+	Vector2 direction = input;
+	float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
 	// 入力方向正規化
 	if (length > 0.0f) {
+		// 斜め入力で直線移動よりも速くならないように正規化
 		if (length > 1.0f) {
-			inputDir.x /= length;
-			inputDir.y /= length;
+			direction.x /= length;
+			direction.y /= length;
 		}
 
-		velocity_.x += inputDir.x * acceleration;
-		velocity_.y += inputDir.y * acceleration;
+		velocity_.x += direction.x * acceleration;
+		velocity_.y += direction.y * acceleration;
 	}
 
 	velocity_.x *= (1.0f - deceleration);
 	velocity_.y *= (1.0f - deceleration);
 
 	float speed = sqrtf(velocity_.x * velocity_.x + velocity_.y * velocity_.y);
+	// 速度を正規化
 	if (speed > maxSpeed) {
 		velocity_.x = (velocity_.x / speed) * maxSpeed;
 		velocity_.y = (velocity_.y / speed) * maxSpeed;
 	}
+}
 
+/// <summary>
+/// 位置の更新処理
+/// </summary>
+void Player::UpdatePosition()
+{
 	Vector3 pos = modelPlayer_->GetTranslate();
 	pos.x += velocity_.x;
 	pos.y += velocity_.y;
@@ -177,32 +191,34 @@ void Player::Move()
 	pos.x = std::clamp(pos.x, -16.0f, 16.0f);
 	pos.y = std::clamp(pos.y, -10.0f, 10.0f);
 	modelPlayer_->SetTranslate(pos);
+}
 
-	if (bulletCooldown_ > 0) {
-		bulletCooldown_--;
+/// <summary>
+/// 射撃の更新処理
+/// </summary>
+void Player::UpdateShooting()
+{
+	if (Input::GetInstance()->IsPress(DIK_SPACE)) {
+		isController_ = false;
+	} else if (Input::GetInstance()->GetXbRightTrigger() > 0.1f) {
+		isController_ = true;
 	}
 
-	for (auto& bullet : bullets_) {
-		if (!bullet->GetIsShot()) {
-			if (Input::GetInstance()->IsPress(DIK_SPACE)) {
-				isController_ = false;
-			} else if (input->GetXbRightTrigger() > 0.1f) {
-				isController_ = true;
-			}
+	Vector3 pos = modelPlayer_->GetTranslate();
 
-			if (Input::GetInstance()->IsPress(DIK_SPACE) || input->GetXbRightTrigger() > 0.1f) {
+	if (Input::GetInstance()->IsPress(DIK_SPACE) || Input::GetInstance()->GetXbRightTrigger() > 0.1f) {
+		weapon_.Fire(pos, aimTarget_);
+	}
+}
 
-				if (bulletCooldown_ <= 0) {
-					if (!bullet->GetIsShot()) {
-						bullet->Fire(pos, aimTarget_);
-						bulletCooldown_ = 10;
-						break;
-					}
-				}
-
-			} else {
-				bulletCooldown_ = 0;
-			}
-		}
+/// <summary>
+/// カメラの更新処理
+/// </summary>
+void Player::UpdateCamera()
+{
+	auto camMgr = CameraManager::GetInstance();
+	if (!camMgr->GetIsDebug()) {
+		Camera* camera = camMgr->GetActiveCamera();
+		modelPlayer_->SetCamera(camera);
 	}
 }

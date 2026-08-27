@@ -7,13 +7,10 @@
 class TitleScene : public BaseScene
 {
 public:
-	// 初期化
 	void Init() override;
 
-	// 更新
 	void Update() override;
 
-	// 描画
 	void Draw() override;
 
 	void Shutdown() override;
@@ -37,11 +34,22 @@ private:
 	};
 
 	// メンバ関数
+	void UpdateImGui();
 	void UpdateCamera();
+	void LoadSound();
+	void LoadCamera();
+	void LoadTexture();
+	void LoadSprite();
+	void LoadModel();
 
 	// メンバ変数
 	float camSpeed_ = 0.1f;
 	int frameCount_ = 0;
+
+	// テクスチャ
+	uint32_t texTitleLogo_;
+	uint32_t texPressSpace_;
+	uint32_t texMaou_;
 
 	// スプライト
 	std::unique_ptr<Sprite> sprTitleLogo_;

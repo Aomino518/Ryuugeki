@@ -4,79 +4,11 @@
 void TitleScene::Init()
 {
     Logger::Write("現在シーンTitleScene");
-	//===========================
-	// サウンド
-	//===========================
-	auto soundMgr = SoundManager::GetInstance();
-	soundMgr->Load("bgm_title", "bgm_title.wav");
-	soundMgr->Load("se_selected", "se_selected.mp3");
-	soundMgr->PlayBGM("bgm_title");
-
-	//===========================
-	// カメラマネージャー
-	//===========================
-	auto camMgr = CameraManager::GetInstance();
-	auto entityCommon = Entity3DCommon::GetInstance();
-	entityCommon->SetCameraManager(camMgr);
-	entityCommon->SetDebugCamera(camMgr->GetDebugCamera());
-	entityCommon->SetDefaultCamera(camMgr->GetActiveCamera());
-
-	// カメラの初期位置設定
-	auto camera = camMgr->GetActiveCamera();
-	camPos_ = { 0.0f, 7.3f, -50.0f };
-	camRot_ = { 0.14f, 0.0f, 0.0f };
-	camera->SetTranslate(camPos_);
-	camera->SetRotate(camRot_);
-
-	//===========================
-	// テクスチャ
-	//===========================
-	auto texMgr = TextureManager::GetInstance();
-	uint32_t texTitleLogo_ = texMgr->Load("resources/sprites/spr_title_logo.png");
-	uint32_t texPressSpace_ = texMgr->Load("resources/sprites/ui_press_space.png");
-	uint32_t texMaou_ = texMgr->Load("resources/sprites/ui_maou.png");
-
-	//===========================
-	// モデルロード
-	//===========================
-	auto modelMgr = ModelManager::GetInstance();
-	modelMgr->LoadModel("player.obj");
-	modelMgr->LoadModel("starSkyDome.obj");
-
-	//===========================
-	// スプライト
-	//===========================
-	sprTitleLogo_ = std::make_unique<Sprite>();
-	sprTitleLogo_->Init();
-	sprTitleLogo_->Create(texTitleLogo_, { 385.0f, 31.0f }, Color::WHITE, { 500.0f, 290.0f });
-	Editor::GetInstance()->RegisterSprite("sprTitleLogo", sprTitleLogo_.get());
-
-	sprUiPressSpace_ = std::make_unique<Sprite>();
-	sprUiPressSpace_->Init();
-	sprUiPressSpace_->Create(texPressSpace_, { 415.0f, 575.0f }, Color::WHITE);
-	Editor::GetInstance()->RegisterSprite("sprUiPressSpace", sprUiPressSpace_.get());
-
-	sprUiMaou_ = std::make_unique<Sprite>();
-	sprUiMaou_->Init();
-	sprUiMaou_->Create(texMaou_, { 1070.0f, 665.0f }, Color::WHITE);
-	Editor::GetInstance()->RegisterSprite("sprUiMaou", sprUiMaou_.get());
-
-	//===========================
-	// モデル
-	//===========================
-	modelPlayer_ = std::make_unique<Entity3D>();
-	modelPlayer_->Init();
-	modelPlayer_->SetModel("player");
-	Editor::GetInstance()->RegisterModel("player", modelPlayer_.get());
-
-	modelSkydome_ = std::make_unique<Entity3D>();
-	modelSkydome_->Init();
-	modelSkydome_->SetModel("starSkyDome");
-	Editor::GetInstance()->RegisterModel("starSkyDome", modelSkydome_.get());
-
-	//===========================
-	// クラス
-	//===========================
+	LoadSound();
+	LoadCamera();
+	LoadTexture();
+	LoadModel();
+	LoadSprite();
 	fade_.Init();
 	fade_.Start(Fade::Status::FadeIn, 1.0f);
     ImGuiManager::GetInstance()->LoadScenesJson();
@@ -128,15 +60,7 @@ void TitleScene::Update()
 	sprUiPressSpace_->Update();
 	sprUiMaou_->Update();
 	fade_.Update();
-
-    ImGuiManager::GetInstance()->BeginFrame();
-    ImGuiManager::GetInstance()->DrawMainMenuBar();
-    ImGuiManager::GetInstance()->DrawCameraWindow(camMgr);
-    ImGuiManager::GetInstance()->DrawEditor();
-    ImGuiManager::GetInstance()->Stats();
-    ImGuiManager::GetInstance()->DrawSoundWindow();
-    ImGuiManager::GetInstance()->DrawLoggerWindow();
-    ImGuiManager::GetInstance()->EndFrame();
+	UpdateImGui();
 }
 
 void TitleScene::Draw()
@@ -163,6 +87,18 @@ void TitleScene::Shutdown()
 	soundMgr->Unload("bgm_title");
 	soundMgr->Unload("se_selected");
     Editor::GetInstance()->Clear();
+}
+
+void TitleScene::UpdateImGui()
+{
+	ImGuiManager::GetInstance()->BeginFrame();
+	ImGuiManager::GetInstance()->DrawMainMenuBar();
+	ImGuiManager::GetInstance()->DrawCameraWindow(CameraManager::GetInstance());
+	ImGuiManager::GetInstance()->DrawEditor();
+	ImGuiManager::GetInstance()->Stats();
+	ImGuiManager::GetInstance()->DrawSoundWindow();
+	ImGuiManager::GetInstance()->DrawLoggerWindow();
+	ImGuiManager::GetInstance()->EndFrame();
 }
 
 void TitleScene::UpdateCamera()
@@ -234,4 +170,71 @@ void TitleScene::UpdateCamera()
 
 		break;
 	}
+}
+
+void TitleScene::LoadSound()
+{
+	auto soundMgr = SoundManager::GetInstance();
+	soundMgr->Load("bgm_title", "bgm_title.wav");
+	soundMgr->Load("se_selected", "se_selected.mp3");
+	soundMgr->PlayBGM("bgm_title");
+}
+
+void TitleScene::LoadCamera()
+{
+	auto camMgr = CameraManager::GetInstance();
+	auto entityCommon = Entity3DCommon::GetInstance();
+	entityCommon->SetCameraManager(camMgr);
+	entityCommon->SetDebugCamera(camMgr->GetDebugCamera());
+	entityCommon->SetDefaultCamera(camMgr->GetActiveCamera());
+
+	// カメラの初期位置設定
+	auto camera = camMgr->GetActiveCamera();
+	camPos_ = { 0.0f, 7.3f, -50.0f };
+	camRot_ = { 0.14f, 0.0f, 0.0f };
+	camera->SetTranslate(camPos_);
+	camera->SetRotate(camRot_);
+}
+
+void TitleScene::LoadTexture()
+{
+	auto texMgr = TextureManager::GetInstance();
+	texTitleLogo_ = texMgr->Load("resources/sprites/spr_title_logo.png");
+	texPressSpace_ = texMgr->Load("resources/sprites/ui_press_space.png");
+	texMaou_ = texMgr->Load("resources/sprites/ui_maou.png");
+}
+
+void TitleScene::LoadSprite()
+{
+	sprTitleLogo_ = std::make_unique<Sprite>();
+	sprTitleLogo_->Init();
+	sprTitleLogo_->Create(texTitleLogo_, { 385.0f, 31.0f }, Color::WHITE, { 500.0f, 290.0f });
+	Editor::GetInstance()->RegisterSprite("sprTitleLogo", sprTitleLogo_.get());
+
+	sprUiPressSpace_ = std::make_unique<Sprite>();
+	sprUiPressSpace_->Init();
+	sprUiPressSpace_->Create(texPressSpace_, { 415.0f, 575.0f }, Color::WHITE);
+	Editor::GetInstance()->RegisterSprite("sprUiPressSpace", sprUiPressSpace_.get());
+
+	sprUiMaou_ = std::make_unique<Sprite>();
+	sprUiMaou_->Init();
+	sprUiMaou_->Create(texMaou_, { 1070.0f, 665.0f }, Color::WHITE);
+	Editor::GetInstance()->RegisterSprite("sprUiMaou", sprUiMaou_.get());
+}
+
+void TitleScene::LoadModel()
+{
+	auto modelMgr = ModelManager::GetInstance();
+	modelMgr->LoadModel("player.obj");
+	modelMgr->LoadModel("starSkyDome.obj");
+
+	modelPlayer_ = std::make_unique<Entity3D>();
+	modelPlayer_->Init();
+	modelPlayer_->SetModel("player");
+	Editor::GetInstance()->RegisterModel("player", modelPlayer_.get());
+
+	modelSkydome_ = std::make_unique<Entity3D>();
+	modelSkydome_->Init();
+	modelSkydome_->SetModel("starSkyDome");
+	Editor::GetInstance()->RegisterModel("starSkyDome", modelSkydome_.get());
 }

@@ -81,6 +81,10 @@
     <ClCompile Include="PlayerController.cpp" />
     <ClCompile Include="Game\EnemyBullet.cpp" />
     <ClCompile Include="SeekerEngine\Utility\GameTime.cpp" />
+    <ClCompile Include="Game\Boss.cpp" />
+    <ClCompile Include="Game\Objects\Weapon.cpp" />
+    <ClCompile Include="Game\Reticle.cpp" />
+    <ClCompile Include="Game\InputUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h" />
@@ -236,6 +240,10 @@
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="Game\EnemyBullet.h" />
     <ClInclude Include="SeekerEngine\Utility\GameTime.h" />
+    <ClInclude Include="Game\Boss.h" />
+    <ClInclude Include="Game\Objects\Weapon.h" />
+    <ClInclude Include="Game\Reticle.h" />
+    <ClInclude Include="Game\InputUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\hlsl\DebugShape3D.hlsli" />

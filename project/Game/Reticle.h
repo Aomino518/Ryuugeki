@@ -11,6 +11,8 @@ public:
 
 	void Draw();
 
+	void DrawImGui(const Vector3& playerPosition);
+
 	Vector3 GetAimTarget() const { return aimTarget_; }
 
 	Vector2 GetScreenPosition() const { return screenPosition_; }

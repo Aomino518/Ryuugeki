@@ -102,56 +102,7 @@ void PlayScene::Update()
     ImGuiManager::GetInstance()->Stats();
 	ImGuiManager::GetInstance()->DrawSoundWindow();
     ImGuiManager::GetInstance()->DrawLoggerWindow();
-
-	//================================
-	// 照準のデバッグ表示
-	//================================
-	Vector3 playerPosition =
-		player_->GetModel()->GetTranslate();
-
-	// すでに上で計算したaimTargetを使う
-	Vector3 difference{
-		reticle_.GetAimTarget().x - playerPosition.x,
-		reticle_.GetAimTarget().y - playerPosition.y,
-		reticle_.GetAimTarget().z - playerPosition.z
-	};
-
-	float targetDistance = sqrtf(
-		difference.x * difference.x +
-		difference.y * difference.y +
-		difference.z * difference.z
-	);
-
-	Vector2 rightStick = Input::GetInstance()->GetXbRightStickVector();
-
-	ImGui::Begin("Aim Debug");
-
-	ImGui::Text(
-		"Player Position : %.2f, %.2f, %.2f",
-		playerPosition.x,
-		playerPosition.y,
-		playerPosition.z
-	);
-
-	ImGui::Text(
-		"Target Position : %.2f, %.2f, %.2f",
-		reticle_.GetAimTarget().x,
-		reticle_.GetAimTarget().y,
-		reticle_.GetAimTarget().z
-	);
-
-	ImGui::Text(
-		"Target Distance : %.2f",
-		targetDistance
-	);
-
-	ImGui::Text(
-		"RightStick : %.2f, %.2f",
-		rightStick.x,
-		rightStick.y
-	);
-
-	ImGui::End();
+	reticle_.DrawImGui(player_->GetPosition());
 
     ImGuiManager::GetInstance()->EndFrame();
 }

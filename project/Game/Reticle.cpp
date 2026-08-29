@@ -38,6 +38,56 @@ void Reticle::Draw()
     sprite_->Draw();
 }
 
+void Reticle::DrawImGui(const Vector3& playerPosition)
+{
+	//================================
+	// 照準のデバッグ表示
+	//================================
+	// すでに上で計算したaimTargetを使う
+	Vector3 difference{
+		aimTarget_.x - playerPosition.x,
+		aimTarget_.y - playerPosition.y,
+		aimTarget_.z - playerPosition.z
+	};
+
+	float targetDistance = sqrtf(
+		difference.x * difference.x +
+		difference.y * difference.y +
+		difference.z * difference.z
+	);
+
+	Vector2 rightStick = Input::GetInstance()->GetXbRightStickVector();
+
+	ImGui::Begin("Aim Debug");
+
+	ImGui::Text(
+		"Player Position : %.2f, %.2f, %.2f",
+		playerPosition.x,
+		playerPosition.y,
+		playerPosition.z
+	);
+
+	ImGui::Text(
+		"Target Position : %.2f, %.2f, %.2f",
+		aimTarget_.x,
+		aimTarget_.y,
+		aimTarget_.z
+	);
+
+	ImGui::Text(
+		"Target Distance : %.2f",
+		targetDistance
+	);
+
+	ImGui::Text(
+		"RightStick : %.2f, %.2f",
+		rightStick.x,
+		rightStick.y
+	);
+
+	ImGui::End();
+}
+
 void Reticle::UpdateInput()
 {
 	if (CameraManager::GetInstance()->GetIsDebug()) {

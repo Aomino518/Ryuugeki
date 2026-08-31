@@ -38,5 +38,7 @@ private:
 
 	bool debugIsHit_ = false;
 	int debugHitTimer_ = 0;
+	float lifeTimer_ = 0.0f;
+	float lifeTime_ = 5.0f;
 };
 

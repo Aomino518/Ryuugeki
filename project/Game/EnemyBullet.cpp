@@ -31,7 +31,9 @@ void EnemyBullet::Update()
 		sphere_.center = pos;
 		model_->SetTranslate(pos);
 
-		if (pos.z <= -110.0f) {
+		lifeTimer_ += Time::GetDeltaTime();
+
+		if (lifeTimer_ >= lifeTime_) {
 			isShot_ = false;
 		}
 	}
@@ -71,6 +73,7 @@ void EnemyBullet::Fire(const Vector3& position)
 {
 	model_->SetTranslate(position);
 	sphere_.center = position;
+	lifeTimer_ = 0.0f;
 	isShot_ = true;
 }
 

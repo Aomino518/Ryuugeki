@@ -66,7 +66,6 @@ private:
 	Reticle reticle_;
 
 	bool isController_ = false;
-
 	bool isMovePlayer_ = true;
 	float playerMoveTimer_ = 0.0f;
 	float playerMoveDuration_ = 120.0f;

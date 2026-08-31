@@ -16,6 +16,7 @@ void Player::Init(const Vector3& position) {
 
 	// 武器の初期化
 	weapon_.Init(position);
+	dethParticle_.Init();
 
 	modelPlayer_->SetTranslate(position);
 	sphere_ = { Vector3{position.x, position.y, position.z - 0.5f}, Vector3{3.0f, 2.0f, 3.0f} };
@@ -35,7 +36,10 @@ void Player::Update() {
 		UpdateShooting();
 		Vector3 pos = modelPlayer_->GetTranslate();
 		sphere_.center = pos;
+	} else {
+		dethParticle_.Update();
 	}
+
 	UpdateCamera();
 	weapon_.Update();
 	modelPlayer_->Update();
@@ -43,6 +47,7 @@ void Player::Update() {
 
 void Player::Draw() {
 	weapon_.Draw();
+	dethParticle_.Draw();
 
 	if (isAlive_) {
 		modelPlayer_->Draw();
@@ -64,6 +69,16 @@ void Player::SetIsDebugHit()
 {
 	debugIsHit_ = true;
 	debugHitTimer_ = 10;
+}
+
+void Player::Damage()
+{
+	if (!isAlive_) {
+		return;
+	}
+
+	isAlive_ = false;
+	dethParticle_.SpawnHitEffect(modelPlayer_->GetTranslate());
 }
 
 /// <summary>

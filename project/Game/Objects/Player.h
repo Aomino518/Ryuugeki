@@ -2,6 +2,7 @@
 #include "SeekerEngine.h"
 #include "Entity3D.h"
 #include "Weapon.h"
+#include "DethParticle.h"
 
 class Player
 {
@@ -33,7 +34,10 @@ public:
 	void SetPosition(const Vector3& pos) { modelPlayer_->SetTranslate(pos); }
 	void SetIsAlive(bool isAlive) { isAlive_ = isAlive; }
 	void SetAimTarget(const Vector3& target) { aimTarget_ = target; }
+
+	void Damage();
 private:
+
 	// メンバ関数
 	/// <summary>
 	/// 移動入力値を返す関数
@@ -87,6 +91,7 @@ private:
 	Sphere sphere_;
 
 	Weapon weapon_;
+	DethParticle dethParticle_;
 
 	Vector3 aimTarget_{};
 

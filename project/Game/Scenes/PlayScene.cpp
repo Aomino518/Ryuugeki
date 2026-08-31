@@ -103,6 +103,7 @@ void PlayScene::Update()
 	ImGuiManager::GetInstance()->DrawSoundWindow();
     ImGuiManager::GetInstance()->DrawLoggerWindow();
 	reticle_.DrawImGui(player_->GetPosition());
+	enemyMgr_->DrawImGui();
 
     ImGuiManager::GetInstance()->EndFrame();
 }
@@ -111,10 +112,10 @@ void PlayScene::Draw()
 {
     /*-- 描画処理 --*/
 	// Model
-	player_->Draw();
-	enemyMgr_->Draw();
 	modelSkydome_->Draw();
 	modelTerrain_->Draw();
+	player_->Draw();
+	enemyMgr_->Draw();
 
 	player_->DebugDraw();
 	enemyMgr_->DebugDraw();
@@ -206,6 +207,7 @@ void PlayScene::LoadModel()
 	modelMgr->LoadModel("bullet.obj");
 	modelMgr->LoadModel("enemy.obj");
 	modelMgr->LoadModel("terrain.obj");
+	modelMgr->LoadModel("boss.obj");
 
 	modelSkydome_ = std::make_unique<Entity3D>();
 	modelSkydome_->Init();

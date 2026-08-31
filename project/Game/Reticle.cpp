@@ -40,6 +40,7 @@ void Reticle::Draw()
 
 void Reticle::DrawImGui(const Vector3& playerPosition)
 {
+#ifdef _DEBUG
 	//================================
 	// 照準のデバッグ表示
 	//================================
@@ -57,7 +58,6 @@ void Reticle::DrawImGui(const Vector3& playerPosition)
 	);
 
 	Vector2 rightStick = Input::GetInstance()->GetXbRightStickVector();
-
 	ImGui::Begin("Aim Debug");
 
 	ImGui::Text(
@@ -86,6 +86,7 @@ void Reticle::DrawImGui(const Vector3& playerPosition)
 	);
 
 	ImGui::End();
+#endif
 }
 
 void Reticle::UpdateInput()

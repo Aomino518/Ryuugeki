@@ -95,12 +95,14 @@ void Enemy::Draw() {
 
 void Enemy::DebugDraw()
 {
+#ifdef _DEBUG
 	if (!debugIsHit_) {
 		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
 	} else  if (!isAlive_ && debugHitTimer_ > 0) {
 		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::RED, DebugDrawMode::Wireframe);
 	}
 	bullet_->DebuDraw();
+#endif
 }
 
 void Enemy::SetIsDebugHit()

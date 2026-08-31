@@ -131,6 +131,8 @@ void ClearScene::Draw()
 void ClearScene::Shutdown()
 {
 	auto soundMgr = SoundManager::GetInstance();
+	soundMgr->StopBGM();
+	soundMgr->StopSE();
 	soundMgr->Unload("se_selected");
 	soundMgr->Unload("se_game_clear");
     Editor::GetInstance()->Clear();

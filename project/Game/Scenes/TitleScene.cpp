@@ -84,6 +84,8 @@ void TitleScene::Draw()
 void TitleScene::Shutdown()
 {
 	auto soundMgr = SoundManager::GetInstance();
+	soundMgr->StopBGM();
+	soundMgr->StopSE();
 	soundMgr->Unload("bgm_title");
 	soundMgr->Unload("se_selected");
     Editor::GetInstance()->Clear();

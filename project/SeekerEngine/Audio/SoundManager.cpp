@@ -70,9 +70,10 @@ void SoundManager::Unload(const std::string& name) {
 	}
 
 	if (currentBGM_ && currentBGM_ == &it->second) {
+		sound_.StopBGM();
 		currentBGM_ = nullptr;
 	}
-
+	sound_.StopSE();
 	sound_.SoundUnload(&it->second);
 	soundDatas_.erase(it);
 

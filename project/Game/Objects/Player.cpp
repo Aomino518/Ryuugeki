@@ -56,6 +56,7 @@ void Player::Draw() {
 
 void Player::DebugDraw()
 {
+#ifdef _DEBUG
 	if (!debugIsHit_) {
 		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
 	} else  if (!isAlive_ && debugHitTimer_ > 0) {
@@ -63,6 +64,7 @@ void Player::DebugDraw()
 	}
 
 	weapon_.DebugDraw();
+#endif
 }
 
 void Player::SetIsDebugHit()

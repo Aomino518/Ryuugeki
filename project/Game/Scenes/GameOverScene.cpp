@@ -131,6 +131,8 @@ void GameOverScene::Draw()
 void GameOverScene::Shutdown()
 {
 	auto soundMgr = SoundManager::GetInstance();
+	soundMgr->StopBGM();
+	soundMgr->StopSE();
 	soundMgr->Unload("se_selected");
 	soundMgr->Unload("se_game_over");
     Editor::GetInstance()->Clear();

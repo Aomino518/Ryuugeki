@@ -59,11 +59,13 @@ void Bullet::Draw() {
 
 void Bullet::DebugDraw()
 {
+#ifdef _DEBUG
 	if (!debugIsHit_ && isShot_) {
 		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
 	} else if (debugHitTimer_ > 0) {
 		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::RED, DebugDrawMode::Wireframe);
 	}
+#endif
 }
 
 void Bullet::SetDebugHit()

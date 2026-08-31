@@ -50,6 +50,7 @@ void Boss::Draw()
 
 void Boss::DrawDebug()
 {
+#ifdef _DEBUG
 	if (isAlive_) {
 		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
 	}
@@ -57,6 +58,7 @@ void Boss::DrawDebug()
 	for (auto& bullet : bullets_) {
 		bullet->DebuDraw();
 	}
+#endif
 }
 
 void Boss::Damage()
@@ -75,12 +77,14 @@ void Boss::Damage()
 
 void Boss::DrawImGui()
 {
+#ifdef _DEBUG
 	ImGui::Begin("Boss Status");
 	ImGui::Text("position : %0.2f, %0.2f, %0.2f", position_.x, position_.y, position_.z);
 	ImGui::Text("sphere_.center : %0.2f, %0.2f, %0.2f", sphere_.center.x, sphere_.center.y, sphere_.center.z);
 	ImGui::Text("HP : %d", hp_);
 	ImGui::Text("isAlive : %s", isAlive_ ? "true" : "false");
 	ImGui::End();
+#endif
 }
 
 void Boss::UpdateMovement(const Vector3& playerPosition)

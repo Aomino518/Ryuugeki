@@ -138,6 +138,8 @@ void PlayScene::Draw()
 void PlayScene::Shutdown()
 {
 	auto soundMgr = SoundManager::GetInstance();
+	soundMgr->StopBGM();
+	soundMgr->StopSE();
 	soundMgr->Unload("bgm_play");
     Editor::GetInstance()->Clear();
 }

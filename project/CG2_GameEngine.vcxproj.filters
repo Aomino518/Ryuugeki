@@ -78,7 +78,7 @@
     <ClCompile Include="SeekerEngine\Core\StartupManager.cpp" />
     <ClCompile Include="SeekerEngine\Audio\SoundManager.cpp" />
     <ClCompile Include="Game\Scenes\TitleScene.cpp" />
-    <ClCompile Include="PlayerController.cpp" />
+    <ClCompile Include="Game\PlayerController.cpp" />
     <ClCompile Include="Game\EnemyBullet.cpp" />
     <ClCompile Include="SeekerEngine\Utility\GameTime.cpp" />
     <ClCompile Include="Game\Boss.cpp" />
@@ -238,7 +238,7 @@
     <ClInclude Include="SeekerEngine\Core\StartupManager.h" />
     <ClInclude Include="SeekerEngine\Audio\SoundManager.h" />
     <ClInclude Include="Game\Scenes\TitleScene.h" />
-    <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="Game\PlayerController.h" />
     <ClInclude Include="Game\EnemyBullet.h" />
     <ClInclude Include="SeekerEngine\Utility\GameTime.h" />
     <ClInclude Include="Game\Boss.h" />

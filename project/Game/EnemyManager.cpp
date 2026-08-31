@@ -8,6 +8,7 @@ void EnemyManager::Init(std::shared_ptr<Player> player) {
 	player_ = player;
 	boss_ = std::make_unique<Boss>();
 	isBossSpawned_ = false;
+	dethParticle_.Init();
 
 	if (!LoadSpawnSchedule("resources/json/enemySpawn.json")) {
 		Logger::Write(Logger::LogLevel::Error, "敵の出現スケジュールを読み込めませんでした");
@@ -21,8 +22,13 @@ void EnemyManager::Update() {
 
 	auto player = player_.lock();
 	if (!isBossSpawned_ && elapsedTime_ >= 40.0f) {
-		boss_->Init(Vector3{0.0f, 0.0f, 250.0f}, player->GetPosition());
+		boss_->Init(Vector3{ 0.0f, 0.0f, 250.0f }, player->GetPosition());
 		isBossSpawned_ = true;
+	}
+
+	// bossを倒したら終了
+	if (isBossSpawned_ && !boss_->GetIsAlive()) {
+		isFinished_ = true;
 	}
 
 	// 出現チェック
@@ -43,24 +49,7 @@ void EnemyManager::Update() {
 
 	for (auto& bullet : bullets) {
 		if (bullet->GetIsShot()) {
-			for (auto it = enemies_.begin(); it != enemies_.end();) {
-				Enemy* enemy = it->get();
-
-				if (!enemy->GetIsAlive()) {
-					++it;
-					continue;
-				}
-
-				if (IsCollision(bullet->GetSphere(), enemy->GetSphere())) {
-					bullet->SetDebugHit();
-					bullet->SetIsShot(false);
-					enemy->SetIsDebugHit();
-					it = enemies_.erase(it);
-					break;
-				} else {
-					it++;
-				}
-			}
+			UpdatePlayerBullet(bullet);
 		}
 	}
 
@@ -77,13 +66,14 @@ void EnemyManager::Update() {
 
 			if (IsCollision(player->GetSphere(), enemyBullet->GetSphere())) {
 				player->SetIsDebugHit();
-				player->SetIsAlive(false);
+				player->Damage();
 				enemyBullet->SetIsDebugHit();
 				enemyBullet->SetIsShot(false);
 			}
 
 			if (IsCollision(player->GetSphere(), enemy->GetSphere())) {
-				player->SetIsAlive(false);
+				player->Damage();
+				dethParticle_.SpawnHitEffect(enemy->GetPosition());
 				it = enemies_.erase(it);
 			} else {
 				it++;
@@ -101,7 +91,7 @@ void EnemyManager::Update() {
 			++it;
 		}
 	}
-
+	dethParticle_.Update();
 	boss_->Update(player->GetPosition());
 }
 
@@ -109,6 +99,8 @@ void EnemyManager::Draw() {
 	for (auto& enemy : enemies_) {
 		enemy->Draw();
 	}
+	boss_->Draw();
+	dethParticle_.Draw();
 }
 
 void EnemyManager::DebugDraw()
@@ -118,6 +110,11 @@ void EnemyManager::DebugDraw()
 	}
 
 	boss_->DrawDebug();
+}
+
+void EnemyManager::DrawImGui()
+{
+	boss_->DrawImGui();
 }
 
 void EnemyManager::SetIsMoveStop(bool flag)
@@ -225,4 +222,40 @@ void EnemyManager::SpawnEnemy(const EnemySpawnData& data)
 	auto enemy = std::make_unique<Enemy>();
 	enemy->Init(data.enemyPattern, data.position);
 	enemies_.push_back(std::move(enemy));
+}
+
+void EnemyManager::UpdatePlayerBullet(std::unique_ptr<Bullet>& bullet)
+{
+	for (auto it = enemies_.begin(); it != enemies_.end();) {
+		Enemy* enemy = it->get();
+
+		if (!enemy->GetIsAlive()) {
+			++it;
+			continue;
+		}
+
+		// 敵に弾が当たったとき
+		if (IsCollision(bullet->GetSphere(), enemy->GetSphere())) {
+			bullet->SetDebugHit();
+			bullet->SetIsShot(false);
+			enemy->SetIsDebugHit();
+			dethParticle_.SpawnHitEffect(enemy->GetPosition());
+			it = enemies_.erase(it);
+			break;
+		} else {
+			it++;
+		}
+
+	}
+
+	if (!boss_->GetIsAlive()) {
+		return;
+	}
+
+	// Bossに弾が当たったとき
+	if (IsCollision(bullet->GetSphere(), boss_->GetSphere()) && boss_->GetIsAlive()) {
+		bullet->SetDebugHit();
+		bullet->SetIsShot(false);
+		boss_->Damage();
+	}
 }

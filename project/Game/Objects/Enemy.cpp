@@ -13,7 +13,6 @@ void Enemy::Init(EnemyPattern pattern, const Vector3& position) {
 	bullet_ = std::make_unique<EnemyBullet>();
 	bullet_->Init(position);
 	timer_ = shotInterval_;
-
 }
 
 void Enemy::Update() {
@@ -88,11 +87,10 @@ void Enemy::Update() {
 }
 
 void Enemy::Draw() {
+	bullet_->Draw();
 	if (isAlive_) {
 		model_->Draw();
 	}
-
-	bullet_->Draw();
 }
 
 void Enemy::DebugDraw()

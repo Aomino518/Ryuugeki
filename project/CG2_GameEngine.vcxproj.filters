@@ -85,6 +85,7 @@
     <ClCompile Include="Game\Objects\Weapon.cpp" />
     <ClCompile Include="Game\Reticle.cpp" />
     <ClCompile Include="Game\InputUtility.cpp" />
+    <ClCompile Include="Game\DethParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h" />
@@ -244,6 +245,7 @@
     <ClInclude Include="Game\Objects\Weapon.h" />
     <ClInclude Include="Game\Reticle.h" />
     <ClInclude Include="Game\InputUtility.h" />
+    <ClInclude Include="Game\DethParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\hlsl\DebugShape3D.hlsli" />

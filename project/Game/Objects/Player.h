@@ -23,6 +23,7 @@ public:
 
 	// Getter
 	Vector3 GetPosition() const { return modelPlayer_->GetTranslate(); }
+	const Vector3& GetScrollPosition() const { return scrollPosition_; }
 	Vector3 GetRotate() const { return rot_; }
 	bool GetIsAlive() const { return isAlive_; }
 	Entity3D* GetModel() const { return modelPlayer_.get(); }
@@ -32,6 +33,7 @@ public:
 
 	// Setter
 	void SetPosition(const Vector3& pos) { modelPlayer_->SetTranslate(pos); }
+	void SetScrollPosition(const Vector3& position);
 	void SetIsAlive(bool isAlive) { isAlive_ = isAlive; }
 	void SetAimTarget(const Vector3& target) { aimTarget_ = target; }
 
@@ -94,6 +96,7 @@ private:
 	DethParticle dethParticle_;
 
 	Vector3 aimTarget_{};
+	Vector3 scrollPosition_{};
 
 	bool isController_ = false;
 

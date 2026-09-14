@@ -13,9 +13,14 @@ void Enemy::Init(EnemyPattern pattern, const Vector3& position) {
 	bullet_ = std::make_unique<EnemyBullet>();
 	bullet_->Init(position);
 	timer_ = shotInterval_;
+	moveState_ = MoveState::Approach;
+	exitDirection_ = 1.0f;
+	exitTravel_ = 0.0f;
+	hasExited_ = false;
+	isMoveStop_ = false;
 }
 
-void Enemy::Update() {
+void Enemy::Update(const Vector3& playerPosition) {
 	auto camMgr = CameraManager::GetInstance();
 	if (debugHitTimer_ > 0) {
 		debugHitTimer_--;
@@ -25,38 +30,63 @@ void Enemy::Update() {
 		}
 	}
 
-	if (!isMoveStop_) {
+	if (!isMoveStop_ && isAlive_ && !hasExited_) {
 		transform_ = model_->GetTransform();
-		if (isAlive_) {
-			switch (pattern_) {
-			case EnemyPattern::Straight:
-				transform_.translate.z -= speed;
 
-				break;
-			case EnemyPattern::SinWave:
-				theta += std::numbers::pi_v<float> / 60.0f;
-				transform_.translate.x += sin(theta) * amplitude;
-				transform_.translate.z -= speed;
+		const float avoidZ = playerPosition.z + avoidDistance_;
 
-				break;
-			case EnemyPattern::ZigZag:
-				switchDirTimer--;
+		if (moveState_ == MoveState::Approach) {
+			if (transform_.translate.z > avoidZ) {
+				switch (pattern_) {
+				case EnemyPattern::Straight:
+					transform_.translate.z -= speed;
 
-				if (switchDirTimer <= 0) {
-					dir = -dir;
-					switchDirTimer = 30;
+					break;
+				case EnemyPattern::SinWave:
+					theta += std::numbers::pi_v<float> / 60.0f;
+					transform_.translate.x += sin(theta) * amplitude;
+					transform_.translate.z -= speed;
+
+					break;
+				case EnemyPattern::ZigZag:
+					switchDirTimer--;
+
+					if (switchDirTimer <= 0) {
+						dir = -dir;
+						switchDirTimer = 30;
+					}
+
+					transform_.translate.x += dir * speed;
+					transform_.translate.z -= speed;
+
+					break;
+				case EnemyPattern::SlowFast:
+					// 徐々に加速
+					speed += 0.02f;
+					transform_.translate.z -= speed;
+
+					break;
 				}
+			}
 
-				transform_.translate.x += dir * speed;
-				transform_.translate.z -= speed;
+			if (transform_.translate.z <= avoidZ) {
+				moveState_ = MoveState::ExitSide;
 
-				break;
-			case EnemyPattern::SlowFast:
-				// 徐々に加速
-				speed += 0.02f;
-				transform_.translate.z -= speed;
+				exitDirection_ = transform_.translate.x >= playerPosition.x ? 1.0f : -1.0f;
+				exitTravel_ = 0.0f;
+				transform_.translate.z = avoidZ;
+			}
+		}
 
-				break;
+		if (moveState_ == MoveState::ExitSide) {
+			const float deltaTime = Time::GetDeltaTime();
+			const float move = exitSpeed_ * deltaTime;
+
+			transform_.translate.x += exitDirection_ * move;
+			transform_.translate.z = avoidZ;
+			exitTravel_ += move;
+			if (exitTravel_ >= exitDistance_) {
+				hasExited_ = true;
 			}
 		}
 
@@ -67,7 +97,9 @@ void Enemy::Update() {
 	//================================
 	// 3秒間隔の弾発射
 	//================================
-	if (isAlive_) {
+	if (isAlive_ &&
+		!hasExited_ &&
+		moveState_ == MoveState::Approach) {
 		timer_--;
 
 		if (timer_ <= 0) {

@@ -2,6 +2,7 @@
 #include "SceneIncludes.h"
 #include "Vector3.h"
 #include "EnemyBullet.h"
+#include "DethParticle.h"
 
 class Boss
 {
@@ -9,6 +10,7 @@ public:
 	void Init(const Vector3& position, const Vector3& playerPosition);
 	void Update(const Vector3& playerPosition);
 	void Draw();
+	void DrawRushWarning();
 	void DrawDebug();
 	void Damage();
 	void DrawImGui();
@@ -22,10 +24,25 @@ public:
 	// Setter
 	void SetIsAlive(bool isAlive) { this->isAlive_ = isAlive; }
 private:
+	enum class RushDirection {
+		LeftToRight,
+		UpToDown,
+		RightToLeft,
+		DownToUp
+	};
+
+	enum class BossPhase {
+		Phase1,
+		Phase2
+	};
+
 	void UpdateMovement(const Vector3& playerPosition);
-	void UpdateAttack();
+	static RushDirection NextDirection(RushDirection direction);
+	void UpdateAttack(const Vector3& playerPosition);
 	void FireBullet();
 	void UpdateBullets();
+	void StartRush(const Vector3& playerPosition);
+	void UpdateRush(const Vector3& playerPosition);
 
 	Vector3 position_{};
 	Sphere sphere_{};
@@ -46,7 +63,8 @@ private:
 	float moveTime_ = 0.0f;
 
 	bool isAlive_ = false;
-	int hp_ = 20;
+	static constexpr int kMaxHp = 20;
+	int hp_ = kMaxHp;
 
 	float attackTimer_ = 0.0f;
 	float burstTimer_ = 0.0f;
@@ -57,5 +75,33 @@ private:
 
 	int burstShotCount_ = 0;
 	static constexpr uint32_t kBurstShotMax_ = 3;
+
+	bool isSecondPhase_ = false;
+	RushDirection shootingDirection_ = RushDirection::LeftToRight;
+	float shootingMoveTime_ = 0.0f;
+	float shootingMoveDuration_ = 6.0f;
+	float screenExitMargin_ = 15.0f;
+
+	// 左→右、上→下、右→左、下→上の順で突進
+	RushDirection rushDirection_ = RushDirection::LeftToRight;
+	float rushTime_ = 0.0f;
+	float rushDuration_ = 2.0f;
+
+	// 横切る範囲。画面外に出る値へ調整する
+	float rushHalfWidth_ = 70.0f;
+	float rushHalfHeight_ = 45.0f;
+
+	bool isRushing_ = false;
+	bool nextAttackIsRush_ = false;
+	// 突進開始時のプレイヤーの座標
+	Vector3 rushTarget_{};
+	std::unique_ptr<Sprite> rushWarning_;
+	float rushWarningDuration_ = 1.0f;
+	float rushWarningThickness_ = 8.0f;
+
+	// ボスの段階
+	BossPhase phase_ = BossPhase::Phase1;
+	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
+	DethParticle dethParticle_;
 };
 

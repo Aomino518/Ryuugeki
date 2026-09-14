@@ -26,6 +26,7 @@ public:
 
 	// 描画
 	void Draw();
+	void DrawRushWarning() { boss_->DrawRushWarning(); }
 
 	void DebugDraw();
 

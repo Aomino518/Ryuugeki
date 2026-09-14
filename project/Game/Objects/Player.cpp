@@ -19,7 +19,18 @@ void Player::Init(const Vector3& position) {
 	dethParticle_.Init();
 
 	modelPlayer_->SetTranslate(position);
+	scrollPosition_ = position;
 	sphere_ = { Vector3{position.x, position.y, position.z - 0.5f}, Vector3{3.0f, 2.0f, 3.0f} };
+}
+
+void Player::SetScrollPosition(const Vector3& position)
+{
+	Vector3 pos = modelPlayer_->GetTranslate();
+	pos.x += position.x - scrollPosition_.x;
+	pos.y += position.y - scrollPosition_.y;
+	pos.z += position.z - scrollPosition_.z;
+	scrollPosition_ = position;
+	modelPlayer_->SetTranslate(pos);
 }
 
 void Player::Update() {
@@ -205,8 +216,8 @@ void Player::UpdatePosition()
 	pos.x += velocity_.x;
 	pos.y += velocity_.y;
 	// 移動範囲制限
-	pos.x = std::clamp(pos.x, -16.0f, 16.0f);
-	pos.y = std::clamp(pos.y, -10.0f, 10.0f);
+	pos.x = std::clamp(pos.x, scrollPosition_.x - 16.0f, scrollPosition_.x + 16.0f);
+	pos.y = std::clamp(pos.y, scrollPosition_.y - 10.0f, scrollPosition_.y + 10.0f);
 	modelPlayer_->SetTranslate(pos);
 }
 

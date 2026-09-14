@@ -71,6 +71,11 @@ private:
 	float playerMoveDuration_ = 120.0f;
 	float startPos = -10.0f;
 	float endPos = 500.0f;
+	// ルートの横幅・高さと、一往復にかかる秒数
+	float routeWidth_ = 18.0f;
+	float routeHeight_ = 8.0f;
+	float routeHorizontalPeriod_ = 30.0f;
+	float routeVerticalPeriod_ = 24.0f;
 
 #ifdef _DEBUG
 	// ゲーム一時停止

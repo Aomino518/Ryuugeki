@@ -21,8 +21,12 @@ void EnemyManager::Update() {
 	}
 
 	auto player = player_.lock();
+	if (!player) {
+		return;
+	}
 	if (!isBossSpawned_ && elapsedTime_ >= 40.0f) {
-		boss_->Init(Vector3{ 0.0f, 0.0f, 250.0f }, player->GetPosition());
+		const Vector3 routePos = player->GetScrollPosition();
+		boss_->Init(Vector3{ routePos.x, routePos.y, 250.0f }, player->GetPosition());
 		isBossSpawned_ = true;
 	}
 
@@ -79,13 +83,19 @@ void EnemyManager::Update() {
 				it++;
 			}
 		}
+
+		if (boss_->GetIsAlive() &&
+			IsCollision(player->GetSphere(), boss_->GetSphere())) {
+			player->Damage();
+		}
 	}
 
 	// 敵の更新
 	for (auto it = enemies_.begin(); it != enemies_.end();) {
-		(*it)->Update();
+		(*it)->Update(player->GetPosition());
 
-		if ((*it)->GetPosition().z < -50.0f) {
+		if ((*it)->GetHasExited() ||
+			(*it)->GetPosition().z < player->GetPosition().z - 50.0f) {
 			it = enemies_.erase(it);
 		} else {
 			++it;
@@ -197,9 +207,10 @@ void EnemyManager::SpawnEnemy(const EnemySpawnData& data)
 	}
 
 	const Vector3 playerPos = player->GetPosition();
+	const Vector3 routePos = player->GetScrollPosition();
 	const Vector3 spawnPos = {
-		data.position.x,
-		data.position.y,
+		routePos.x + data.position.x,
+		routePos.y + data.position.y,
 		playerPos.z + data.position.z
 	};
 
@@ -220,7 +231,7 @@ void EnemyManager::SpawnEnemy(const EnemySpawnData& data)
 			spawnPos.z));
 
 	auto enemy = std::make_unique<Enemy>();
-	enemy->Init(data.enemyPattern, data.position);
+	enemy->Init(data.enemyPattern, spawnPos);
 	enemies_.push_back(std::move(enemy));
 }
 

@@ -1,6 +1,8 @@
 #include "PlayScene.h"
 #include "SceneIncludes.h"
 #include "MathFunc.h"
+#include <cmath>
+#include <numbers>
 
 void PlayScene::Init()
 {
@@ -42,9 +44,26 @@ void PlayScene::Update()
 		break;
 	}
 
-	// カメラの更新処理
+	// 操作による移動を保ったまま、ルートの中心を進める
+	if (isMovePlayer_) {
+		playerMoveTimer_ += Time::GetDeltaTime();
+		if (playerMoveTimer_ >= playerMoveDuration_) {
+			playerMoveTimer_ = playerMoveDuration_;
+			isMovePlayer_ = false;
+		}
+		const float t = LerpRateConvert(playerMoveTimer_, playerMoveDuration_);
+		const float angle = 2.0f * std::numbers::pi_v<float> * playerMoveTimer_;
+		player_->SetScrollPosition({
+			std::sin(angle / routeHorizontalPeriod_) * routeWidth_,
+			std::sin(angle / routeVerticalPeriod_) * routeHeight_,
+			Lerp(startPos, endPos, t)
+		});
+	}
+
+	// カメラは操作位置ではなくルートの中心を追従する
 	Camera* mainCamera = camMgr->GetCamera("MainCamera");
-	Vector3 camPos = { 0.0f, 0.0f, player_->GetPosition().z - 50.0f};
+	Vector3 camPos = player_->GetScrollPosition();
+	camPos.z -= 50.0f;
 	mainCamera->SetTranslate(camPos);
 	camMgr->Update();
 
@@ -69,18 +88,6 @@ void PlayScene::Update()
 	reticle_.Update(player_->GetPosition(), enemyMgr_->GetEnemies());
 	player_->SetAimTarget(reticle_.GetAimTarget());
 
-	if (isMovePlayer_) {
-		playerMoveTimer_ += Time::GetDeltaTime();
-		// 0.0fから1.0fの補間率に変換
-		float t = LerpRateConvert(playerMoveTimer_, playerMoveDuration_);
-		Vector3 playerPos = player_->GetPosition();
-		playerPos.z = Lerp(startPos, endPos, t);
-		player_->SetPosition(playerPos);
-
-		if (t >= 1.0f) {
-			isMovePlayer_ = false;
-		}
-	}
 	player_->Update();
 
 	isController_ = player_->GetIsConroller();
@@ -122,6 +129,7 @@ void PlayScene::Draw()
 	DebugDraw::Draw();
 
 	// Sprite
+	enemyMgr_->DrawRushWarning();
 	reticle_.Draw();
 
 	if (!isController_) {
@@ -208,7 +216,7 @@ void PlayScene::LoadModel()
 	auto modelMgr = ModelManager::GetInstance();
 	modelMgr->LoadModel("bullet.obj");
 	modelMgr->LoadModel("enemy.obj");
-	modelMgr->LoadModel("terrain.obj");
+	modelMgr->LoadModel("planetTerrain.obj");
 	modelMgr->LoadModel("boss.obj");
 
 	modelSkydome_ = std::make_unique<Entity3D>();
@@ -218,14 +226,16 @@ void PlayScene::LoadModel()
 
 	modelTerrain_ = std::make_unique<Entity3D>();
 	modelTerrain_->Init();
-	modelTerrain_->SetModel("terrain");
+	modelTerrain_->SetModel("planetTerrain");
 	modelTerrain_->SetTranslate({ 0.0f, -10.0f, 0.0f });
 	modelTerrain_->SetScale({ 5.0f, 5.0f, 50.0f });
-	Editor::GetInstance()->RegisterModel("terrain", modelTerrain_.get());
+	Editor::GetInstance()->RegisterModel("planetTerrain", modelTerrain_.get());
 }
 
 void PlayScene::InitClass()
 {
+	playerMoveTimer_ = 0.0f;
+	isMovePlayer_ = true;
 	player_ = std::make_shared<Player>();
 	player_->Init(Vector3{ 0.0f, 0.0f, -10.0f });
 

@@ -10,12 +10,17 @@ enum class EnemyPattern {
 	SlowFast
 };
 
+enum class MoveState {
+	Approach,
+	ExitSide
+};
+
 class Enemy
 {
 public:
 	void Init(EnemyPattern pattern, const Vector3& position);
 
-	void Update();
+	void Update(const Vector3& playerPosition);
 
 	void Draw();
 
@@ -27,6 +32,7 @@ public:
 	bool GetIsAlive() const { return isAlive_; }
 	Sphere GetSphere() const { return sphere_; }
 	std::unique_ptr<EnemyBullet>& GetBullet() { return bullet_; }
+	bool GetHasExited() const { return hasExited_; }
 
 	bool GetIsMoveStop() const { return isMoveStop_; }
 	void SetIsMoveStop(bool flag) { isMoveStop_ = flag; }
@@ -54,4 +60,13 @@ private:
 	int debugHitTimer_ = 0;
 
 	bool isMoveStop_ = false;
+
+	MoveState moveState_ = MoveState::Approach;
+	float avoidDistance_ = 15.0f;
+	float exitSpeed_ = 30.0f;
+	float exitDirection_ = 1.0f;
+	float exitTravel_ = 0.0f;
+	float exitDistance_ = 80.0f;
+
+	bool hasExited_ = false;
 };

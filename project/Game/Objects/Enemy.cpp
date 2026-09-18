@@ -30,6 +30,44 @@ void Enemy::Update(const Vector3& playerPosition) {
 		}
 	}
 
+	UpdateMovement(playerPosition);
+	UpdateShooting();
+
+	if (!camMgr->GetIsDebug()) {
+		Camera* camera = camMgr->GetActiveCamera();
+		model_->SetCamera(camera);
+	}
+
+	model_->Update();
+}
+
+void Enemy::Draw() {
+	bullet_->Draw();
+	if (isAlive_) {
+		model_->Draw();
+	}
+}
+
+void Enemy::DebugDraw()
+{
+#ifdef _DEBUG
+	if (!debugIsHit_) {
+		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
+	} else  if (!isAlive_ && debugHitTimer_ > 0) {
+		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::RED, DebugDrawMode::Wireframe);
+	}
+	bullet_->DebuDraw();
+#endif
+}
+
+void Enemy::SetIsDebugHit()
+{
+	debugIsHit_ = true;
+	debugHitTimer_ = 10;
+}
+
+void Enemy::UpdateMovement(const Vector3& playerPosition)
+{
 	if (!isMoveStop_ && isAlive_ && !hasExited_) {
 		transform_ = model_->GetTransform();
 
@@ -93,10 +131,10 @@ void Enemy::Update(const Vector3& playerPosition) {
 		sphere_.center = transform_.translate;
 		model_->SetTranslate(transform_.translate);
 	}
+}
 
-	//================================
-	// 3秒間隔の弾発射
-	//================================
+void Enemy::UpdateShooting()
+{
 	if (isAlive_ &&
 		!hasExited_ &&
 		moveState_ == MoveState::Approach) {
@@ -109,36 +147,4 @@ void Enemy::Update(const Vector3& playerPosition) {
 	}
 
 	bullet_->Update();
-
-	if (!camMgr->GetIsDebug()) {
-		Camera* camera = camMgr->GetActiveCamera();
-
-		model_->SetCamera(camera);
-	}
-	model_->Update();
-}
-
-void Enemy::Draw() {
-	bullet_->Draw();
-	if (isAlive_) {
-		model_->Draw();
-	}
-}
-
-void Enemy::DebugDraw()
-{
-#ifdef _DEBUG
-	if (!debugIsHit_) {
-		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::GREEN, DebugDrawMode::Wireframe);
-	} else  if (!isAlive_ && debugHitTimer_ > 0) {
-		DebugDraw::DrawSphere(sphere_.center, sphere_.radius, Color::RED, DebugDrawMode::Wireframe);
-	}
-	bullet_->DebuDraw();
-#endif
-}
-
-void Enemy::SetIsDebugHit()
-{
-	debugIsHit_ = true;
-	debugHitTimer_ = 10;
 }

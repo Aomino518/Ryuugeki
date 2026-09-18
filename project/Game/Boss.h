@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include "EnemyBullet.h"
 #include "DethParticle.h"
+#include "HpBar.h"
 
 class Boss
 {
@@ -76,7 +77,6 @@ private:
 	int burstShotCount_ = 0;
 	static constexpr uint32_t kBurstShotMax_ = 3;
 
-	bool isSecondPhase_ = false;
 	RushDirection shootingDirection_ = RushDirection::LeftToRight;
 	float shootingMoveTime_ = 0.0f;
 	float shootingMoveDuration_ = 6.0f;
@@ -103,5 +103,7 @@ private:
 	BossPhase phase_ = BossPhase::Phase1;
 	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 	DethParticle dethParticle_;
-};
 
+	// HPバー
+	HpBar hpBar_;
+};

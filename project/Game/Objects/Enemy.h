@@ -38,6 +38,9 @@ public:
 	void SetIsMoveStop(bool flag) { isMoveStop_ = flag; }
 
 private:
+	void UpdateMovement(const Vector3& playerPosition);
+	void UpdateShooting();
+
 	Transform transform_{};
 	std::unique_ptr<Entity3D> model_;
 	// 敵の弾

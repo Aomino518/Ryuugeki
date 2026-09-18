@@ -3,6 +3,7 @@
 #include "Entity3D.h"
 #include "Weapon.h"
 #include "DethParticle.h"
+#include "HpBar.h"
 
 class Player
 {
@@ -105,5 +106,10 @@ private:
 	static constexpr float deadZone_ = 0.15f;
 	static constexpr float maxTiltAngle_ = 0.3f;
 	static constexpr float interpolationSpeed_ = 5.0f;
+
+	// 体力
+	static constexpr int kMaxHp = 10;
+	int hp_ = kMaxHp;
+	HpBar hpBar_;
 };
 

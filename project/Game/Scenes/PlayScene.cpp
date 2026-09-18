@@ -1,8 +1,6 @@
 #include "PlayScene.h"
 #include "SceneIncludes.h"
 #include "MathFunc.h"
-#include <cmath>
-#include <numbers>
 
 void PlayScene::Init()
 {
@@ -44,7 +42,7 @@ void PlayScene::Update()
 		break;
 	}
 
-	// 操作による移動を保ったまま、ルートの中心を進める
+	// 操作による移動を保ったまま、スクロールの中心をZ方向へ直進させる
 	if (isMovePlayer_) {
 		playerMoveTimer_ += Time::GetDeltaTime();
 		if (playerMoveTimer_ >= playerMoveDuration_) {
@@ -52,20 +50,14 @@ void PlayScene::Update()
 			isMovePlayer_ = false;
 		}
 		const float t = LerpRateConvert(playerMoveTimer_, playerMoveDuration_);
-		const float angle = 2.0f * std::numbers::pi_v<float> * playerMoveTimer_;
 		player_->SetScrollPosition({
-			std::sin(angle / routeHorizontalPeriod_) * routeWidth_,
-			std::sin(angle / routeVerticalPeriod_) * routeHeight_,
+			0.0f,
+			0.0f,
 			Lerp(startPos, endPos, t)
 		});
 	}
 
-	// カメラは操作位置ではなくルートの中心を追従する
-	Camera* mainCamera = camMgr->GetCamera("MainCamera");
-	Vector3 camPos = player_->GetScrollPosition();
-	camPos.z -= 50.0f;
-	mainCamera->SetTranslate(camPos);
-	camMgr->Update();
+	UpdatePlayerCamera();
 
 	// モデルの更新処理
 	if (!camMgr->GetIsDebug()) {
@@ -91,6 +83,10 @@ void PlayScene::Update()
 	player_->Update();
 
 	isController_ = player_->GetIsConroller();
+	
+	// スカイドームをカメラを中心に追従
+	auto skyDomePos = camMgr->GetActiveCamera()->GetTranslate();
+	modelSkydome_->SetTranslate(skyDomePos);
 	modelSkydome_->Update();
 	enemyMgr_->Update();
 
@@ -165,6 +161,43 @@ void PlayScene::UpdatePlay()
 		fade_.Start(Fade::Status::FadeOut, 1.0f);
 		phase_ = ScenePhase::FADEOUT;
 	}
+}
+
+void PlayScene::UpdatePlayerCamera()
+{
+	auto camMgr = CameraManager::GetInstance();
+
+	// カメラスクロール
+	const float playerX = player_->GetPosition().x;
+	const float offsetX = playerX - cameraX_;
+
+	if (offsetX > cameraDeadZone_) {
+		cameraX_ = playerX - cameraDeadZone_;
+	} else if (offsetX < -cameraDeadZone_) {
+		cameraX_ = playerX + cameraDeadZone_;
+	}
+
+	const float playerY = player_->GetPosition().y;
+	const float offsetY = playerY - cameraY_;
+
+	if (offsetY > cameraDeadZone_) {
+		cameraY_ = playerY - cameraDeadZone_;
+	} else if (offsetY < -cameraDeadZone_) {
+		cameraY_ = playerY + cameraDeadZone_;
+	}
+
+	const Vector3 scrollPos = player_->GetScrollPosition();
+	cameraX_ = std::clamp(cameraX_, scrollPos.x - cameraLimit_, scrollPos.x + cameraLimit_);
+	cameraY_ = std::clamp(cameraY_, scrollPos.y - cameraLimit_, scrollPos.x + cameraLimit_);
+
+	// カメラは操作位置ではなくルートの中心を追従する
+	Camera* mainCamera = camMgr->GetCamera("MainCamera");
+	Vector3 camPos = scrollPos;
+	camPos.x = cameraX_;
+	camPos.y = cameraY_;
+	camPos.z -= 50.0f;
+	mainCamera->SetTranslate(camPos);
+	camMgr->Update();
 }
 
 void PlayScene::LoadSound()

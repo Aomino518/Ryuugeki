@@ -21,6 +21,7 @@ void Player::Init(const Vector3& position) {
 	modelPlayer_->SetTranslate(position);
 	scrollPosition_ = position;
 	sphere_ = { Vector3{position.x, position.y, position.z - 0.5f}, Vector3{3.0f, 2.0f, 3.0f} };
+	hpBar_.Init(Vector2{ 25.0f, 670.0f }, Vector2{300.0f, 30.0f}, Color::GREEN);
 }
 
 void Player::SetScrollPosition(const Vector3& position)
@@ -54,6 +55,10 @@ void Player::Update() {
 	UpdateCamera();
 	weapon_.Update();
 	modelPlayer_->Update();
+	hpBar_.SetVisible(true);
+	if (isAlive_) {
+		hpBar_.Update(hp_, kMaxHp);
+	}
 }
 
 void Player::Draw() {
@@ -63,6 +68,7 @@ void Player::Draw() {
 	if (isAlive_) {
 		modelPlayer_->Draw();
 	}
+	hpBar_.Draw();
 }
 
 void Player::DebugDraw()
@@ -90,8 +96,13 @@ void Player::Damage()
 		return;
 	}
 
-	isAlive_ = false;
-	dethParticle_.SpawnHitEffect(modelPlayer_->GetTranslate());
+	hp_--;
+
+	if (hp_ <= 0) {
+		hp_ = 0;
+		isAlive_ = false;
+		dethParticle_.SpawnHitEffect(modelPlayer_->GetTranslate());
+	}
 }
 
 /// <summary>
@@ -216,8 +227,8 @@ void Player::UpdatePosition()
 	pos.x += velocity_.x;
 	pos.y += velocity_.y;
 	// 移動範囲制限
-	pos.x = std::clamp(pos.x, scrollPosition_.x - 16.0f, scrollPosition_.x + 16.0f);
-	pos.y = std::clamp(pos.y, scrollPosition_.y - 10.0f, scrollPosition_.y + 10.0f);
+	pos.x = std::clamp(pos.x, scrollPosition_.x - 18.0f, scrollPosition_.x + 18.0f);
+	pos.y = std::clamp(pos.y, scrollPosition_.y - 10.0f, scrollPosition_.y + 12.0f);
 	modelPlayer_->SetTranslate(pos);
 }
 

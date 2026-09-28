@@ -34,6 +34,7 @@ private:
 
 	enum class BossPhase {
 		Phase1,
+		Transition,
 		Phase2
 	};
 
@@ -108,8 +109,8 @@ private:
 	// 段階の移行
 	float transitionTime_ = 0.0f;
 	float transitionDuration_ = 2.0f;
-	Vector3 startPosition_ = { 0.0f, 0.0f, 0.0f };
-	Vector3 targetPosition_ = { 0.0f, 0.0f, 0.0f };
+	Vector3 startPosition_{};
+	Vector3 targetPosition_{};
 
 	// HPバー
 	HpBar hpBar_;

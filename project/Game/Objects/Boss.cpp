@@ -47,19 +47,21 @@ void Boss::Update(const Vector3& playerPosition)
 {
 	if (isAlive_) {
 		if (phase_ == BossPhase::Phase1 && hp_ <= kMaxHp / 2) {
-			phase_ = BossPhase::Phase2;
-			color_ = { 1.0f, 0.3f, 0.3f, 1.0f };
-			// 画面外からの射撃移動を先に行い、その後は突進と交互に使う
-			nextAttackIsRush_ = false;
-			attackTimer_ = 0.0f;
+			startPosition_ = position_;
+			targetPosition_ = { position_.x, position_.y + 50.0f, position_.z };
+			phase_ = BossPhase::Transition;
+			transitionTime_ = 0.0f;
+			// 途中の連射を停止
 			isBurstAttacking_ = false;
+			nextAttackIsRush_ = false;
 			burstShotCount_ = 0;
 			burstTimer_ = 0.0f;
 			shootingMoveTime_ = 0.0f;
-			dethParticle_.SpawnHitEffect(position_);
 		}
 
-		if (isRushing_) {
+		if (phase_ == BossPhase::Transition) {
+			Transition();
+		} else if (isRushing_) {
 			UpdateRush(playerPosition);
 		} else {
 			UpdateMovement(playerPosition);
@@ -374,9 +376,23 @@ void Boss::UpdateRush(const Vector3& playerPosition)
 
 void Boss::Transition()
 {
+	transitionTime_ += Time::GetDeltaTime();
 	float t = std::clamp(transitionTime_ / transitionDuration_, 0.0f, 1.0f);
 	float eased = t * t * (3.0f - 2.0f * t);
 	position_ = startPosition_ + (targetPosition_ - startPosition_) * eased;
+
+	if (t >= 1.0f) {
+		position_ = targetPosition_;
+		phase_ = BossPhase::Phase2;
+		color_ = { 1.0f, 0.3f, 0.3f, 1.0f };
+		nextAttackIsRush_ = false;
+		nextAttackIsRush_ = false;
+		attackTimer_ = 0.0f;
+		shootingMoveTime_ = 0.0f;
+	}
+
+	sphere_.center = position_;
+	model_->SetTranslate(position_);
 }
 
 Boss::RushDirection Boss::NextDirection(RushDirection direction)

@@ -12,6 +12,11 @@ void TitleScene::Init()
 	fade_.Init();
 	fade_.Start(Fade::Status::FadeIn, 1.0f);
     ImGuiManager::GetInstance()->LoadScenesJson();
+	auto* skyModel = ModelManager::GetInstance()->FindModel("player");
+
+	if (skyModel) {
+		skyModel->SetIsLighting(true);
+	}
 }
 
 void TitleScene::Update()

@@ -12,6 +12,12 @@ void PlayScene::Init()
 	LoadModel();
 	InitClass();
     ImGuiManager::GetInstance()->LoadScenesJson();
+	// SkyDomeだけライティングオフ
+	auto* skyModel = ModelManager::GetInstance()->FindModel("starSkyDome");
+
+	if (skyModel) {
+		skyModel->SetIsLighting(false);
+	}
 }
 
 void PlayScene::Update()
@@ -57,14 +63,6 @@ void PlayScene::Update()
 		});
 	}
 
-	UpdatePlayerCamera();
-
-	// モデルの更新処理
-	if (!camMgr->GetIsDebug()) {
-		Camera* camera = camMgr->GetActiveCamera();
-
-		modelSkydome_->SetCamera(camera);
-	}
 
 #ifdef _DEBUG
 	if (Input::GetInstance()->IsPress(DIK_1)) {
@@ -85,13 +83,22 @@ void PlayScene::Update()
 	isController_ = player_->GetIsConroller();
 	
 	// スカイドームをカメラを中心に追従
-	auto skyDomePos = camMgr->GetActiveCamera()->GetTranslate();
+	auto skyDomePos = camMgr->GetIsDebug() ? camMgr->GetDebugCamera()->GetTranslate() : camMgr->GetActiveCamera()->GetTranslate();
 	modelSkydome_->SetTranslate(skyDomePos);
 	modelSkydome_->Update();
 	enemyMgr_->Update();
 
 	modelTerrain_->SetCamera(camMgr->GetActiveCamera());
 	modelTerrain_->Update();
+
+	// モデルの更新処理
+	if (!camMgr->GetIsDebug()) {
+		Camera* camera = camMgr->GetActiveCamera();
+
+		modelSkydome_->SetCamera(camera);
+	}
+
+	UpdatePlayerCamera();
 
 	// スプライトの更新処理
 	sprUiPlayOperate_->Update();
@@ -107,6 +114,7 @@ void PlayScene::Update()
     ImGuiManager::GetInstance()->DrawLoggerWindow();
 	reticle_.DrawImGui(player_->GetPosition());
 	enemyMgr_->DrawImGui();
+	player_->DrawImGui();
 
     ImGuiManager::GetInstance()->EndFrame();
 }

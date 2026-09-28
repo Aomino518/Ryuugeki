@@ -2,8 +2,8 @@
 #include "SceneIncludes.h"
 #include "Vector3.h"
 #include "EnemyBullet.h"
-#include "DethParticle.h"
-#include "HpBar.h"
+#include "Effects/DethParticle.h"
+#include "UI/HpBar.h"
 
 class Boss
 {
@@ -44,6 +44,7 @@ private:
 	void UpdateBullets();
 	void StartRush(const Vector3& playerPosition);
 	void UpdateRush(const Vector3& playerPosition);
+	void Transition();
 
 	Vector3 position_{};
 	Sphere sphere_{};
@@ -103,6 +104,12 @@ private:
 	BossPhase phase_ = BossPhase::Phase1;
 	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
 	DethParticle dethParticle_;
+
+	// 段階の移行
+	float transitionTime_ = 0.0f;
+	float transitionDuration_ = 2.0f;
+	Vector3 startPosition_ = { 0.0f, 0.0f, 0.0f };
+	Vector3 targetPosition_ = { 0.0f, 0.0f, 0.0f };
 
 	// HPバー
 	HpBar hpBar_;

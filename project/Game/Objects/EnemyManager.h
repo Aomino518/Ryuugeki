@@ -1,7 +1,7 @@
 #pragma once
 #include "Enemy.h"
 #include "Boss.h"
-#include "DethParticle.h"
+#include "Effects/DethParticle.h"
 #include "Bullet.h"
 #include <nlohmann/json.hpp>
 

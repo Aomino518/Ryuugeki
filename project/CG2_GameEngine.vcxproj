@@ -157,14 +157,13 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Game\Boss.cpp" />
-    <ClCompile Include="Game\EnemyBullet.cpp" />
-    <ClCompile Include="Game\InputUtility.cpp" />
-    <ClCompile Include="Game\PlayerController.cpp" />
+    <ClCompile Include="Game\Objects\Boss.cpp" />
+    <ClCompile Include="Game\Objects\EnemyBullet.cpp" />
+    <ClCompile Include="Game\Utilities\InputUtility.cpp" />
     <ClCompile Include="Game\Objects\Weapon.cpp" />
-    <ClCompile Include="Game\Reticle.cpp" />
-    <ClCompile Include="Game\DethParticle.cpp" />
-    <ClCompile Include="Game\HpBar.cpp" />
+    <ClCompile Include="Game\UI\Reticle.cpp" />
+    <ClCompile Include="Game\Effects\DethParticle.cpp" />
+    <ClCompile Include="Game\UI\HpBar.cpp" />
     <ClCompile Include="SeekerEngine\3D\AccelerationField.cpp" />
     <ClCompile Include="SeekerEngine\2D\AccelerationField2D.cpp" />
     <ClCompile Include="SeekerEngine\Editor\Editor.cpp" />
@@ -185,10 +184,10 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">MaxSpeed</Optimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</WholeProgramOptimization>
     </ClCompile>
-    <ClCompile Include="Game\EnemyManager.cpp" />
+    <ClCompile Include="Game\Objects\EnemyManager.cpp" />
     <ClCompile Include="Game\Objects\Bullet.cpp" />
     <ClCompile Include="Game\Objects\Enemy.cpp" />
-    <ClCompile Include="Game\Fade.cpp" />
+    <ClCompile Include="Game\Effects\Fade.cpp" />
     <ClCompile Include="Game\Objects\Player.cpp" />
     <ClCompile Include="SeekerEngine\Scene\BaseScene.cpp" />
     <ClCompile Include="Game\Scenes\ClearScene.cpp" />
@@ -336,14 +335,13 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game\Boss.h" />
-    <ClInclude Include="Game\EnemyBullet.h" />
-    <ClInclude Include="Game\InputUtility.h" />
-    <ClInclude Include="Game\PlayerController.h" />
+    <ClInclude Include="Game\Objects\Boss.h" />
+    <ClInclude Include="Game\Objects\EnemyBullet.h" />
+    <ClInclude Include="Game\Utilities\InputUtility.h" />
     <ClInclude Include="Game\Objects\Weapon.h" />
-    <ClInclude Include="Game\Reticle.h" />
-    <ClInclude Include="Game\DethParticle.h" />
-    <ClInclude Include="Game\HpBar.h" />
+    <ClInclude Include="Game\UI\Reticle.h" />
+    <ClInclude Include="Game\Effects\DethParticle.h" />
+    <ClInclude Include="Game\UI\HpBar.h" />
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h" />
     <ClInclude Include="SeekerEngine\Editor\Editor.h" />
     <ClInclude Include="SeekerEngine\Effect\Emitter2DManager.h" />
@@ -442,10 +440,10 @@
     <ClInclude Include="SeekerEngine\2D\WorldField2DManager.h" />
     <ClInclude Include="SeekerEngine\3D\WorldFieldManager.h" />
     <ClInclude Include="SeekerEngine\Utility\ImGuiUtils.h" />
-    <ClInclude Include="Game\EnemyManager.h" />
+    <ClInclude Include="Game\Objects\EnemyManager.h" />
     <ClInclude Include="Game\Objects\Bullet.h" />
     <ClInclude Include="Game\Objects\Enemy.h" />
-    <ClInclude Include="Game\Fade.h" />
+    <ClInclude Include="Game\Effects\Fade.h" />
     <ClInclude Include="Game\Objects\Player.h" />
     <ClInclude Include="SeekerEngine\Math\Matrix3x3.h" />
     <ClInclude Include="SeekerEngine\Math\Matrix4x4.h" />

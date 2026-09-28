@@ -131,6 +131,10 @@ EnemyPattern EnemyManager::ConvertEnemyPattern(const std::string& patternName) c
 		return EnemyPattern::SlowFast;
 	}
 
+	if (patternName == "KeepStop") {
+		return EnemyPattern::KeepStop;
+	}
+
 	throw std::runtime_error("未対応のEnemyPatternです: " + patternName);
 }
 
@@ -210,9 +214,9 @@ void EnemyManager::UpdatePlayerBullet(std::unique_ptr<Bullet>& bullet)
 void EnemyManager::UpdateBoss()
 {
 	auto player = player_.lock();
-	if (!isBossSpawned_ && elapsedTime_ >= 40.0f) {
+	if (!isBossSpawned_ && elapsedTime_ >= 50.0f) {
 		const Vector3 routePos = player->GetScrollPosition();
-		boss_->Init(Vector3{ routePos.x, routePos.y, 250.0f }, player->GetPosition());
+		boss_->Init(Vector3{ routePos.x, routePos.y, player->GetPosition().z + 50.0f }, player->GetPosition());
 		isBossSpawned_ = true;
 	}
 
@@ -238,10 +242,9 @@ void EnemyManager::UpdateEnemy()
 {
 	auto player = player_.lock();
 	for (auto it = enemies_.begin(); it != enemies_.end();) {
-		(*it)->Update(player->GetPosition());
+		(*it)->Update();
 
-		if ((*it)->GetHasExited() ||
-			(*it)->GetPosition().z < player->GetPosition().z - 50.0f) {
+		if ((*it)->GetPosition().z < player->GetPosition().z - 50.0f) {
 			it = enemies_.erase(it);
 		} else {
 			++it;

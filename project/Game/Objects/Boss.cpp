@@ -372,6 +372,13 @@ void Boss::UpdateRush(const Vector3& playerPosition)
 	}
 }
 
+void Boss::Transition()
+{
+	float t = std::clamp(transitionTime_ / transitionDuration_, 0.0f, 1.0f);
+	float eased = t * t * (3.0f - 2.0f * t);
+	position_ = startPosition_ + (targetPosition_ - startPosition_) * eased;
+}
+
 Boss::RushDirection Boss::NextDirection(RushDirection direction)
 {
 	switch (direction) {

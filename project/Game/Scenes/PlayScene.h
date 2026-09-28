@@ -1,10 +1,10 @@
 #pragma once
 #include "SceneIncludes.h"
 #include "BaseScene.h"
-#include "Fade.h"
+#include "Effects/Fade.h"
 #include "Player.h"
 #include "EnemyManager.h"
-#include "Reticle.h"
+#include "UI/Reticle.h"
 
 class PlayScene : public BaseScene
 {
@@ -69,7 +69,7 @@ private:
 	bool isController_ = false;
 	bool isMovePlayer_ = true;
 	float playerMoveTimer_ = 0.0f;
-	float playerMoveDuration_ = 120.0f;
+	float playerMoveDuration_ = 60.0f;
 	float startPos = -10.0f;
 	float endPos = 500.0f;
 

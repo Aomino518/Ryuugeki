@@ -1,5 +1,5 @@
 #include "Reticle.h"
-#include "InputUtility.h"
+#include "Utilities/InputUtility.h"
 #include <algorithm>
 #include "Enemy.h"
 

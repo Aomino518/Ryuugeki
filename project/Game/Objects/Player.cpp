@@ -88,11 +88,13 @@ void Player::DebugDraw()
 
 void Player::DrawImGui()
 {
+#ifdef _DEBUG
 	ImGui::Begin("Player Status");
 	ImGui::Text("HP : %d", hp_);
 	ImGui::Text("isAlive : %s", isAlive_ ? "true" : "false");
 	ImGui::Text("invincibleTimer : %0.2f", invincibleTimer_);
 	ImGui::End();
+#endif
 }
 
 void Player::SetIsDebugHit()

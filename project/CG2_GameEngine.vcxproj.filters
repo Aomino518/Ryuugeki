@@ -40,58 +40,58 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SeekerEngine\3D\AccelerationField.cpp">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\2D\AccelerationField2D.cpp">
-      <Filter>SeekerEngine\2D</Filter>
+      <Filter>Engine\2D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Editor\Editor.cpp">
-      <Filter>SeekerEngine\Editor</Filter>
+      <Filter>Engine\Editor</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Effect\Emitter2DManager.cpp">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Utility\JsonUtils.cpp">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Effect\Particle2DManager.cpp">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Effect\Particle2DEmitter.cpp">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Math\MathFunc.cpp">
-      <Filter>SeekerEngine\Math</Filter>
+      <Filter>Engine\Math</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Math\MathOperator.cpp">
-      <Filter>SeekerEngine\Math</Filter>
+      <Filter>Engine\Math</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\DebugShape\DebugDraw3D.cpp">
-      <Filter>SeekerEngine\DebugShape</Filter>
+      <Filter>Engine\DebugShape</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\DebugShape\DebugDraw.cpp">
-      <Filter>SeekerEngine\DebugShape</Filter>
+      <Filter>Engine\DebugShape</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\DebugShape\DebugDraw2D.cpp">
-      <Filter>SeekerEngine\DebugShape</Filter>
+      <Filter>Engine\DebugShape</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Effect\EmitterManager.cpp">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\2D\WorldField2DManager.cpp">
-      <Filter>SeekerEngine\2D</Filter>
+      <Filter>Engine\2D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\3D\WorldFieldManager.cpp">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Utility\ImGuiUtils.cpp">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Game\main.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Scene\BaseScene.cpp">
-      <Filter>SeekerEngine\Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scenes\ClearScene.cpp">
       <Filter>Game\Scenes</Filter>
@@ -100,115 +100,115 @@
       <Filter>Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Light\LightManager.cpp">
-      <Filter>SeekerEngine\Light</Filter>
+      <Filter>Engine\Light</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scenes\PlayScene.cpp">
       <Filter>Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Scene\SceneManager.cpp">
-      <Filter>SeekerEngine\Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Effect\ParticleEmitter.cpp">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Graphics\BlendStateUtils.cpp">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\3D\CameraManager.cpp">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\3D\Camera.cpp">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Utility\Color.cpp">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Utility\CreateResorceUtils.cpp">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Graphics\D3DResourceLeakChecker.cpp">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Core\Application.cpp">
-      <Filter>SeekerEngine\Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\3D\DebugCamera.cpp">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Graphics\DxcCompiler.cpp">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Graphics\Graphics.cpp">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Graphics\InputLayout.cpp">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Input\Input.cpp">
-      <Filter>SeekerEngine\Input</Filter>
+      <Filter>Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Utility\Logger.cpp">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Graphics\ImGuiManager.cpp">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Graphics\PsoBuilder.cpp">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Graphics\RootSignatureFactory.cpp">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Audio\Sound.cpp">
-      <Filter>SeekerEngine\Audio</Filter>
+      <Filter>Engine\Audio</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\2D\Sprite.cpp">
-      <Filter>SeekerEngine\2D</Filter>
+      <Filter>Engine\2D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\2D\SpriteCommon.cpp">
-      <Filter>SeekerEngine\2D</Filter>
+      <Filter>Engine\2D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Utility\StringUtil.cpp">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\3D\Entity3D.cpp">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\3D\Entity3DCommon.cpp">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\3D\Model.cpp">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\3D\ModelManager.cpp">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Core\SeekerEngine.cpp">
-      <Filter>SeekerEngine\Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\2D\TextureManager.cpp">
-      <Filter>SeekerEngine\2D</Filter>
+      <Filter>Engine\2D</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Effect\ParticleManager.cpp">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Core\SEFramework.cpp">
-      <Filter>SeekerEngine\Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Graphics\SrvManager.cpp">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Core\StartupManager.cpp">
-      <Filter>SeekerEngine\Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Audio\SoundManager.cpp">
-      <Filter>SeekerEngine\Audio</Filter>
+      <Filter>Engine\Audio</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scenes\TitleScene.cpp">
       <Filter>Game\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="SeekerEngine\Utility\GameTime.cpp">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Game\UI\Reticle.cpp">
       <Filter>Game\UI</Filter>
@@ -255,76 +255,76 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h">
-      <Filter>SeekerEngine\2D</Filter>
+      <Filter>Engine\2D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Editor\Editor.h">
-      <Filter>SeekerEngine\Editor</Filter>
+      <Filter>Engine\Editor</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Effect\Emitter2DManager.h">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Utility\JsonMath.h">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Utility\JsonTransform.h">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Utility\JsonUtils.h">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Effect\Particle2DManager.h">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Effect\Particle2DEmitter.h">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClInclude>
     <ClInclude Include="Game\SceneIncludes.h">
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Math\MathFunc.h">
-      <Filter>SeekerEngine\Math</Filter>
+      <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Math\MathOperator.h">
-      <Filter>SeekerEngine\Math</Filter>
+      <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Math\AABB.h">
-      <Filter>SeekerEngine\Math</Filter>
+      <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\3D\AccelerationField.h">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\DebugShape\DebugDraw3D.h">
-      <Filter>SeekerEngine\DebugShape</Filter>
+      <Filter>Engine\DebugShape</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\DebugShape\DebugDraw.h">
-      <Filter>SeekerEngine\DebugShape</Filter>
+      <Filter>Engine\DebugShape</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\DebugShape\DebugDraw2D.h">
-      <Filter>SeekerEngine\DebugShape</Filter>
+      <Filter>Engine\DebugShape</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Effect\EmitterManager.h">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\2D\WorldField2DManager.h">
-      <Filter>SeekerEngine\2D</Filter>
+      <Filter>Engine\2D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\3D\WorldFieldManager.h">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Utility\ImGuiUtils.h">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Math\Matrix3x3.h">
-      <Filter>SeekerEngine\Math</Filter>
+      <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Math\Matrix4x4.h">
-      <Filter>SeekerEngine\Math</Filter>
+      <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Scene\AbstractSceneFactory.h">
-      <Filter>SeekerEngine\Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Scene\BaseScene.h">
-      <Filter>SeekerEngine\Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scenes\ClearScene.h">
       <Filter>Game\Scenes</Filter>
@@ -333,124 +333,124 @@
       <Filter>Game\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Light\LightManager.h">
-      <Filter>SeekerEngine\Light</Filter>
+      <Filter>Engine\Light</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scenes\PlayScene.h">
       <Filter>Game\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Scene\SceneManager.h">
-      <Filter>SeekerEngine\Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Effect\ParticleEmitter.h">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Graphics\BlendStateUtils.h">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\3D\CameraManager.h">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\3D\Camera.h">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Utility\Color.h">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Utility\CreateResorceUtils.h">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Graphics\D3DResourceLeakChecker.h">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Core\Application.h">
-      <Filter>SeekerEngine\Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\3D\DebugCamera.h">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Graphics\DxcCompiler.h">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Graphics\Graphics.h">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Graphics\InputLayout.h">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Input\Input.h">
-      <Filter>SeekerEngine\Input</Filter>
+      <Filter>Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Utility\Logger.h">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Graphics\PsoBuilder.h">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Graphics\RootSignatureFactory.h">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Audio\Sound.h">
-      <Filter>SeekerEngine\Audio</Filter>
+      <Filter>Engine\Audio</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\2D\Sprite.h">
-      <Filter>SeekerEngine\2D</Filter>
+      <Filter>Engine\2D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\2D\SpriteCommon.h">
-      <Filter>SeekerEngine\2D</Filter>
+      <Filter>Engine\2D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Utility\StringUtil.h">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\3D\Entity3D.h">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\3D\Entity3DCommon.h">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Graphics\ImGuiManager.h">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\3D\Model.h">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\3D\ModelManager.h">
-      <Filter>SeekerEngine\3D</Filter>
+      <Filter>Engine\3D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Core\SeekerEngine.h">
-      <Filter>SeekerEngine\Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\2D\TextureManager.h">
-      <Filter>SeekerEngine\2D</Filter>
+      <Filter>Engine\2D</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Math\Vector2.h">
-      <Filter>SeekerEngine\Math</Filter>
+      <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Math\Vector3.h">
-      <Filter>SeekerEngine\Math</Filter>
+      <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Math\Vector4.h">
-      <Filter>SeekerEngine\Math</Filter>
+      <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Effect\ParticleManager.h">
-      <Filter>SeekerEngine\Effect</Filter>
+      <Filter>Engine\Effect</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Core\SEFramework.h">
-      <Filter>SeekerEngine\Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Graphics\SrvManager.h">
-      <Filter>SeekerEngine\Graphics</Filter>
+      <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Core\StartupManager.h">
-      <Filter>SeekerEngine\Core</Filter>
+      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Audio\SoundManager.h">
-      <Filter>SeekerEngine\Audio</Filter>
+      <Filter>Engine\Audio</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scenes\TitleScene.h">
       <Filter>Game\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="SeekerEngine\Utility\GameTime.h">
-      <Filter>SeekerEngine\Utility</Filter>
+      <Filter>Engine\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Game\UI\Reticle.h">
       <Filter>Game\UI</Filter>
@@ -537,6 +537,48 @@
     <Filter Include="Game\Utilities">
       <UniqueIdentifier>{3e9eab12-fe1c-4dd3-bdec-68eab1968f42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{8482FA85-7BDB-4572-9188-A203E5EB1969}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\3D">
+      <UniqueIdentifier>{57944A9D-20F6-4E47-B9E8-DCC94F45E162}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\2D">
+      <UniqueIdentifier>{2AC00965-51EC-4C12-85FB-C336A073CB22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Editor">
+      <UniqueIdentifier>{ABE287BA-022E-45F3-9084-B092F3717E49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Effect">
+      <UniqueIdentifier>{19256944-D58C-409D-B2A8-556E47DB5DB4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Utility">
+      <UniqueIdentifier>{DF7BD088-342B-44BF-96A7-E113E7527707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math">
+      <UniqueIdentifier>{B2AAF21E-3838-4016-8CF4-15E5D965F133}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\DebugShape">
+      <UniqueIdentifier>{509C692C-AC66-4104-BAE4-69067ECCE58D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scene">
+      <UniqueIdentifier>{360D0C2D-6D15-4B3D-A911-F222691ABE52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Light">
+      <UniqueIdentifier>{E7393C08-05E1-4378-9906-4BE9BC23FC41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics">
+      <UniqueIdentifier>{02D20EDB-A993-45FD-A05A-C2A2CAEC8CA3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Core">
+      <UniqueIdentifier>{B6DAE094-9EA2-438C-A836-643376EC3D3C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Input">
+      <UniqueIdentifier>{AA5B732A-0EC4-4BAF-98F2-E19113BAD9FA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Audio">
+      <UniqueIdentifier>{D531A8C7-78CA-4A2C-9661-BFBC62F84EAB}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="resources\hlsl">
@@ -544,48 +586,6 @@
     </Filter>
     <Filter Include="resources">
       <UniqueIdentifier>{918A52B8-2F24-4F89-9B23-350AC34797C1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\3D">
-      <UniqueIdentifier>{57944A9D-20F6-4E47-B9E8-DCC94F45E162}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine">
-      <UniqueIdentifier>{8482FA85-7BDB-4572-9188-A203E5EB1969}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\2D">
-      <UniqueIdentifier>{2AC00965-51EC-4C12-85FB-C336A073CB22}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\Editor">
-      <UniqueIdentifier>{ABE287BA-022E-45F3-9084-B092F3717E49}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\Effect">
-      <UniqueIdentifier>{19256944-D58C-409D-B2A8-556E47DB5DB4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\Utility">
-      <UniqueIdentifier>{DF7BD088-342B-44BF-96A7-E113E7527707}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\Math">
-      <UniqueIdentifier>{B2AAF21E-3838-4016-8CF4-15E5D965F133}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\DebugShape">
-      <UniqueIdentifier>{509C692C-AC66-4104-BAE4-69067ECCE58D}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\Scene">
-      <UniqueIdentifier>{360D0C2D-6D15-4B3D-A911-F222691ABE52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\Light">
-      <UniqueIdentifier>{E7393C08-05E1-4378-9906-4BE9BC23FC41}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\Graphics">
-      <UniqueIdentifier>{02D20EDB-A993-45FD-A05A-C2A2CAEC8CA3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\Core">
-      <UniqueIdentifier>{B6DAE094-9EA2-438C-A836-643376EC3D3C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\Input">
-      <UniqueIdentifier>{AA5B732A-0EC4-4BAF-98F2-E19113BAD9FA}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SeekerEngine\Audio">
-      <UniqueIdentifier>{D531A8C7-78CA-4A2C-9661-BFBC62F84EAB}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

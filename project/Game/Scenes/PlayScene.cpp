@@ -257,7 +257,7 @@ void PlayScene::LoadModel()
 	auto modelMgr = ModelManager::GetInstance();
 	modelMgr->LoadModel("bullet.obj");
 	modelMgr->LoadModel("enemy.obj");
-	modelMgr->LoadModel("planetTerrain.obj");
+	modelMgr->LoadModel("greenTerrain.obj");
 	modelMgr->LoadModel("boss.obj");
 
 	modelSkydome_ = std::make_unique<Entity3D>();
@@ -267,10 +267,9 @@ void PlayScene::LoadModel()
 
 	modelTerrain_ = std::make_unique<Entity3D>();
 	modelTerrain_->Init();
-	modelTerrain_->SetModel("planetTerrain");
-	modelTerrain_->SetTranslate({ 0.0f, -10.0f, 0.0f });
-	modelTerrain_->SetScale({ 5.0f, 5.0f, 50.0f });
-	Editor::GetInstance()->RegisterModel("planetTerrain", modelTerrain_.get());
+	modelTerrain_->SetModel("greenTerrain");
+	modelTerrain_->SetTranslate({ 0.0f, -10.0f, -50.0f });
+	Editor::GetInstance()->RegisterModel("greenTerrain", modelTerrain_.get());
 }
 
 void PlayScene::InitClass()

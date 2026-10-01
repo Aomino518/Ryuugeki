@@ -104,6 +104,7 @@ DirectX::ScratchImage TextureManager::LoadFromFile(const std::string& filePath)
 	std::wstring filePathW = ConvertString(filePath);
 	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
 	if (FAILED(hr)) {
+		Logger::Write(Logger::LogLevel::Debug, "Texture Path : " + filePath);
 		Logger::Write(Logger::LogLevel::Error, "Failed to load texture");
 		assert(SUCCEEDED(hr));
 	}

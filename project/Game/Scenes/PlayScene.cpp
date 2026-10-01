@@ -48,22 +48,6 @@ void PlayScene::Update()
 		break;
 	}
 
-	// 操作による移動を保ったまま、スクロールの中心をZ方向へ直進させる
-	if (isMovePlayer_) {
-		playerMoveTimer_ += Time::GetDeltaTime();
-		if (playerMoveTimer_ >= playerMoveDuration_) {
-			playerMoveTimer_ = playerMoveDuration_;
-			isMovePlayer_ = false;
-		}
-		const float t = LerpRateConvert(playerMoveTimer_, playerMoveDuration_);
-		player_->SetScrollPosition({
-			0.0f,
-			0.0f,
-			Lerp(startPos, endPos, t)
-		});
-	}
-
-
 #ifdef _DEBUG
 	if (Input::GetInstance()->IsPress(DIK_1)) {
 		isGameStop_ = !isGameStop_;
@@ -265,17 +249,22 @@ void PlayScene::LoadModel()
 	modelSkydome_->SetModel("starSkyDome");
 	Editor::GetInstance()->RegisterModel("starSkyDome", modelSkydome_.get());
 
-	modelTerrain_ = std::make_unique<Entity3D>();
-	modelTerrain_->Init();
-	modelTerrain_->SetModel("greenTerrain");
-	modelTerrain_->SetTranslate({ 0.0f, -10.0f, -50.0f });
-	Editor::GetInstance()->RegisterModel("greenTerrain", modelTerrain_.get());
+	for (int i = 0; i < kTerrainCount; ++i) {
+		auto& terrain = modelTerrain_[i];
+		terrain = std::make_unique<Entity3D>();
+		terrain->Init();
+		terrain->SetModel("greenTerrain");
+		terrain->SetTranslate({
+			0.0f,
+			-15.0f,
+			-50.0f + terrainLength_ * static_cast<float>(i)
+			});
+		Editor::GetInstance()->RegisterModel("greenTerrain", modelTerrain_[i].get());
+	}
 }
 
 void PlayScene::InitClass()
 {
-	playerMoveTimer_ = 0.0f;
-	isMovePlayer_ = true;
 	player_ = std::make_shared<Player>();
 	player_->Init(Vector3{ 0.0f, 0.0f, -10.0f });
 
@@ -286,4 +275,9 @@ void PlayScene::InitClass()
 
 	fade_.Init();
 	fade_.Start(Fade::Status::FadeIn, 1.0f);
+}
+
+void PlayScene::UpdaTerrain()
+{
+
 }

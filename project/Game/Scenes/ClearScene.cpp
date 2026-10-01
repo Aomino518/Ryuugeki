@@ -48,8 +48,8 @@ void ClearScene::Init()
 	//===========================
 	modelSkydome_ = std::make_unique<Entity3D>();
 	modelSkydome_->Init();
-	modelSkydome_->SetModel("starSkyDome");
-	Editor::GetInstance()->RegisterModel("starSkyDome", modelSkydome_.get());
+	modelSkydome_->SetModel("skydome");
+	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 
 	//===========================
 	// クラス

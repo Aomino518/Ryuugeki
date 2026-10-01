@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "EnemyManager.h"
 #include "UI/Reticle.h"
+#include <array>
 
 class PlayScene : public BaseScene
 {
@@ -39,10 +40,12 @@ private:
 	void LoadSprite();
 	void LoadModel();
 	void InitClass();
+	void UpdateTerrain();
 
 	// メンバ変数
 	bool isClear = false;
 	bool isGameOver = false;
+	static constexpr int kTerrainCount = 4;
 
 	// テクスチャ
 	uint32_t texReticle_;
@@ -55,7 +58,7 @@ private:
 
 	// モデル
 	std::unique_ptr<Entity3D> modelSkydome_;
-	std::unique_ptr<Entity3D> modelTerrain_;
+	std::array<std::unique_ptr<Entity3D>, kTerrainCount> modelTerrains_;
 
 	// シーンフェーズ
 	ScenePhase phase_ = ScenePhase::FADEIN;
@@ -67,11 +70,9 @@ private:
 	Reticle reticle_;
 
 	bool isController_ = false;
-	bool isMovePlayer_ = true;
-	float playerMoveTimer_ = 0.0f;
-	float playerMoveDuration_ = 60.0f;
-	float startPos = -10.0f;
-	float endPos = 500.0f;
+	float terrainScale_ = 3.0f;
+	float terrainLength_ = 40.0f * terrainScale_;
+	float terrainSpeed_ = 45.0f;
 
 	float cameraX_ = 0.0f;
 	float cameraY_ = 0.0f;

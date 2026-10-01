@@ -48,22 +48,6 @@ void PlayScene::Update()
 		break;
 	}
 
-	// 操作による移動を保ったまま、スクロールの中心をZ方向へ直進させる
-	if (isMovePlayer_) {
-		playerMoveTimer_ += Time::GetDeltaTime();
-		if (playerMoveTimer_ >= playerMoveDuration_) {
-			playerMoveTimer_ = playerMoveDuration_;
-			isMovePlayer_ = false;
-		}
-		const float t = LerpRateConvert(playerMoveTimer_, playerMoveDuration_);
-		player_->SetScrollPosition({
-			0.0f,
-			0.0f,
-			Lerp(startPos, endPos, t)
-		});
-	}
-
-
 #ifdef _DEBUG
 	if (Input::GetInstance()->IsPress(DIK_1)) {
 		isGameStop_ = !isGameStop_;
@@ -88,9 +72,6 @@ void PlayScene::Update()
 	modelSkydome_->Update();
 	enemyMgr_->Update();
 
-	modelTerrain_->SetCamera(camMgr->GetActiveCamera());
-	modelTerrain_->Update();
-
 	// モデルの更新処理
 	if (!camMgr->GetIsDebug()) {
 		Camera* camera = camMgr->GetActiveCamera();
@@ -99,6 +80,7 @@ void PlayScene::Update()
 	}
 
 	UpdatePlayerCamera();
+	UpdateTerrain();
 
 	// スプライトの更新処理
 	sprUiPlayOperate_->Update();
@@ -124,7 +106,9 @@ void PlayScene::Draw()
     /*-- 描画処理 --*/
 	// Model
 	modelSkydome_->Draw();
-	modelTerrain_->Draw();
+	for (auto& terrain : modelTerrains_) {
+		terrain->Draw();
+	}
 	player_->Draw();
 	enemyMgr_->Draw();
 
@@ -265,17 +249,26 @@ void PlayScene::LoadModel()
 	modelSkydome_->SetModel("starSkyDome");
 	Editor::GetInstance()->RegisterModel("starSkyDome", modelSkydome_.get());
 
-	modelTerrain_ = std::make_unique<Entity3D>();
-	modelTerrain_->Init();
-	modelTerrain_->SetModel("greenTerrain");
-	modelTerrain_->SetTranslate({ 0.0f, -10.0f, -50.0f });
-	Editor::GetInstance()->RegisterModel("greenTerrain", modelTerrain_.get());
+	for (int i = 0; i < kTerrainCount; ++i) {
+		auto& terrain = modelTerrains_[i];
+		terrain = std::make_unique<Entity3D>();
+		terrain->Init();
+		terrain->SetModel("greenTerrain");
+		terrain->SetScale({
+			terrainScale_,
+			terrainScale_,
+			terrainScale_
+			});
+		terrain->SetTranslate({
+			0.0f,
+			-20.0f,
+			terrainLength_ * static_cast<float>(i)
+			});
+	}
 }
 
 void PlayScene::InitClass()
 {
-	playerMoveTimer_ = 0.0f;
-	isMovePlayer_ = true;
 	player_ = std::make_shared<Player>();
 	player_->Init(Vector3{ 0.0f, 0.0f, -10.0f });
 
@@ -286,4 +279,33 @@ void PlayScene::InitClass()
 
 	fade_.Init();
 	fade_.Start(Fade::Status::FadeIn, 1.0f);
+}
+
+void PlayScene::UpdateTerrain()
+{
+	auto* camera = CameraManager::GetInstance()->GetCamera("MainCamera");
+
+	const float halfLength = terrainLength_ * 0.5f;
+	const float totalLength = terrainLength_ * kTerrainCount;
+	// カメラから少し後ろで折り返す
+	const float recycleZ = camera->GetTranslate().z - 5.0f;
+
+	const float moveAmount = phase_ == ScenePhase::MAIN ? terrainSpeed_ * Time::GetDeltaTime() : 0.0f;
+
+	for (auto& terrain : modelTerrains_) {
+		Vector3 pos = terrain->GetTranslate();
+
+		// 地形を手前へ動かす。
+		pos.z -= moveAmount;
+
+		// 地形の奥側の端までカメラ後方へ抜けたら、
+		// 3枚分先へ戻す。移動の余りも保持する。
+		while (pos.z + halfLength < recycleZ) {
+			pos.z += totalLength;
+		}
+
+		terrain->SetTranslate(pos);
+		terrain->SetCamera(camera);
+		terrain->Update();
+	}
 }

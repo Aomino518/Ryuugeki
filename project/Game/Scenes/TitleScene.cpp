@@ -233,7 +233,7 @@ void TitleScene::LoadModel()
 {
 	auto modelMgr = ModelManager::GetInstance();
 	modelMgr->LoadModel("player.obj");
-	modelMgr->LoadModel("starSkyDome.obj");
+	modelMgr->LoadModel("skydome.obj");
 
 	modelPlayer_ = std::make_unique<Entity3D>();
 	modelPlayer_->Init();
@@ -242,6 +242,6 @@ void TitleScene::LoadModel()
 
 	modelSkydome_ = std::make_unique<Entity3D>();
 	modelSkydome_->Init();
-	modelSkydome_->SetModel("starSkyDome");
-	Editor::GetInstance()->RegisterModel("starSkyDome", modelSkydome_.get());
+	modelSkydome_->SetModel("skydome");
+	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 }

@@ -13,7 +13,7 @@ void PlayScene::Init()
 	InitClass();
     ImGuiManager::GetInstance()->LoadScenesJson();
 	// SkyDomeだけライティングオフ
-	auto* skyModel = ModelManager::GetInstance()->FindModel("starSkyDome");
+	auto* skyModel = ModelManager::GetInstance()->FindModel("skydome");
 
 	if (skyModel) {
 		skyModel->SetIsLighting(false);
@@ -246,8 +246,8 @@ void PlayScene::LoadModel()
 
 	modelSkydome_ = std::make_unique<Entity3D>();
 	modelSkydome_->Init();
-	modelSkydome_->SetModel("starSkyDome");
-	Editor::GetInstance()->RegisterModel("starSkyDome", modelSkydome_.get());
+	modelSkydome_->SetModel("skydome");
+	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 
 	for (int i = 0; i < kTerrainCount; ++i) {
 		auto& terrain = modelTerrains_[i];

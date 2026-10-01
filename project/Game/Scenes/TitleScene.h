@@ -2,7 +2,7 @@
 #include "SceneIncludes.h"
 #include "BaseScene.h"
 #include "Particle2DEmitter.h"
-#include "Fade.h"
+#include "Effects/Fade.h"
 
 class TitleScene : public BaseScene
 {

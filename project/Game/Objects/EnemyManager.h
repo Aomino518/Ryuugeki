@@ -1,7 +1,7 @@
 #pragma once
 #include "Enemy.h"
 #include "Boss.h"
-#include "DethParticle.h"
+#include "Effects/DethParticle.h"
 #include "Bullet.h"
 #include <nlohmann/json.hpp>
 
@@ -47,6 +47,10 @@ private:
 
 	void SpawnEnemy(const EnemySpawnData& data);
 	void UpdatePlayerBullet(std::unique_ptr<Bullet>& bullet);
+	void UpdateBoss();
+	void UpdateEnemySpawn();
+	void UpdateEnemy();
+	void ChackPlayerCollisions();
 
 	// メンバ変数
 	std::vector<std::unique_ptr<Enemy>> enemies_;

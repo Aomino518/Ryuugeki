@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseScene.h"
 #include "SeekerEngine.h"
-#include "Fade.h"
+#include "Effects/Fade.h"
 
 class ClearScene : public BaseScene
 {

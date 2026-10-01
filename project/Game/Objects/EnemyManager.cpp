@@ -20,87 +20,23 @@ void EnemyManager::Update() {
 		elapsedTime_ += Time::GetDeltaTime();
 	}
 
+	UpdateBoss();
+	UpdateEnemySpawn();
+	ChackPlayerCollisions();
+	UpdateEnemy();
+
 	auto player = player_.lock();
-	if (!player) {
-		return;
-	}
-	if (!isBossSpawned_ && elapsedTime_ >= 40.0f) {
-		const Vector3 routePos = player->GetScrollPosition();
-		boss_->Init(Vector3{ routePos.x, routePos.y, 250.0f }, player->GetPosition());
-		isBossSpawned_ = true;
-	}
-
-	// bossを倒したら終了
-	if (isBossSpawned_ && !boss_->GetIsAlive()) {
-		isFinished_ = true;
-	}
-
-	// 出現チェック
-	for (auto it = spawnList_.begin(); it != spawnList_.end();) {
-		if (elapsedTime_ >= it->spawnTime) {
-			SpawnEnemy(*it);
-			it = spawnList_.erase(it);
-		} else {
-			it++;
-		}
-	}
-
 	if (!player) {
 		return;
 	}
 
 	auto& bullets = player->GetBullets();
-
 	for (auto& bullet : bullets) {
 		if (bullet->GetIsShot()) {
 			UpdatePlayerBullet(bullet);
 		}
 	}
 
-	if (player->GetIsAlive()) {
-		for (auto it = enemies_.begin(); it != enemies_.end();) {
-			Enemy* enemy = it->get();
-
-			if (!enemy->GetIsAlive()) {
-				++it;
-				continue;
-			}
-
-			auto& enemyBullet = enemy->GetBullet();
-
-			if (IsCollision(player->GetSphere(), enemyBullet->GetSphere())) {
-				player->SetIsDebugHit();
-				player->Damage();
-				enemyBullet->SetIsDebugHit();
-				enemyBullet->SetIsShot(false);
-			}
-
-			if (IsCollision(player->GetSphere(), enemy->GetSphere())) {
-				player->Damage();
-				dethParticle_.SpawnHitEffect(enemy->GetPosition());
-				it = enemies_.erase(it);
-			} else {
-				it++;
-			}
-		}
-
-		if (boss_->GetIsAlive() &&
-			IsCollision(player->GetSphere(), boss_->GetSphere())) {
-			player->Damage();
-		}
-	}
-
-	// 敵の更新
-	for (auto it = enemies_.begin(); it != enemies_.end();) {
-		(*it)->Update(player->GetPosition());
-
-		if ((*it)->GetHasExited() ||
-			(*it)->GetPosition().z < player->GetPosition().z - 50.0f) {
-			it = enemies_.erase(it);
-		} else {
-			++it;
-		}
-	}
 	dethParticle_.Update();
 	boss_->Update(player->GetPosition());
 }
@@ -195,6 +131,10 @@ EnemyPattern EnemyManager::ConvertEnemyPattern(const std::string& patternName) c
 		return EnemyPattern::SlowFast;
 	}
 
+	if (patternName == "KeepStop") {
+		return EnemyPattern::KeepStop;
+	}
+
 	throw std::runtime_error("未対応のEnemyPatternです: " + patternName);
 }
 
@@ -268,5 +208,83 @@ void EnemyManager::UpdatePlayerBullet(std::unique_ptr<Bullet>& bullet)
 		bullet->SetDebugHit();
 		bullet->SetIsShot(false);
 		boss_->Damage();
+	}
+}
+
+void EnemyManager::UpdateBoss()
+{
+	auto player = player_.lock();
+	if (!isBossSpawned_ && elapsedTime_ >= 50.0f) {
+		const Vector3 routePos = player->GetScrollPosition();
+		boss_->Init(Vector3{ routePos.x, routePos.y, player->GetPosition().z + 50.0f }, player->GetPosition());
+		isBossSpawned_ = true;
+	}
+
+	// bossを倒したら終了
+	if (isBossSpawned_ && !boss_->GetIsAlive()) {
+		isFinished_ = true;
+	}
+}
+
+void EnemyManager::UpdateEnemySpawn()
+{
+	for (auto it = spawnList_.begin(); it != spawnList_.end();) {
+		if (elapsedTime_ >= it->spawnTime) {
+			SpawnEnemy(*it);
+			it = spawnList_.erase(it);
+		} else {
+			it++;
+		}
+	}
+}
+
+void EnemyManager::UpdateEnemy()
+{
+	auto player = player_.lock();
+	for (auto it = enemies_.begin(); it != enemies_.end();) {
+		(*it)->Update();
+
+		if ((*it)->GetPosition().z < player->GetPosition().z - 50.0f) {
+			it = enemies_.erase(it);
+		} else {
+			++it;
+		}
+	}
+}
+
+void EnemyManager::ChackPlayerCollisions()
+{
+	auto player = player_.lock();
+	if (player->GetIsAlive()) {
+		for (auto it = enemies_.begin(); it != enemies_.end();) {
+			Enemy* enemy = it->get();
+
+			if (!enemy->GetIsAlive()) {
+				++it;
+				continue;
+			}
+
+			auto& enemyBullet = enemy->GetBullet();
+
+			if (enemyBullet->GetIsShot() && IsCollision(player->GetSphere(), enemyBullet->GetSphere())) {
+				player->SetIsDebugHit();
+				player->Damage();
+				enemyBullet->SetIsDebugHit();
+				enemyBullet->SetIsShot(false);
+			}
+
+			if (enemy->GetIsAlive() && IsCollision(player->GetSphere(), enemy->GetSphere())) {
+				player->Damage();
+				dethParticle_.SpawnHitEffect(enemy->GetPosition());
+				it = enemies_.erase(it);
+			} else {
+				it++;
+			}
+		}
+
+		if (boss_->GetIsAlive() &&
+			IsCollision(player->GetSphere(), boss_->GetSphere())) {
+			player->Damage();
+		}
 	}
 }

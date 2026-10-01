@@ -1,10 +1,10 @@
 #pragma once
 #include "SceneIncludes.h"
 #include "BaseScene.h"
-#include "Fade.h"
+#include "Effects/Fade.h"
 #include "Player.h"
 #include "EnemyManager.h"
-#include "Reticle.h"
+#include "UI/Reticle.h"
 
 class PlayScene : public BaseScene
 {
@@ -32,6 +32,7 @@ private:
 
 	// メンバ関数
 	void UpdatePlay(); // プレイ中の更新処理
+	void UpdatePlayerCamera();
 	void LoadSound();
 	void LoadCamera();
 	void LoadTexture();
@@ -68,14 +69,14 @@ private:
 	bool isController_ = false;
 	bool isMovePlayer_ = true;
 	float playerMoveTimer_ = 0.0f;
-	float playerMoveDuration_ = 120.0f;
+	float playerMoveDuration_ = 60.0f;
 	float startPos = -10.0f;
 	float endPos = 500.0f;
-	// ルートの横幅・高さと、一往復にかかる秒数
-	float routeWidth_ = 18.0f;
-	float routeHeight_ = 8.0f;
-	float routeHorizontalPeriod_ = 30.0f;
-	float routeVerticalPeriod_ = 24.0f;
+
+	float cameraX_ = 0.0f;
+	float cameraY_ = 0.0f;
+	float cameraDeadZone_ = 2.0f;
+	float cameraLimit_ = 2.0f;
 
 #ifdef _DEBUG
 	// ゲーム一時停止

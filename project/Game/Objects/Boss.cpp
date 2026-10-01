@@ -23,7 +23,6 @@ void Boss::Init(const Vector3& position, const Vector3& playerPosition)
 	distanceFromPlayer_ = translate.z - playerPosition.z;
 
 	hp_ = kMaxHp;
-	isSecondPhase_ = false;
 	shootingDirection_ = RushDirection::LeftToRight;
 	shootingMoveTime_ = 0.0f;
 	rushDirection_ = RushDirection::LeftToRight;
@@ -41,26 +40,28 @@ void Boss::Init(const Vector3& position, const Vector3& playerPosition)
 	rushWarning_->Init();
 	rushWarning_->Create(texWhite, { 0.0f, 0.0f }, { 1.0f, 0.2f, 0.1f, 1.0f });
 	rushWarning_->SetAnchorPoint({ 0.0f, 0.5f });
+	hpBar_.Init(Vector2{360.0f, 20.0f}, Vector2{500.0f, 20.0f}, Color::RED);
 }
 
 void Boss::Update(const Vector3& playerPosition)
 {
 	if (isAlive_) {
 		if (phase_ == BossPhase::Phase1 && hp_ <= kMaxHp / 2) {
-			phase_ = BossPhase::Phase2;
-			isSecondPhase_ = true;
-			color_ = { 1.0f, 0.3f, 0.3f, 1.0f };
-			// 画面外からの射撃移動を先に行い、その後は突進と交互に使う
-			nextAttackIsRush_ = false;
-			attackTimer_ = 0.0f;
+			startPosition_ = position_;
+			targetPosition_ = { position_.x, position_.y + 50.0f, position_.z };
+			phase_ = BossPhase::Transition;
+			transitionTime_ = 0.0f;
+			// 途中の連射を停止
 			isBurstAttacking_ = false;
+			nextAttackIsRush_ = false;
 			burstShotCount_ = 0;
 			burstTimer_ = 0.0f;
 			shootingMoveTime_ = 0.0f;
-			dethParticle_.SpawnHitEffect(position_);
 		}
 
-		if (isRushing_) {
+		if (phase_ == BossPhase::Transition) {
+			Transition();
+		} else if (isRushing_) {
 			UpdateRush(playerPosition);
 		} else {
 			UpdateMovement(playerPosition);
@@ -78,6 +79,11 @@ void Boss::Update(const Vector3& playerPosition)
 
 	UpdateBullets();
 	dethParticle_.Update();
+
+	hpBar_.SetVisible(isAlive_);
+	if (isAlive_) {
+		hpBar_.Update(hp_, kMaxHp);
+	}
 }
 
 void Boss::Draw()
@@ -92,6 +98,7 @@ void Boss::Draw()
 	}
 
 	dethParticle_.Draw();
+	hpBar_.Draw();
 }
 
 void Boss::DrawRushWarning()
@@ -169,7 +176,14 @@ void Boss::DrawImGui()
 	ImGui::Text("position : %0.2f, %0.2f, %0.2f", position_.x, position_.y, position_.z);
 	ImGui::Text("sphere_.center : %0.2f, %0.2f, %0.2f", sphere_.center.x, sphere_.center.y, sphere_.center.z);
 	ImGui::Text("HP : %d", hp_);
-	ImGui::Text("Phase : %s", isSecondPhase_ ? "Second" : "First");
+	switch (phase_) {
+	case BossPhase::Phase1: 
+		ImGui::Text("BossPhase : Phase1");
+		break;
+	case BossPhase::Phase2: 
+		ImGui::Text("BossPhase : Phase2");
+		break;
+	}
 	ImGui::Text("Rushing : %s", isRushing_ ? "true" : "false");
 	ImGui::Text("isAlive : %s", isAlive_ ? "true" : "false");
 	ImGui::End();
@@ -187,7 +201,7 @@ void Boss::UpdateMovement(const Vector3& playerPosition)
 	translate.y += heightOffset_;
 	translate.z += distanceFromPlayer_;
 
-	if (isSecondPhase_) {
+	if (phase_ == BossPhase::Phase2) {
 		shootingMoveTime_ += Time::GetDeltaTime();
 		// 横切った後は画面外で次の突進を待つ
 		const float t = std::min(shootingMoveTime_ / shootingMoveDuration_, 1.0f);
@@ -244,7 +258,7 @@ void Boss::UpdateAttack(const Vector3& playerPosition)
 	if (attackTimer_ >= attackInterval_) {
 		attackTimer_ = 0.0f;
 
-		if (isSecondPhase_ && nextAttackIsRush_) {
+		if (phase_ == BossPhase::Phase2 && nextAttackIsRush_) {
 			nextAttackIsRush_ = false;
 			StartRush(playerPosition);
 		} else {
@@ -252,7 +266,7 @@ void Boss::UpdateAttack(const Vector3& playerPosition)
 			burstShotCount_ = 0;
 			burstTimer_ = burstInterval_;
 
-			if (isSecondPhase_) {
+			if (phase_ == BossPhase::Phase2) {
 				nextAttackIsRush_ = true;
 			}
 		}
@@ -358,6 +372,27 @@ void Boss::UpdateRush(const Vector3& playerPosition)
 		rushTime_ = 0.0f;
 		rushDirection_ = NextDirection(rushDirection_);
 	}
+}
+
+void Boss::Transition()
+{
+	transitionTime_ += Time::GetDeltaTime();
+	float t = std::clamp(transitionTime_ / transitionDuration_, 0.0f, 1.0f);
+	float eased = t * t * (3.0f - 2.0f * t);
+	position_ = startPosition_ + (targetPosition_ - startPosition_) * eased;
+
+	if (t >= 1.0f) {
+		position_ = targetPosition_;
+		phase_ = BossPhase::Phase2;
+		color_ = { 1.0f, 0.3f, 0.3f, 1.0f };
+		nextAttackIsRush_ = false;
+		nextAttackIsRush_ = false;
+		attackTimer_ = 0.0f;
+		shootingMoveTime_ = 0.0f;
+	}
+
+	sphere_.center = position_;
+	model_->SetTranslate(position_);
 }
 
 Boss::RushDirection Boss::NextDirection(RushDirection direction)

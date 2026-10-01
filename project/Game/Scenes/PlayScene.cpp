@@ -1,8 +1,6 @@
 #include "PlayScene.h"
 #include "SceneIncludes.h"
 #include "MathFunc.h"
-#include <cmath>
-#include <numbers>
 
 void PlayScene::Init()
 {
@@ -14,6 +12,12 @@ void PlayScene::Init()
 	LoadModel();
 	InitClass();
     ImGuiManager::GetInstance()->LoadScenesJson();
+	// SkyDomeだけライティングオフ
+	auto* skyModel = ModelManager::GetInstance()->FindModel("starSkyDome");
+
+	if (skyModel) {
+		skyModel->SetIsLighting(false);
+	}
 }
 
 void PlayScene::Update()
@@ -44,7 +48,7 @@ void PlayScene::Update()
 		break;
 	}
 
-	// 操作による移動を保ったまま、ルートの中心を進める
+	// 操作による移動を保ったまま、スクロールの中心をZ方向へ直進させる
 	if (isMovePlayer_) {
 		playerMoveTimer_ += Time::GetDeltaTime();
 		if (playerMoveTimer_ >= playerMoveDuration_) {
@@ -52,27 +56,13 @@ void PlayScene::Update()
 			isMovePlayer_ = false;
 		}
 		const float t = LerpRateConvert(playerMoveTimer_, playerMoveDuration_);
-		const float angle = 2.0f * std::numbers::pi_v<float> * playerMoveTimer_;
 		player_->SetScrollPosition({
-			std::sin(angle / routeHorizontalPeriod_) * routeWidth_,
-			std::sin(angle / routeVerticalPeriod_) * routeHeight_,
+			0.0f,
+			0.0f,
 			Lerp(startPos, endPos, t)
 		});
 	}
 
-	// カメラは操作位置ではなくルートの中心を追従する
-	Camera* mainCamera = camMgr->GetCamera("MainCamera");
-	Vector3 camPos = player_->GetScrollPosition();
-	camPos.z -= 50.0f;
-	mainCamera->SetTranslate(camPos);
-	camMgr->Update();
-
-	// モデルの更新処理
-	if (!camMgr->GetIsDebug()) {
-		Camera* camera = camMgr->GetActiveCamera();
-
-		modelSkydome_->SetCamera(camera);
-	}
 
 #ifdef _DEBUG
 	if (Input::GetInstance()->IsPress(DIK_1)) {
@@ -91,11 +81,24 @@ void PlayScene::Update()
 	player_->Update();
 
 	isController_ = player_->GetIsConroller();
+	
+	// スカイドームをカメラを中心に追従
+	auto skyDomePos = camMgr->GetIsDebug() ? camMgr->GetDebugCamera()->GetTranslate() : camMgr->GetActiveCamera()->GetTranslate();
+	modelSkydome_->SetTranslate(skyDomePos);
 	modelSkydome_->Update();
 	enemyMgr_->Update();
 
 	modelTerrain_->SetCamera(camMgr->GetActiveCamera());
 	modelTerrain_->Update();
+
+	// モデルの更新処理
+	if (!camMgr->GetIsDebug()) {
+		Camera* camera = camMgr->GetActiveCamera();
+
+		modelSkydome_->SetCamera(camera);
+	}
+
+	UpdatePlayerCamera();
 
 	// スプライトの更新処理
 	sprUiPlayOperate_->Update();
@@ -111,6 +114,7 @@ void PlayScene::Update()
     ImGuiManager::GetInstance()->DrawLoggerWindow();
 	reticle_.DrawImGui(player_->GetPosition());
 	enemyMgr_->DrawImGui();
+	player_->DrawImGui();
 
     ImGuiManager::GetInstance()->EndFrame();
 }
@@ -167,6 +171,43 @@ void PlayScene::UpdatePlay()
 	}
 }
 
+void PlayScene::UpdatePlayerCamera()
+{
+	auto camMgr = CameraManager::GetInstance();
+
+	// カメラスクロール
+	const float playerX = player_->GetPosition().x;
+	const float offsetX = playerX - cameraX_;
+
+	if (offsetX > cameraDeadZone_) {
+		cameraX_ = playerX - cameraDeadZone_;
+	} else if (offsetX < -cameraDeadZone_) {
+		cameraX_ = playerX + cameraDeadZone_;
+	}
+
+	const float playerY = player_->GetPosition().y;
+	const float offsetY = playerY - cameraY_;
+
+	if (offsetY > cameraDeadZone_) {
+		cameraY_ = playerY - cameraDeadZone_;
+	} else if (offsetY < -cameraDeadZone_) {
+		cameraY_ = playerY + cameraDeadZone_;
+	}
+
+	const Vector3 scrollPos = player_->GetScrollPosition();
+	cameraX_ = std::clamp(cameraX_, scrollPos.x - cameraLimit_, scrollPos.x + cameraLimit_);
+	cameraY_ = std::clamp(cameraY_, scrollPos.y - cameraLimit_, scrollPos.x + cameraLimit_);
+
+	// カメラは操作位置ではなくルートの中心を追従する
+	Camera* mainCamera = camMgr->GetCamera("MainCamera");
+	Vector3 camPos = scrollPos;
+	camPos.x = cameraX_;
+	camPos.y = cameraY_;
+	camPos.z -= 50.0f;
+	mainCamera->SetTranslate(camPos);
+	camMgr->Update();
+}
+
 void PlayScene::LoadSound()
 {
 	auto soundMgr = SoundManager::GetInstance();
@@ -216,7 +257,7 @@ void PlayScene::LoadModel()
 	auto modelMgr = ModelManager::GetInstance();
 	modelMgr->LoadModel("bullet.obj");
 	modelMgr->LoadModel("enemy.obj");
-	modelMgr->LoadModel("planetTerrain.obj");
+	modelMgr->LoadModel("greenTerrain.obj");
 	modelMgr->LoadModel("boss.obj");
 
 	modelSkydome_ = std::make_unique<Entity3D>();
@@ -226,10 +267,9 @@ void PlayScene::LoadModel()
 
 	modelTerrain_ = std::make_unique<Entity3D>();
 	modelTerrain_->Init();
-	modelTerrain_->SetModel("planetTerrain");
-	modelTerrain_->SetTranslate({ 0.0f, -10.0f, 0.0f });
-	modelTerrain_->SetScale({ 5.0f, 5.0f, 50.0f });
-	Editor::GetInstance()->RegisterModel("planetTerrain", modelTerrain_.get());
+	modelTerrain_->SetModel("greenTerrain");
+	modelTerrain_->SetTranslate({ 0.0f, -10.0f, -50.0f });
+	Editor::GetInstance()->RegisterModel("greenTerrain", modelTerrain_.get());
 }
 
 void PlayScene::InitClass()

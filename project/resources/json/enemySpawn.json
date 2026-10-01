@@ -4,8 +4,8 @@
             "spawnTime" : 3.0,
             "pattern" : "Straight",
             "position": {
-                "x": -10.0,
-                "y": 0.0,
+                "x": 0.0,
+                "y": -8.0,
                 "z": 100.0
             }
         },
@@ -13,53 +13,188 @@
             "spawnTime" : 10.0,
             "pattern" : "Straight",
             "position": {
+                "x": 10.0,
+                "y": -8.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 10.0,
+            "pattern" : "Straight",
+            "position": {
+                "x": -10.0,
+                "y": -8.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 15.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": 0.0,
+                "y": 3.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 15.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": -5.0,
+                "y": 0.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 15.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": 5.0,
+                "y": 0.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 15.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": 0.0,
+                "y": -3.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 25.0,
+            "pattern" : "Straight",
+            "position": {
+                "x": -10.0,
+                "y": -3.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 25.0,
+            "pattern" : "Straight",
+            "position": {
+                "x": -10.0,
+                "y": -3.0,
+                "z": 115.0
+            }
+        },
+         {
+            "spawnTime" : 25.0,
+            "pattern" : "Straight",
+            "position": {
+                "x": -10.0,
+                "y": -3.0,
+                "z": 130.0
+            }
+        },
+        {
+            "spawnTime" : 30.0,
+            "pattern" : "Straight",
+            "position": {
+                "x": 10.0,
+                "y": -3.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 30.0,
+            "pattern" : "Straight",
+            "position": {
+                "x": 10.0,
+                "y": -3.0,
+                "z": 115.0
+            }
+        },
+        {
+            "spawnTime" : 30.0,
+            "pattern" : "Straight",
+            "position": {
+                "x": 10.0,
+                "y": -3.0,
+                "z": 130.0
+            }
+        },
+        {
+            "spawnTime" : 35.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": 0.0,
+                "y": 3.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 35.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": -10.0,
+                "y": 3.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 35.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": 10.0,
+                "y": 3.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 35.0,
+            "pattern" : "KeepStop",
+            "position": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 100.0
             }
         },
         {
-            "spawnTime" : 13.0,
-            "pattern" : "Straight",
+            "spawnTime" : 35.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": -5.0,
+                "y": 0.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 35.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": 5.0,
+                "y": 0.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 35.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": 0.0,
+                "y": -3.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 35.0,
+            "pattern" : "KeepStop",
+            "position": {
+                "x": -10.0,
+                "y": -3.0,
+                "z": 100.0
+            }
+        },
+        {
+            "spawnTime" : 35.0,
+            "pattern" : "KeepStop",
             "position": {
                 "x": 10.0,
-                "y": 0.0,
-                "z": 100.0
-            }
-        },
-        {
-            "spawnTime" : 20.0,
-            "pattern" : "SinWave",
-            "position": {
-                "x": -12.0,
-                "y": 3.0,
-                "z": 100.0
-            }
-        },
-        {
-            "spawnTime" : 25.0,
-            "pattern" : "SinWave",
-            "position": {
-                "x": 12.0,
-                "y": 3.0,
-                "z": 100.0
-            }
-        },
-        {
-            "spawnTime" : 30.0,
-            "pattern" : "ZigZag",
-            "position": {
-                "x": -15.0,
-                "y": 0.0,
-                "z": 100.0
-            }
-        },
-        {
-            "spawnTime" : 32.0,
-            "pattern" : "ZigZag",
-            "position": {
-                "x": 15.0,
-                "y": 0.0,
+                "y": -3.0,
                 "z": 100.0
             }
         }

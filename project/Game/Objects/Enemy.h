@@ -7,12 +7,19 @@ enum class EnemyPattern {
 	Straight,
 	SinWave,
 	ZigZag,
-	SlowFast
+	SlowFast,
+	KeepStop
 };
 
-enum class MoveState {
-	Approach,
-	ExitSide
+enum class EnemyState {
+	Approach, // 接近
+	Hover, // 停止・浮遊
+	Dead
+};
+
+enum class ApproachBehavior {
+	KeepMoving, // 進み続ける
+	StopAtTarget // 指定位置で停止
 };
 
 class Enemy
@@ -20,7 +27,7 @@ class Enemy
 public:
 	void Init(EnemyPattern pattern, const Vector3& position);
 
-	void Update(const Vector3& playerPosition);
+	void Update();
 
 	void Draw();
 
@@ -32,12 +39,26 @@ public:
 	bool GetIsAlive() const { return isAlive_; }
 	Sphere GetSphere() const { return sphere_; }
 	std::unique_ptr<EnemyBullet>& GetBullet() { return bullet_; }
-	bool GetHasExited() const { return hasExited_; }
-
+	
 	bool GetIsMoveStop() const { return isMoveStop_; }
 	void SetIsMoveStop(bool flag) { isMoveStop_ = flag; }
 
 private:
+	// メンバ関数
+	void UpdateMovement();
+	// 行動の更新
+	void UpdateStraight();
+	void UpdateSinWave();
+	void UpdateZigZag();
+	void UpdateSlowFast();
+	void UpdateKeepStop();
+	void UpdateState();
+	// 状態の更新
+	void UpdateApproach();
+	void UpdateHover();
+	void UpdateShooting();
+	void EnterHover();
+
 	Transform transform_{};
 	std::unique_ptr<Entity3D> model_;
 	// 敵の弾
@@ -61,12 +82,13 @@ private:
 
 	bool isMoveStop_ = false;
 
-	MoveState moveState_ = MoveState::Approach;
-	float avoidDistance_ = 15.0f;
-	float exitSpeed_ = 30.0f;
-	float exitDirection_ = 1.0f;
-	float exitTravel_ = 0.0f;
-	float exitDistance_ = 80.0f;
+	EnemyState enemyState_ = EnemyState::Approach;
+	ApproachBehavior approachBehavior_ = ApproachBehavior::KeepMoving;
 
-	bool hasExited_ = false;
+	Vector3 hoverOrigin_{};
+	float hoverTimer_ = 0.0f;
+	float hoverAmplitude_ = 0.3f;
+	float hoverPeriod_ = 2.0f;
+	float distance = 0.0f;
+	float maxDistance = 40.0f;
 };

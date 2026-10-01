@@ -1,7 +1,8 @@
+#define NOMINMAX
 #include "Player.h"
 #include "Vector3.h"
 #include "SceneIncludes.h"
-#include "InputUtility.h"
+#include "Utilities/InputUtility.h"
 
 /// <summary>
 /// 初期化処理関数
@@ -21,6 +22,7 @@ void Player::Init(const Vector3& position) {
 	modelPlayer_->SetTranslate(position);
 	scrollPosition_ = position;
 	sphere_ = { Vector3{position.x, position.y, position.z - 0.5f}, Vector3{3.0f, 2.0f, 3.0f} };
+	hpBar_.Init(Vector2{ 25.0f, 670.0f }, Vector2{300.0f, 30.0f}, Color::GREEN);
 }
 
 void Player::SetScrollPosition(const Vector3& position)
@@ -53,7 +55,12 @@ void Player::Update() {
 
 	UpdateCamera();
 	weapon_.Update();
+	UpdateHitEffect();
 	modelPlayer_->Update();
+	hpBar_.SetVisible(true);
+	if (isAlive_) {
+		hpBar_.Update(hp_, kMaxHp);
+	}
 }
 
 void Player::Draw() {
@@ -63,6 +70,7 @@ void Player::Draw() {
 	if (isAlive_) {
 		modelPlayer_->Draw();
 	}
+	hpBar_.Draw();
 }
 
 void Player::DebugDraw()
@@ -78,6 +86,17 @@ void Player::DebugDraw()
 #endif
 }
 
+void Player::DrawImGui()
+{
+#ifdef _DEBUG
+	ImGui::Begin("Player Status");
+	ImGui::Text("HP : %d", hp_);
+	ImGui::Text("isAlive : %s", isAlive_ ? "true" : "false");
+	ImGui::Text("invincibleTimer : %0.2f", invincibleTimer_);
+	ImGui::End();
+#endif
+}
+
 void Player::SetIsDebugHit()
 {
 	debugIsHit_ = true;
@@ -86,12 +105,20 @@ void Player::SetIsDebugHit()
 
 void Player::Damage()
 {
-	if (!isAlive_) {
+	if (!isAlive_ || invincibleTimer_ > 0.0f) {
 		return;
 	}
 
-	isAlive_ = false;
-	dethParticle_.SpawnHitEffect(modelPlayer_->GetTranslate());
+	hitEffectTimer_ = kHitEffectDuration;
+	invincibleTimer_ = invincibleTime_;
+
+	hp_--;
+
+	if (hp_ <= 0) {
+		hp_ = 0;
+		isAlive_ = false;
+		dethParticle_.SpawnHitEffect(modelPlayer_->GetTranslate());
+	}
 }
 
 /// <summary>
@@ -216,8 +243,8 @@ void Player::UpdatePosition()
 	pos.x += velocity_.x;
 	pos.y += velocity_.y;
 	// 移動範囲制限
-	pos.x = std::clamp(pos.x, scrollPosition_.x - 16.0f, scrollPosition_.x + 16.0f);
-	pos.y = std::clamp(pos.y, scrollPosition_.y - 10.0f, scrollPosition_.y + 10.0f);
+	pos.x = std::clamp(pos.x, scrollPosition_.x - 18.0f, scrollPosition_.x + 18.0f);
+	pos.y = std::clamp(pos.y, scrollPosition_.y - 10.0f, scrollPosition_.y + 12.0f);
 	modelPlayer_->SetTranslate(pos);
 }
 
@@ -248,5 +275,36 @@ void Player::UpdateCamera()
 	if (!camMgr->GetIsDebug()) {
 		Camera* camera = camMgr->GetActiveCamera();
 		modelPlayer_->SetCamera(camera);
+	}
+}
+
+void Player::UpdateHitEffect()
+{
+	Vector3 drawRotation = rot_;
+	Vector4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	if (invincibleTimer_ > 0.0f) {
+		invincibleTimer_ -= Time::GetDeltaTime();
+	} else if (invincibleTimer_ < 0.0f) {
+		invincibleTimer_ = 0.0f;
+	}
+
+	if (hitEffectTimer_ > 0.0f) {
+		const float elapsed = kHitEffectDuration - hitEffectTimer_;
+		const float strength = hitEffectTimer_ / kHitEffectDuration;
+
+		float kPi = std::numbers::pi_v<float>;
+		drawRotation.z += std::sin(elapsed * 2.0f * kPi * 20.0f) * kHitShakeAngle * strength;
+
+		color = {
+			1.0f,
+			1.0f - 0.8f * strength,
+			1.0f - 0.8f * strength,
+			1.0f
+		};
+
+		hitEffectTimer_ = std::max(0.0f, hitEffectTimer_ - Time::GetDeltaTime());
+
+		modelPlayer_->SetRotate(drawRotation);
+		modelPlayer_->SetMaterial(color);
 	}
 }

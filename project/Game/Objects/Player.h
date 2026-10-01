@@ -2,7 +2,8 @@
 #include "SeekerEngine.h"
 #include "Entity3D.h"
 #include "Weapon.h"
-#include "DethParticle.h"
+#include "Effects/DethParticle.h"
+#include "UI/HpBar.h"
 
 class Player
 {
@@ -18,6 +19,8 @@ public:
 	void Draw();
 
 	void DebugDraw();
+
+	void DrawImGui();
 
 	void SetIsDebugHit();
 
@@ -74,6 +77,8 @@ private:
 	/// </summary>
 	void UpdateCamera();
 	
+	void UpdateHitEffect();
+	
 	// モデル
 	std::unique_ptr<Entity3D> modelPlayer_;
 
@@ -105,5 +110,17 @@ private:
 	static constexpr float deadZone_ = 0.15f;
 	static constexpr float maxTiltAngle_ = 0.3f;
 	static constexpr float interpolationSpeed_ = 5.0f;
+
+	// 体力
+	static constexpr int kMaxHp = 10;
+	int hp_ = kMaxHp;
+	HpBar hpBar_;
+
+	// ヒットエフェクト
+	float hitEffectTimer_ = 0.0f;
+	static constexpr float kHitEffectDuration = 0.25f;
+	static constexpr float kHitShakeAngle = 0.12f;
+	float invincibleTimer_ = 0.0f;
+	float invincibleTime_ = 1.5f;
 };
 

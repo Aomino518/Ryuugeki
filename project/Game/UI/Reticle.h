@@ -1,6 +1,11 @@
 #pragma once
-#include "SceneIncludes.h"
+#include <memory>
+#include <vector>
+#include "Sprite.h"
+#include "Vector2.h"
+#include "Vector3.h"
 
+class Camera;
 class Enemy;
 class Reticle
 {

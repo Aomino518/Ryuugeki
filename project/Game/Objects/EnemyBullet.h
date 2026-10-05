@@ -1,7 +1,8 @@
 #pragma once
-#include "SeekerEngine.h"
+#include <memory>
+#include "Entity3D.h"
+#include "MathFunc.h"
 #include "Vector3.h"
-#include "SceneIncludes.h"
 
 class Player;
 class EnemyBullet

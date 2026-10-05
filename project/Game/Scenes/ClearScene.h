@@ -1,6 +1,9 @@
 #pragma once
 #include "BaseScene.h"
-#include "SeekerEngine.h"
+#include <cstdint>
+#include <memory>
+#include "Entity3D.h"
+#include "Sprite.h"
 #include "Effects/Fade.h"
 
 class ClearScene : public BaseScene

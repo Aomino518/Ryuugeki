@@ -158,15 +158,9 @@ void TitleScene::UpdateCamera()
 	camera->SetTranslate(camPos_);
 	camera->SetRotate(camRot_);
 
-	/*witch(camPhase_) {
+	switch(camPhase_) {
 	case CameraPhase::BACK:
-		camPos_.z += camSpeed_;
-		frameCount_ += 1;
-
-		if (frameCount_ >= 300) {
-			camPos_ = { -30.0f, 7.3f, 30.0f };
-			camRot_ = { 0.14f, 90.0f, 0.0f };
-			frameCount_ = 0;
+		if(cameraTime_ >= 5.0f) {
 			camPhase_ = CameraPhase::LEFTSIDE;
 		}
 
@@ -219,7 +213,7 @@ void TitleScene::UpdateCamera()
 		camera->SetRotate(camRot_);
 
 		break;
-	}*/
+	}
 }
 
 void TitleScene::LoadSound()

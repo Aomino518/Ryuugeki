@@ -1,4 +1,8 @@
 #include "Fade.h"
+#include <algorithm>
+#include "Application.h"
+#include "Color.h"
+#include "TextureManager.h"
 
 void Fade::Init() {
 	// テクスチャ

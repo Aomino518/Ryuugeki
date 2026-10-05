@@ -1,7 +1,10 @@
 #pragma once
-#include "SceneIncludes.h"
+#include <array>
+#include <memory>
+#include "Entity3D.h"
+#include "Sprite.h"
+#include "Vector3.h"
 #include "BaseScene.h"
-#include "Particle2DEmitter.h"
 #include "Effects/Fade.h"
 #include <cstdint>
 

@@ -1,4 +1,12 @@
 #include "Boss.h"
+#include "Application.h"
+#include "CameraManager.h"
+#include "Color.h"
+#include "DebugDraw.h"
+#include "Editor.h"
+#include "GameTime.h"
+#include "TextureManager.h"
+#include "imgui.h"
 #include <algorithm>
 #include "MathFunc.h"
 #include <cmath>

@@ -1,4 +1,8 @@
 #include "EnemyBullet.h"
+#include "CameraManager.h"
+#include "Color.h"
+#include "DebugDraw.h"
+#include "GameTime.h"
 #include "Player.h"
 #include "MathFunc.h"
 

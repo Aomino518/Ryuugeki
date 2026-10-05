@@ -1,5 +1,5 @@
 #pragma once
-#include "SceneIncludes.h"
+#include <cstdint>
 #include "Vector3.h"
 
 class DethParticle

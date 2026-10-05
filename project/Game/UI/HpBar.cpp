@@ -1,4 +1,6 @@
 #include "HpBar.h"
+#include "Color.h"
+#include "TextureManager.h"
 #include <algorithm>
 
 void HpBar::Init(const Vector2& position, const Vector2& size, const Vector4& color)

@@ -1,5 +1,9 @@
 #pragma once
-#include "SceneIncludes.h"
+#include <cstdint>
+#include <memory>
+#include "Sprite.h"
+#include "Vector2.h"
+#include "Vector4.h"
 
 class HpBar
 {

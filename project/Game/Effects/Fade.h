@@ -1,6 +1,7 @@
 #pragma once
-#include "SeekerEngine.h"
-#include "SceneIncludes.h"
+#include <cstdint>
+#include <memory>
+#include "Sprite.h"
 
 class Fade {
 public:

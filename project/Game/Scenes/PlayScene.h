@@ -1,5 +1,8 @@
 #pragma once
-#include "SceneIncludes.h"
+#include <cstdint>
+#include <memory>
+#include "Entity3D.h"
+#include "Sprite.h"
 #include "BaseScene.h"
 #include "Effects/Fade.h"
 #include "Player.h"

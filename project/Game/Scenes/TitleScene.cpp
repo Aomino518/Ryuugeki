@@ -12,10 +12,10 @@ void TitleScene::Init()
 	fade_.Init();
 	fade_.Start(Fade::Status::FadeIn, 1.0f);
     ImGuiManager::GetInstance()->LoadScenesJson();
-	auto* skyModel = ModelManager::GetInstance()->FindModel("player");
+	auto* skyModel = ModelManager::GetInstance()->FindModel("skydome");
 
 	if (skyModel) {
-		skyModel->SetIsLighting(true);
+		skyModel->SetIsLighting(false);
 	}
 }
 
@@ -45,10 +45,6 @@ void TitleScene::Update()
 		break;
 	}
 
-	// カメラの更新処理
-	UpdateCamera();
-	camMgr->Update();
-
 	// モデルの更新処理
 	if (!camMgr->GetIsDebug()) {
 		Camera* camera = camMgr->GetActiveCamera();
@@ -56,8 +52,13 @@ void TitleScene::Update()
 		modelPlayer_->SetCamera(camera);
 		modelSkydome_->SetCamera(camera);
 	}
+	UpdateTerrain();
 	modelPlayer_->Update();
 	modelSkydome_->Update();
+
+	// カメラの更新処理
+	UpdateCamera();
+	camMgr->Update();
 
 	// スプライトの更新処理
 	sprTitleLogo_->Update();
@@ -71,6 +72,9 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	// モデルの描画処理
+	for (auto& terrain : modelTerrains_) {
+		terrain->Draw();
+	}
 	modelPlayer_->Draw();
 	modelSkydome_->Draw();
 
@@ -110,12 +114,51 @@ void TitleScene::UpdateImGui()
 
 void TitleScene::UpdateCamera()
 {
-	if (CameraManager::GetInstance()->GetIsDebug()) {
+	auto camera = CameraManager::GetInstance()->GetCamera("MainCamera");
+	if (CameraManager::GetInstance()->GetIsDebug() || !camera) {
 		return;
 	}
 
-	auto camera = CameraManager::GetInstance()->GetCamera("MainCamera");
-	switch (camPhase_) {
+	const float dt = Time::GetDeltaTime();
+	const bool starting = phase_ == ScenePhase::FADEOUT;
+	if (!starting) {
+		cameraTime_ += dt;
+	}
+
+	const Vector3 playerPos = modelPlayer_->GetTranslate();
+
+	const float angle = std::sin(cameraTime_ * 1.0f) * 1.0f;
+	const float distance = starting ? 32.0f : 50.0f;
+
+	const Vector3 targetPos = {
+	  playerPos.x + std::sin(angle) * distance,
+	  playerPos.y + 10.0f,
+	  playerPos.z + std::cos(angle) * distance
+	};
+
+	const float smoothSpeed = starting ? 3.0f : 0.2f;
+	camPos_ = LerpCameraTranslate(camPos_, targetPos, smoothSpeed, dt);
+	const Vector3 focus = {
+		playerPos.x,
+		playerPos.y,
+		playerPos.z
+	};
+
+	const float dx = focus.x - camPos_.x;
+	const float dy = focus.y - camPos_.y;
+	const float dz = focus.z - camPos_.z;
+	const float horizontal = std::sqrt(dx * dx + dz * dz);
+
+	camRot_ = {
+		-std::atan2(dy, horizontal),
+		 std::atan2(dx, dz),
+		 0.0f
+	};
+
+	camera->SetTranslate(camPos_);
+	camera->SetRotate(camRot_);
+
+	/*witch(camPhase_) {
 	case CameraPhase::BACK:
 		camPos_.z += camSpeed_;
 		frameCount_ += 1;
@@ -176,7 +219,7 @@ void TitleScene::UpdateCamera()
 		camera->SetRotate(camRot_);
 
 		break;
-	}
+	}*/
 }
 
 void TitleScene::LoadSound()
@@ -234,6 +277,7 @@ void TitleScene::LoadModel()
 	auto modelMgr = ModelManager::GetInstance();
 	modelMgr->LoadModel("player.obj");
 	modelMgr->LoadModel("skydome.obj");
+	modelMgr->LoadModel("greenTerrain.obj");
 
 	modelPlayer_ = std::make_unique<Entity3D>();
 	modelPlayer_->Init();
@@ -244,4 +288,49 @@ void TitleScene::LoadModel()
 	modelSkydome_->Init();
 	modelSkydome_->SetModel("skydome");
 	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
+
+	for (int i = 0; i < kTerrainCount; ++i) {
+		auto& terrain = modelTerrains_[i];
+		terrain = std::make_unique<Entity3D>();
+		terrain->Init();
+		terrain->SetModel("greenTerrain");
+		terrain->SetScale({
+			terrainScale_,
+			terrainScale_,
+			terrainScale_
+			});
+		terrain->SetTranslate({
+			0.0f,
+			-20.0f,
+			terrainLength_ * static_cast<float>(i)
+			});
+	}
+}
+
+void TitleScene::UpdateTerrain()
+{
+	auto* camera = CameraManager::GetInstance()->GetCamera("MainCamera");
+
+	const float halfLength = terrainLength_ * 0.5f;
+	const float totalLength = terrainLength_ * kTerrainCount;
+	// カメラから少し後ろで折り返す
+	const float recycleZ = modelPlayer_->GetTranslate().z - 300.0f;
+	const float moveAmount = terrainSpeed_ * Time::GetDeltaTime();
+
+	for (auto& terrain : modelTerrains_) {
+		Vector3 pos = terrain->GetTranslate();
+
+		// 地形を手前へ動かす。
+		pos.z -= moveAmount;
+
+		// 地形の奥側の端までカメラ後方へ抜けたら、
+		// 3枚分先へ戻す。移動の余りも保持する。
+		while (pos.z + halfLength < recycleZ) {
+			pos.z += totalLength;
+		}
+
+		terrain->SetTranslate(pos);
+		terrain->SetCamera(camera);
+		terrain->Update();
+	}
 }

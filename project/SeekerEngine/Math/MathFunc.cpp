@@ -480,3 +480,15 @@ float LerpRateConvert(float timer, float duration)
 	float t = timer / duration;
 	return std::clamp(t, 0.0f, 1.0f);
 }
+
+Vector3 LerpCameraTranslate(const Vector3& currentPos, const Vector3& targetPos, float smoothSpeed, float dt)
+{
+	float t = smoothSpeed * dt;
+	return Lerp(currentPos, targetPos, t);
+}
+
+Vector3 LerpCameraRotation(const Vector3& currentRot, const Vector3& targetRot, float smoothSpeed, float dt)
+{
+	float t = smoothSpeed * dt;
+	return Lerp(currentRot, targetRot, t);
+}

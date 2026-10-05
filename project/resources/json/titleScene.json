@@ -45,7 +45,7 @@
             "name": "EntranceCamera"
         }
     ],
-    "isLighting": false,
+    "isLighting": true,
     "lights": {
         "directionalLight": {
             "color": {

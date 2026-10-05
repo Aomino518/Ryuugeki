@@ -153,3 +153,7 @@ Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t);
 /// <param name="duration">目標時間</param>
 /// <returns>変換された補間率</returns>
 float LerpRateConvert(float timer, float duration);
+
+Vector3 LerpCameraTranslate(const Vector3& currentPos, const Vector3& targetPos, float smoothSpeed, float dt);
+
+Vector3 LerpCameraRotation(const Vector3& currentRot, const Vector3& targetRot, float smoothSpeed, float dt);

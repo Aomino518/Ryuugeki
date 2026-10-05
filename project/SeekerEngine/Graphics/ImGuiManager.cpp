@@ -157,6 +157,11 @@ void ImGuiManager::DrawCameraWindow(CameraManager* cameraManager)
 #ifdef USE_IMGUI
 	if (windowState_.showCamera) {
 		ImGui::Begin("Camera Manager");
+		bool manualEdit = cameraManager->GetIsManualEdit();
+
+		if (ImGui::Checkbox("isManualEdit", &manualEdit)) {
+			cameraManager->SetIsManualEdit(manualEdit);
+		}
 
 		if (ImGui::CollapsingHeader("Debug Camera", ImGuiTreeNodeFlags_DefaultOpen))
 		{

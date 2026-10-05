@@ -8,11 +8,6 @@
 #include "imgui_impl_win32.h"
 #endif
 
-enum class UITheme {
-	Default,
-	Cyberpunk
-};
-
 class Application;
 class Graphics;
 class CameraManager;

@@ -37,6 +37,10 @@ public:
 	nlohmann::json SaveToJson() const;
 	void LoadFromJson(const nlohmann::json& j);
 
+	// カメラの手動編集フラグのGetterとSetter
+	bool GetIsManualEdit() const { return isManualEdit_; }
+	void SetIsManualEdit(bool enabled) { isManualEdit_ = enabled; }
+
 private:
 	CameraManager() = default;
 	~CameraManager() = default;
@@ -48,5 +52,7 @@ private:
 
 	bool activeIsDebug_ = false;
 	int activeCamIndex_ = 0;
+	// カメラの手動編集
+	bool isManualEdit_ = false;
 };
 

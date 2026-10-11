@@ -38,7 +38,6 @@ private:
 	};
 
 	// メンバ関数
-	void UpdateImGui();
 	void UpdateCamera();
 	void LoadSound();
 	void LoadCamera();
@@ -48,10 +47,10 @@ private:
 	void UpdateTerrain();
 
 	// メンバ変数
-	float camSpeed_ = 0.1f;
+	//float camSpeed_ = 0.1f;
 	int frameCount_ = 0;
 	static constexpr int32_t kTerrainCount = 9;
-	float cameraTime_ = 0.0f;
+	//float cameraTime_ = 0.0f;
 
 	// テクスチャ
 	uint32_t texTitleLogo_;

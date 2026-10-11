@@ -29,6 +29,8 @@ public:
 
 	bool GetIsEndRequest() { return scene_->GetIsEndRequest(); }
 
+	void DrawImGui();
+
 private:
 	SceneManager() = default;
 	~SceneManager() = default;

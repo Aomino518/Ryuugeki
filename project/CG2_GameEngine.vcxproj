@@ -456,4 +456,8 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="SeekerEngine\2D\RenderTexture.cpp" />
+    <ClInclude Include="SeekerEngine\2D\RenderTexture.h" />
+  </ItemGroup>
 </Project>

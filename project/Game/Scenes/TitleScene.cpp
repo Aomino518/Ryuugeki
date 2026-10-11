@@ -17,6 +17,20 @@ void TitleScene::Init()
 	if (skyModel) {
 		skyModel->SetIsLighting(false);
 	}
+
+	auto camMgr = CameraManager::GetInstance();
+	std::string error;
+	camMgr->CreateCamera("Camera1");
+	camMgr->CreateCamera("Camera2");
+	camMgr->CreateCamera("Camera3");
+
+	if (!camMgr->LoadCameraFile(
+		"resources/json/cameras/titleCameraPattern_01.json", error)) {
+		Logger::Write(Logger::LogLevel::Warning, "カメラ設定の読み込みに失敗しました: " + error);
+	}
+
+	camMgr->SetActiveCameraByName("MainCamera");
+	camMgr->GetCamera("MainCamera")->StartLerp();
 }
 
 void TitleScene::Update()
@@ -66,7 +80,6 @@ void TitleScene::Update()
 	sprUiPressSpace_->Update();
 	sprUiMaou_->Update();
 	fade_.Update();
-	UpdateImGui();
 }
 
 void TitleScene::Draw()
@@ -86,30 +99,20 @@ void TitleScene::Draw()
 	sprUiMaou_->Draw();
 	fade_.Draw();
 
-	// ImGuiの描画処理
-	ImGuiManager::GetInstance()->Draw();
 }
 
 void TitleScene::Shutdown()
 {
 	auto soundMgr = SoundManager::GetInstance();
+	auto camMgr = CameraManager::GetInstance();
 	soundMgr->StopBGM();
 	soundMgr->StopSE();
 	soundMgr->Unload("bgm_title");
 	soundMgr->Unload("se_selected");
+	camMgr->RemoveCamera("Camera1");
+	camMgr->RemoveCamera("Camera2");
+	camMgr->RemoveCamera("Camera3");
 	Editor::GetInstance()->Clear();
-}
-
-void TitleScene::UpdateImGui()
-{
-	ImGuiManager::GetInstance()->BeginFrame();
-	ImGuiManager::GetInstance()->DrawMainMenuBar();
-	ImGuiManager::GetInstance()->DrawCameraWindow(CameraManager::GetInstance());
-	ImGuiManager::GetInstance()->DrawEditor();
-	ImGuiManager::GetInstance()->Stats();
-	ImGuiManager::GetInstance()->DrawSoundWindow();
-	ImGuiManager::GetInstance()->DrawLoggerWindow();
-	ImGuiManager::GetInstance()->EndFrame();
 }
 
 void TitleScene::UpdateCamera()
@@ -120,7 +123,7 @@ void TitleScene::UpdateCamera()
 		return;
 	}
 
-	if (!camMgr->GetIsManualEdit()) {
+	/*if (!camMgr->GetIsManualEdit()) {
 		const float dt = Time::GetDeltaTime();
 		const bool starting = phase_ == ScenePhase::FADEOUT;
 		if (!starting) {
@@ -140,6 +143,7 @@ void TitleScene::UpdateCamera()
 
 		const float smoothSpeed = starting ? 3.0f : 0.2f;
 		camPos_ = LerpCameraTranslate(camPos_, targetPos, smoothSpeed, dt);
+
 		const Vector3 focus = {
 			playerPos.x,
 			playerPos.y,
@@ -159,64 +163,42 @@ void TitleScene::UpdateCamera()
 
 		camera->SetTranslate(camPos_);
 		camera->SetRotate(camRot_);
-	}
+	}*/
 
-	/*switch (camPhase_) {
+	switch (camPhase_) {
 	case CameraPhase::BACK:
-		if(cameraTime_ >= 5.0f) {
+		if (camMgr->GetCamera("MainCamera")->GetIsLerpEnd()) {
+			camMgr->SetActiveCameraByName("Camera1");
+			camMgr->GetCamera("Camera1")->StartLerp();
 			camPhase_ = CameraPhase::LEFTSIDE;
 		}
 
-		camera->SetTranslate(camPos_);
-		camera->SetRotate(camRot_);
-
 		break;
 	case CameraPhase::LEFTSIDE:
-		camPos_.z -= camSpeed_;
-		frameCount_ += 1;
-
-		if (frameCount_ >= 300) {
-			camPos_ = { 0.0f, 7.3f, 40.0f };
-			camRot_ = { 0.14f, 91.1f, 0.0f };
-			frameCount_ = 0;
+		if (camMgr->GetCamera("Camera1")->GetIsLerpEnd()) {
+			camMgr->SetActiveCameraByName("Camera2");
+			camMgr->GetCamera("Camera2")->StartLerp();
 			camPhase_ = CameraPhase::FRONT;
 		}
 
-		camera->SetTranslate(camPos_);
-		camera->SetRotate(camRot_);
-
 		break;
 	case CameraPhase::FRONT:
-		camPos_.z -= camSpeed_;
-		frameCount_ += 1;
-
-		if (frameCount_ >= 300) {
-			camPos_ = { 30.0f, 7.3f, 30.0f };
-			camRot_ = { 0.14f, -90.0f, 0.0f };
-			frameCount_ = 0;
+		if (camMgr->GetCamera("Camera2")->GetIsLerpEnd()) {
+			camMgr->SetActiveCameraByName("Camera3");
+			camMgr->GetCamera("Camera3")->StartLerp();
 			camPhase_ = CameraPhase::RIGHTSIDE;
 		}
 
-		camera->SetTranslate(camPos_);
-		camera->SetRotate(camRot_);
-
 		break;
 	case CameraPhase::RIGHTSIDE:
-		camPos_.z -= camSpeed_;
-		frameCount_ += 1;
-
-		if (frameCount_ >= 300) {
-			camPos_ = { 0.0f, 7.3f, -50.0f };
-			camRot_ = { 0.14f, 0.0f, 0.0f };
-			frameCount_ = 0;
+		if (camMgr->GetCamera("Camera3")->GetIsLerpEnd()) {
+			camMgr->SetActiveCameraByName("MainCamera");
+			camMgr->GetCamera("MainCamera")->StartLerp();
 			camPhase_ = CameraPhase::BACK;
 		}
 
-		camera->SetTranslate(camPos_);
-		camera->SetRotate(camRot_);
-
 		break;
-	}*/
+	};
 }
 
 void TitleScene::LoadSound()
@@ -306,7 +288,7 @@ void TitleScene::LoadModel()
 
 void TitleScene::UpdateTerrain()
 {
-	auto* camera = CameraManager::GetInstance()->GetCamera("MainCamera");
+	auto* camera = CameraManager::GetInstance()->GetActiveCamera();
 
 	const float halfLength = terrainLength_ * 0.5f;
 	const float totalLength = terrainLength_ * kTerrainCount;

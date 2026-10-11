@@ -103,15 +103,6 @@ void GameOverScene::Update()
 	sprUiSpaceBackTitle_->UpdateColorBlink(Color::WHITE, Color::YELLOW);
 	sprUiSpaceBackTitle_->Update();
 	fade_.Update();
-
-    ImGuiManager::GetInstance()->BeginFrame();
-    ImGuiManager::GetInstance()->DrawMainMenuBar();
-    ImGuiManager::GetInstance()->DrawCameraWindow(camMgr);
-    ImGuiManager::GetInstance()->DrawEditor();
-    ImGuiManager::GetInstance()->Stats();
-    ImGuiManager::GetInstance()->DrawSoundWindow();
-    ImGuiManager::GetInstance()->DrawLoggerWindow();
-    ImGuiManager::GetInstance()->EndFrame();
 }
 
 void GameOverScene::Draw()
@@ -124,8 +115,6 @@ void GameOverScene::Draw()
 	sprGameOver_->Draw();
 	sprUiSpaceBackTitle_->Draw();
 	fade_.Draw();
-
-    ImGuiManager::GetInstance()->Draw();
 }
 
 void GameOverScene::Shutdown()

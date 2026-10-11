@@ -86,19 +86,6 @@ void PlayScene::Update()
 	sprUiPlayOperate_->Update();
 	sprUiConroller_->Update();
 	fade_.Update();
-
-    ImGuiManager::GetInstance()->BeginFrame();
-    ImGuiManager::GetInstance()->DrawMainMenuBar();
-    ImGuiManager::GetInstance()->DrawCameraWindow(camMgr);
-    ImGuiManager::GetInstance()->DrawEditor();
-    ImGuiManager::GetInstance()->Stats();
-	ImGuiManager::GetInstance()->DrawSoundWindow();
-    ImGuiManager::GetInstance()->DrawLoggerWindow();
-	reticle_.DrawImGui(player_->GetPosition());
-	enemyMgr_->DrawImGui();
-	player_->DrawImGui();
-
-    ImGuiManager::GetInstance()->EndFrame();
 }
 
 void PlayScene::Draw()
@@ -127,8 +114,6 @@ void PlayScene::Draw()
 	}
 
 	fade_.Draw();
-
-    ImGuiManager::GetInstance()->Draw();
 }
 
 void PlayScene::Shutdown()
@@ -138,6 +123,15 @@ void PlayScene::Shutdown()
 	soundMgr->StopSE();
 	soundMgr->Unload("bgm_play");
     Editor::GetInstance()->Clear();
+}
+
+void PlayScene::DrawImGui()
+{
+#ifdef USE_IMGUI
+	reticle_.DrawImGui(player_->GetPosition());
+	enemyMgr_->DrawImGui();
+	player_->DrawImGui();
+#endif
 }
 
 void PlayScene::UpdatePlay()

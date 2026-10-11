@@ -25,6 +25,9 @@ public:
 	void EndRequset() { this->isEndRequest_ = true; }
 
 	bool GetIsEndRequest() { return isEndRequest_; }
+
+	// シーン固有のImGuiを描画
+	virtual void DrawImGui() {}
 protected:
 	SceneManager* sceneManager_ = nullptr;
 	bool isEndRequest_ = false;

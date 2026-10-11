@@ -154,6 +154,22 @@ Vector4 Lerp(const Vector4& v1, const Vector4& v2, float t);
 /// <returns>変換された補間率</returns>
 float LerpRateConvert(float timer, float duration);
 
+/// <summary>
+/// カメラの位置補間関数
+/// </summary>
+/// <param name="currentPos">現在座標</param>
+/// <param name="targetPos">目標座標</param>
+/// <param name="smoothSpeed">補間速度</param>
+/// <param name="dt">デルタタイム</param>
+/// <returns>補間した位置</returns>
 Vector3 LerpCameraTranslate(const Vector3& currentPos, const Vector3& targetPos, float smoothSpeed, float dt);
 
+/// <summary>
+/// カメラの角度補間関数
+/// </summary>
+/// <param name="currentPos">現在角度</param>
+/// <param name="targetPos">目標角度</param>
+/// <param name="smoothSpeed">補間速度</param>
+/// <param name="dt">デルタタイム</param>
+/// <returns>補間した角度</returns>
 Vector3 LerpCameraRotation(const Vector3& currentRot, const Vector3& targetRot, float smoothSpeed, float dt);

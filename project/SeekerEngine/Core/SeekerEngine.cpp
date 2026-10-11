@@ -42,6 +42,7 @@ void SeekerEngine::Init()
 	Graphics::GetInstance()->Init(true);
 
 	SrvManager::GetInstance()->Init();
+	sceneTexture_.Create(Graphics::GetWidth(), Graphics::GetHeight());
 
 	// DxcCompilerの初期化
 	dxcCompiler_.Init();
@@ -81,6 +82,8 @@ void SeekerEngine::Init()
 
 void SeekerEngine::Update()
 {
+	// Resize before scene updates can record texture uploads on the command list.
+	sceneTexture_.Resize(Graphics::GetWidth(), Graphics::GetHeight());
 	Time::Update();
 	Input::GetInstance()->Update();
 	DebugDraw::Update();
@@ -90,6 +93,7 @@ void SeekerEngine::Update()
 
 void SeekerEngine::Shutdown()
 {
+	sceneTexture_.Shutdown();
 	SceneManager::GetInstance()->Shutdown();
 	ImGuiManager::GetInstance()->Shutdown();
 	LightManager::GetInstance()->Shutdown();
@@ -117,11 +121,42 @@ void SeekerEngine::Shutdown()
 void SeekerEngine::BegineFrame()
 {
 	Graphics::GetInstance()->BeginFrame();
+	sceneTexture_.BeginWrite(Graphics::GetCmdList());
 }
 
 void SeekerEngine::EndFrame()
 {
-	Graphics::GetInstance()->EndFrame();
+	auto* graphics = Graphics::GetInstance();
+	sceneTexture_.EndWrite(Graphics::GetCmdList());
+#ifdef USE_IMGUI
+	graphics->BindBackBuffer();
+	// ImGuiの描画先はバックバッファ
+	auto* imgui = ImGuiManager::GetInstance();
+
+	imgui->BeginFrame();
+	imgui->DrawMainMenuBar();
+
+	imgui->DrawSceneWindow(
+		sceneTexture_.GetSrvIndex(),
+		Graphics::GetWidth(),
+		Graphics::GetHeight()
+	);
+
+	imgui->DrawCameraWindow(CameraManager::GetInstance());
+	imgui->DrawEditor();
+	imgui->Stats();
+	imgui->DrawSoundWindow();
+	imgui->DrawLoggerWindow();
+	SceneManager::GetInstance()->DrawImGui();
+	imgui->EndFrame();
+
+	SrvManager::GetInstance()->PreDraw();
+	imgui->Draw();
+
+#else
+	Graphics::GetInstance()->CopySceneToBackBuffer(sceneTexture_.GetResource());
+#endif
+	graphics->EndFrame();
 }
 
 Application* SeekerEngine::GetApp() const

@@ -6,6 +6,12 @@
 
 using json = nlohmann::json;
 
+inline json ToJson(const float& value) {
+    return json{
+        {"value", value}
+    };
+}
+
 inline json ToJson(const Vector2& v) {
 	return json{
 		{"x", v.x},
@@ -30,6 +36,10 @@ inline json ToJson(const Vector4& v)
         {"z", v.z},
         {"w", v.w}
     };
+}
+
+inline void FromJson(const json& j, float& value) {
+    value = j.value("value", value);
 }
 
 inline void FromJson(const json& j, Vector2& v) {

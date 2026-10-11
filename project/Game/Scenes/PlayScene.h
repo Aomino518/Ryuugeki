@@ -26,6 +26,8 @@ public:
 
 	const char* GetSceneName() const override { return "GAMEPLAY"; }
 
+	void DrawImGui() override;
+
 private:
 	// シーンフェーズ
 	enum struct ScenePhase {

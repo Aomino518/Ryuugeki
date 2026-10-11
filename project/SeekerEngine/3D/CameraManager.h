@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "DebugCamera.h"
 #include <memory>
+#include <filesystem>
 #include <vector>
 #include <string>
 #include <nlohmann/json.hpp>
@@ -36,10 +37,18 @@ public:
 	// json保存と読み込み
 	nlohmann::json SaveToJson() const;
 	void LoadFromJson(const nlohmann::json& j);
+	// 全カメラの演出データをJSONへ変換・反映する
+	nlohmann::json SaveLerpCamera() const;
+	bool LoadLerpCamera(const nlohmann::json& j, std::string& error);
+	// ファイルの保存と読み込み
+	bool SaveCameraFile(const std::filesystem::path& path, std::string& error) const;
+	bool LoadCameraFile(const std::filesystem::path& path, std::string& error);
 
 	// カメラの手動編集フラグのGetterとSetter
 	bool GetIsManualEdit() const { return isManualEdit_; }
 	void SetIsManualEdit(bool enabled) { isManualEdit_ = enabled; }
+
+	bool RemoveCamera(const std::string& cameraName);
 
 private:
 	CameraManager() = default;

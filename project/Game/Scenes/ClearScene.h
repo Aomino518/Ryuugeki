@@ -22,6 +22,8 @@ class ClearScene : public BaseScene
 
 	const char* GetSceneName() const override { return "CLEAR"; }
 
+	void DrawImGui() override;
+
 private:
 	// シーンフェーズ
 	enum struct ScenePhase {

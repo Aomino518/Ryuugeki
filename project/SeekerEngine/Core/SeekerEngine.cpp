@@ -29,6 +29,7 @@
 #include "DebugDraw3D.h"
 #include "Particle2DManager.h"
 #include "GameTime.h"
+#include "Editor.h"
 
 void SeekerEngine::Init()
 {
@@ -120,6 +121,7 @@ void SeekerEngine::Shutdown()
 
 void SeekerEngine::BegineFrame()
 {
+	Editor::GetInstance()->BeginSceneFrame();
 	Graphics::GetInstance()->BeginFrame();
 	sceneTexture_.BeginWrite(Graphics::GetCmdList());
 }

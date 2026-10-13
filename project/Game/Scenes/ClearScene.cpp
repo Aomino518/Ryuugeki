@@ -49,6 +49,7 @@ void ClearScene::Init()
 	modelSkydome_ = std::make_unique<Entity3D>();
 	modelSkydome_->Init();
 	modelSkydome_->SetModel("skydome");
+	modelSkydome_->SetPicked(false);
 	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 
 	//===========================
@@ -125,4 +126,11 @@ void ClearScene::Shutdown()
 	soundMgr->Unload("se_selected");
 	soundMgr->Unload("se_game_clear");
     Editor::GetInstance()->Clear();
+}
+
+void ClearScene::DrawImGui()
+{
+#ifdef USE_IMGUI
+
+#endif
 }

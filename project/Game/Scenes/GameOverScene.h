@@ -22,6 +22,8 @@ class GameOverScene : public BaseScene
 
 	const char* GetSceneName() const override { return "GAMEOVER"; }
 
+	void DrawImGui() override;
+
 private:
 	// シーンフェーズ
 	enum struct ScenePhase {

@@ -49,6 +49,7 @@ void GameOverScene::Init()
 	modelSkydome_ = std::make_unique<Entity3D>();
 	modelSkydome_->Init();
 	modelSkydome_->SetModel("skydome");
+	modelSkydome_->SetPicked(false);
 	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 	
 	//===========================
@@ -125,4 +126,11 @@ void GameOverScene::Shutdown()
 	soundMgr->Unload("se_selected");
 	soundMgr->Unload("se_game_over");
     Editor::GetInstance()->Clear();
+}
+
+void GameOverScene::DrawImGui()
+{
+#ifdef USE_IMGUI
+
+#endif
 }

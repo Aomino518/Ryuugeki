@@ -73,7 +73,30 @@ void Entity3D::Draw()
 
 	if (model_) {
 		model_->Draw();
+		drawnForPicking_ = true;
 	}
+}
+
+bool Entity3D::Pick(float u, float v, float& depth) const
+{
+	if (!picked_ || !drawnForPicking_ || !model_ || !transformationMatrixData_) {
+		return false;
+	}
+
+	// Matrix4x4行列をXMFLOAT4X4に変換
+	const auto wvp = Picking::LoadMatrix(transformationMatrixData_->WVP);
+	Picking::LocalRay localRay;
+	float distance = 0.0f;
+
+	// 指定した画面上の位置がモデルに当たっているか
+	if (!Picking::MakeLocalRay(u, v, wvp, localRay) || !model_->IntersectRay(localRay, distance)) {
+		return false;
+	}
+
+	// 画面の奥域を求める
+	depth = Picking::HitDepth(localRay, distance, wvp);
+	// depthが以下条件と無限やNaNでなければ返す
+	return std::isfinite(depth) && depth >= 0.0f && depth <= 1.0f;
 }
 
 json Entity3D::SaveToJson() const

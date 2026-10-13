@@ -705,6 +705,15 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 			const auto handle = SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex);
 
 			ImGui::Image(reinterpret_cast<ImTextureID>(handle.ptr), imageSize);
+		
+			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
+				!ImGui::IsMouseDown(ImGuiMouseButton_Right) && !ImGui::GetIO().KeyAlt) {
+				const ImVec2 mouse = ImGui::GetMousePos();
+				const ImVec2 origin = ImGui::GetItemRectMin();
+				Editor::GetInstance()->PickModel(
+					(mouse.x - origin.x) / imageSize.x,
+					(mouse.y - origin.y) / imageSize.y);
+			}
 		}
 	}
 

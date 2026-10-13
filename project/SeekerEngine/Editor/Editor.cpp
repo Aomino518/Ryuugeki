@@ -30,6 +30,36 @@ void Editor::Draw()
 #endif
 }
 
+void Editor::BeginSceneFrame()
+{
+	for (const auto& [name, model] : models_) {
+		if (model) {
+			model->ResetPickingState();
+		}
+	}
+}
+
+void Editor::PickModel(float u, float v)
+{
+	// 範囲内でなければ返す
+	if (!(u >= 0.0f && u < 1.0f && v >= 0.0f && v < 1.0f)) {
+		return;
+	}
+
+	InspectorSelection picked;
+	float nearestDepth = 1.0f;
+	for (const auto& [name, model] : models_) {
+		float depth = 0.0f;
+		if (model && model->Pick(u, v, depth) && // 最も手前にあるモデルを選択
+			(depth < nearestDepth || (depth == nearestDepth && // これまでに見つかった交点より手前か
+				(picked.category == InspectorCategory::None || name < picked.name)))) { // 何も選択されてないか現在の選択で辞書順で前か
+			nearestDepth = depth;
+			picked = { InspectorCategory::Model, name };
+		}
+	}
+	selection_ = picked;
+}
+
 void Editor::RegisterSprite(const std::string& name, Sprite* sprite)
 {
 	sprites_[name] = sprite;

@@ -115,6 +115,13 @@ void TitleScene::Shutdown()
 	Editor::GetInstance()->Clear();
 }
 
+void TitleScene::DrawImGui()
+{
+#ifdef USE_IMGUI
+	
+#endif
+}
+
 void TitleScene::UpdateCamera()
 {
 	auto camMgr = CameraManager::GetInstance();
@@ -266,6 +273,7 @@ void TitleScene::LoadModel()
 	modelSkydome_ = std::make_unique<Entity3D>();
 	modelSkydome_->Init();
 	modelSkydome_->SetModel("skydome");
+	modelSkydome_->SetPicked(false);
 	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 
 	for (int i = 0; i < kTerrainCount; ++i) {

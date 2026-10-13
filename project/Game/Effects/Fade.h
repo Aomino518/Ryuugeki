@@ -28,8 +28,7 @@ public:
 	bool IsFinished() const;
 
 private:
-	std::unique_ptr<Sprite> sprite_;
-
+	void Applay();
 	uint32_t tex_;
 
 	// 現在のフェードの状態
@@ -38,6 +37,12 @@ private:
 	// フェードの持続時間
 	float duration_ = 0.0f;
 	// 経過時間カウンター
-	float counter_ = 0.0f;
+	float elapsed_ = 0.0f;
+
+	static constexpr int kColumns = 16;
+	static constexpr int kRows = 9;
+	static constexpr float kCell = 86.0f;
+
+	std::array<std::unique_ptr<Sprite>, kColumns * kRows> squares_;
 };
 

@@ -138,21 +138,6 @@ void PlayScene::DrawImGui()
 #endif
 }
 
-void PlayScene::OnPlayBegin()
-{
-	SoundManager::GetInstance()->PlayBGM("bgm_play");
-
-	phase_ = ScenePhase::FADEIN;
-	fade_.Start(Fade::Status::FadeIn, 1.0f);
-}
-
-void PlayScene::OnPlayEnd()
-{
-	auto* sound = SoundManager::GetInstance();
-	sound->StopBGM();
-	sound->StopSE();
-}
-
 void PlayScene::UpdatePlay()
 {
 	if (enemyMgr_->GetIsFinished()) {

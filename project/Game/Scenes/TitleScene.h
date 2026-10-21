@@ -22,9 +22,6 @@ public:
 
 	const char* GetSceneName() const override { return "TITLE"; }
 
-	void OnPlayBegin() override;
-	void OnPlayEnd() override;
-
 private:
 	// シーンフェーズ
 	enum struct ScenePhase {

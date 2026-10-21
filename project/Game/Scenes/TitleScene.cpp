@@ -115,20 +115,6 @@ void TitleScene::Shutdown()
 	Editor::GetInstance()->Clear();
 }
 
-void TitleScene::OnPlayBegin()
-{
-	SoundManager::GetInstance()->PlayBGM("bgm_title");
-	phase_ = ScenePhase::FADEIN;
-	fade_.Start(Fade::Status::FadeIn, 1.0f);
-}
-
-void TitleScene::OnPlayEnd()
-{
-	auto* sound = SoundManager::GetInstance();
-	sound->StopBGM();
-	sound->StopSE();
-}
-
 void TitleScene::DrawImGui()
 {
 #ifdef USE_IMGUI
@@ -227,6 +213,7 @@ void TitleScene::LoadSound()
 	auto soundMgr = SoundManager::GetInstance();
 	soundMgr->Load("bgm_title", "bgm_title.wav");
 	soundMgr->Load("se_selected", "se_selected.mp3");
+	SoundManager::GetInstance()->PlayBGM("bgm_title");
 }
 
 void TitleScene::LoadCamera()

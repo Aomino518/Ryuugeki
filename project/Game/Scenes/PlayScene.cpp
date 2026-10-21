@@ -119,8 +119,6 @@ void PlayScene::Draw()
 void PlayScene::Shutdown()
 {
 	auto soundMgr = SoundManager::GetInstance();
-	soundMgr->StopBGM();
-	soundMgr->StopSE();
 	soundMgr->Unload("bgm_play");
     Editor::GetInstance()->Clear();
 }
@@ -132,6 +130,21 @@ void PlayScene::DrawImGui()
 	enemyMgr_->DrawImGui();
 	player_->DrawImGui();
 #endif
+}
+
+void PlayScene::OnPlayBegin()
+{
+	SoundManager::GetInstance()->PlayBGM("bgm_play");
+
+	phase_ = ScenePhase::FADEIN;
+	fade_.Start(Fade::Status::FadeIn, 1.0f);
+}
+
+void PlayScene::OnPlayEnd()
+{
+	auto* sound = SoundManager::GetInstance();
+	sound->StopBGM();
+	sound->StopSE();
 }
 
 void PlayScene::UpdatePlay()
@@ -190,7 +203,6 @@ void PlayScene::LoadSound()
 {
 	auto soundMgr = SoundManager::GetInstance();
 	soundMgr->Load("bgm_play", "bgm_play.wav");
-	soundMgr->PlayBGM("bgm_play");
 }
 
 void PlayScene::LoadCamera()

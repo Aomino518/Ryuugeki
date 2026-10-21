@@ -119,8 +119,8 @@ private:
 	// ヒットエフェクト
 	float hitEffectTimer_ = 0.0f;
 	static constexpr float kHitEffectDuration = 0.25f;
-	static constexpr float kHitShakeAngle = 0.12f;
+	static constexpr float kHitShakeAngle = 0.30f;
 	float invincibleTimer_ = 0.0f;
-	float invincibleTime_ = 1.5f;
+	float invincibleTime_ = 2.0f;
 };
 

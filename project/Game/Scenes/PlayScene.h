@@ -28,6 +28,9 @@ public:
 
 	void DrawImGui() override;
 
+	void OnPlayBegin() override;
+	void OnPlayEnd() override;
+
 private:
 	// シーンフェーズ
 	enum struct ScenePhase {

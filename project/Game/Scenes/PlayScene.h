@@ -32,6 +32,7 @@ private:
 	// シーンフェーズ
 	enum struct ScenePhase {
 		FADEIN,
+		CAMMOTION,
 		MAIN,
 		FADEOUT
 	};

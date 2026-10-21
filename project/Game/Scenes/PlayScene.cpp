@@ -12,6 +12,22 @@ void PlayScene::Init()
 	LoadModel();
 	InitClass();
     ImGuiManager::GetInstance()->LoadScenesJson();
+	auto camMgr = CameraManager::GetInstance();
+	std::string error;
+	camMgr->CreateCamera("Camera1");
+	camMgr->SetActiveCameraByName("Camera1");
+	if (!camMgr->LoadCameraFile(
+		"resources/json/cameras/startPlayScene.json", error)) {
+		Logger::Write(Logger::LogLevel::Warning, "カメラ設定の読み込みに失敗しました: " + error);
+	}
+	// フェード中から演出の開始位置を表示し、移動はフェード終了後に始める。
+	auto* entranceCamera = camMgr->GetCamera("Camera1");
+	entranceCamera->SetTranslate(entranceCamera->GetStartPos());
+	entranceCamera->SetRotate(entranceCamera->GetStartRot());
+	entranceCamera->SetIsLerp(false);
+	entranceCamera->Update();
+	Entity3DCommon::GetInstance()->SetDefaultCamera(entranceCamera);
+
 	// SkyDomeだけライティングオフ
 	auto* skyModel = ModelManager::GetInstance()->FindModel("skydome");
 
@@ -21,6 +37,7 @@ void PlayScene::Init()
 
 	phase_ = ScenePhase::FADEIN;
 	fade_.Start(Fade::Status::FadeIn, 1.0f);
+
 }
 
 void PlayScene::Update()
@@ -32,8 +49,16 @@ void PlayScene::Update()
 	switch (phase_) {
 	case ScenePhase::FADEIN:
 		if (fade_.IsFinished()) {
+			camMgr->GetCamera("Camera1")->StartLerp();
+			phase_ = ScenePhase::CAMMOTION;
+		}
+		break;
+	case ScenePhase::CAMMOTION:
+		if (camMgr->GetCamera("Camera1")->GetIsLerpEnd()) {
+			camMgr->SetActiveCameraByName("MainCamera");
 			phase_ = ScenePhase::MAIN;
 		}
+
 		break;
 	case ScenePhase::MAIN:
 		UpdatePlay();
@@ -72,7 +97,6 @@ void PlayScene::Update()
 	// スカイドームをカメラを中心に追従
 	auto skyDomePos = camMgr->GetIsDebug() ? camMgr->GetDebugCamera()->GetTranslate() : camMgr->GetActiveCamera()->GetTranslate();
 	modelSkydome_->SetTranslate(skyDomePos);
-	modelSkydome_->Update();
 	enemyMgr_->Update();
 
 	// モデルの更新処理
@@ -81,6 +105,7 @@ void PlayScene::Update()
 
 		modelSkydome_->SetCamera(camera);
 	}
+	modelSkydome_->Update();
 
 	UpdatePlayerCamera();
 	UpdateTerrain();
@@ -108,7 +133,10 @@ void PlayScene::Draw()
 
 	// Sprite
 	enemyMgr_->DrawRushWarning();
-	reticle_.Draw();
+
+	if (phase_ == ScenePhase::MAIN) {
+		reticle_.Draw();
+	}
 
 	if (!isController_) {
 		sprUiPlayOperate_->Draw();
@@ -126,6 +154,7 @@ void PlayScene::Shutdown()
 	sound->StopBGM();
 	sound->StopSE();
 	soundMgr->Unload("bgm_play");
+	CameraManager::GetInstance()->RemoveCamera("Camera1");
     Editor::GetInstance()->Clear();
 }
 
@@ -282,12 +311,19 @@ void PlayScene::InitClass()
 
 void PlayScene::UpdateTerrain()
 {
-	auto* camera = CameraManager::GetInstance()->GetCamera("MainCamera");
+	auto* cameraManager = CameraManager::GetInstance();
+	auto* camera = cameraManager->GetActiveCamera();
+	auto* debugCamera = cameraManager->GetDebugCamera();
+	if (cameraManager->GetIsDebug() ? !debugCamera : !camera) {
+		return;
+	}
+	const Vector3& cameraPosition = cameraManager->GetIsDebug()
+		? debugCamera->GetTranslate() : camera->GetTranslate();
 
 	const float halfLength = terrainLength_ * 0.5f;
 	const float totalLength = terrainLength_ * kTerrainCount;
 	// カメラから少し後ろで折り返す
-	const float recycleZ = camera->GetTranslate().z - 5.0f;
+	const float recycleZ = cameraPosition.z - 45.0f;
 
 	const float moveAmount = phase_ == ScenePhase::MAIN ? terrainSpeed_ * Time::GetDeltaTime() : 0.0f;
 
@@ -304,7 +340,9 @@ void PlayScene::UpdateTerrain()
 		}
 
 		terrain->SetTranslate(pos);
-		terrain->SetCamera(camera);
+		if (camera) {
+			terrain->SetCamera(camera);
+		}
 		terrain->Update();
 	}
 }

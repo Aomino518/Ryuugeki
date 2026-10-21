@@ -317,7 +317,9 @@ void TitleScene::UpdateTerrain()
 		}
 
 		terrain->SetTranslate(pos);
-		terrain->SetCamera(camera);
+		if (camera) {
+			terrain->SetCamera(camera);
+		}
 		terrain->Update();
 	}
 }

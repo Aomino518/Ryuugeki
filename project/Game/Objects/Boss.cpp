@@ -114,7 +114,15 @@ void Boss::DrawRushWarning()
 	if (!isAlive_ || !isRushing_ || rushTime_ >= 0.0f || !rushWarning_) {
 		return;
 	}
-	const Camera* camera = CameraManager::GetInstance()->GetActiveCamera();
+	const auto* cameraManager = CameraManager::GetInstance();
+	const Camera* camera = cameraManager->GetActiveCamera();
+	const auto* debugCamera = cameraManager->GetDebugCamera();
+	const bool isDebug = cameraManager->GetIsDebug();
+	if (isDebug ? !debugCamera : !camera) {
+		return;
+	}
+	const auto& view = isDebug ? debugCamera->GetViewMatrix() : camera->GetViewMatrix();
+	const auto& vp = isDebug ? debugCamera->GetViewProjectionMatrix() : camera->GetViewProjectionMatrix();
 	Vector3 start = rushTarget_;
 	Vector3 end = rushTarget_;
 	start.z = end.z = position_.z;
@@ -128,11 +136,10 @@ void Boss::DrawRushWarning()
 		end.y += rushHalfHeight_;
 	}
 	// カメラの背後にある線は投影しない
-	if (TransformToVector3(start, camera->GetViewMatrix()).z <= 0.0f ||
-		TransformToVector3(end, camera->GetViewMatrix()).z <= 0.0f) {
+	if (TransformToVector3(start, view).z <= 0.0f ||
+		TransformToVector3(end, view).z <= 0.0f) {
 		return;
 	}
-	const auto& vp = camera->GetViewProjectionMatrix();
 	const Vector3 a = TransformToVector3(start, vp);
 	const Vector3 b = TransformToVector3(end, vp);
 	auto app = Application::GetInstance();

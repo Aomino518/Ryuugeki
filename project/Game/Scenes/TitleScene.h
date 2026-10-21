@@ -22,6 +22,9 @@ public:
 
 	const char* GetSceneName() const override { return "TITLE"; }
 
+	void OnPlayBegin() override;
+	void OnPlayEnd() override;
+
 private:
 	// シーンフェーズ
 	enum struct ScenePhase {
@@ -48,10 +51,8 @@ private:
 	void UpdateTerrain();
 
 	// メンバ変数
-	//float camSpeed_ = 0.1f;
 	int frameCount_ = 0;
 	static constexpr int32_t kTerrainCount = 9;
-	//float cameraTime_ = 0.0f;
 
 	// テクスチャ
 	uint32_t texTitleLogo_;

@@ -18,6 +18,9 @@ void PlayScene::Init()
 	if (skyModel) {
 		skyModel->SetIsLighting(false);
 	}
+
+	phase_ = ScenePhase::FADEIN;
+	fade_.Start(Fade::Status::FadeIn, 1.0f);
 }
 
 void PlayScene::Update()
@@ -119,8 +122,9 @@ void PlayScene::Draw()
 void PlayScene::Shutdown()
 {
 	auto soundMgr = SoundManager::GetInstance();
-	soundMgr->StopBGM();
-	soundMgr->StopSE();
+	auto* sound = SoundManager::GetInstance();
+	sound->StopBGM();
+	sound->StopSE();
 	soundMgr->Unload("bgm_play");
     Editor::GetInstance()->Clear();
 }
@@ -190,7 +194,7 @@ void PlayScene::LoadSound()
 {
 	auto soundMgr = SoundManager::GetInstance();
 	soundMgr->Load("bgm_play", "bgm_play.wav");
-	soundMgr->PlayBGM("bgm_play");
+	SoundManager::GetInstance()->PlayBGM("bgm_play");
 }
 
 void PlayScene::LoadCamera()

@@ -21,12 +21,12 @@ void PlayScene::Init()
 		Logger::Write(Logger::LogLevel::Warning, "カメラ設定の読み込みに失敗しました: " + error);
 	}
 	// フェード中から演出の開始位置を表示し、移動はフェード終了後に始める。
-	auto* entranceCamera = camMgr->GetCamera("Camera1");
-	entranceCamera->SetTranslate(entranceCamera->GetStartPos());
-	entranceCamera->SetRotate(entranceCamera->GetStartRot());
-	entranceCamera->SetIsLerp(false);
-	entranceCamera->Update();
-	Entity3DCommon::GetInstance()->SetDefaultCamera(entranceCamera);
+	auto* startCamera = camMgr->GetCamera("Camera1");
+	startCamera->SetTranslate(startCamera->GetStartPos());
+	startCamera->SetRotate(startCamera->GetStartRot());
+	startCamera->SetIsLerp(false);
+	startCamera->Update();
+	Entity3DCommon::GetInstance()->SetDefaultCamera(startCamera);
 
 	// SkyDomeだけライティングオフ
 	auto* skyModel = ModelManager::GetInstance()->FindModel("skydome");

@@ -4,14 +4,14 @@
 
 void PlayScene::Init()
 {
-    Logger::Write("現在シーンPlayScene");
+	Logger::Write("現在シーンPlayScene");
 	LoadSound();
 	LoadCamera();
 	LoadTexture();
 	LoadSprite();
 	LoadModel();
 	InitClass();
-    ImGuiManager::GetInstance()->LoadScenesJson();
+	ImGuiManager::GetInstance()->LoadScenesJson();
 	auto camMgr = CameraManager::GetInstance();
 	std::string error;
 	camMgr->CreateCamera("Camera1");
@@ -43,7 +43,7 @@ void PlayScene::Init()
 void PlayScene::Update()
 {
 	auto camMgr = CameraManager::GetInstance();
-    /*-- 更新処理 --*/
+	/*-- 更新処理 --*/
 	auto soundMgr = SoundManager::GetInstance();
 	/*-- 更新処理 --*/
 	switch (phase_) {
@@ -91,9 +91,10 @@ void PlayScene::Update()
 	player_->SetAimTarget(reticle_.GetAimTarget());
 
 	player_->Update();
+	UpdatePlayerCamera();
 
 	isController_ = player_->GetIsConroller();
-	
+
 	// スカイドームをカメラを中心に追従
 	auto skyDomePos = camMgr->GetIsDebug() ? camMgr->GetDebugCamera()->GetTranslate() : camMgr->GetActiveCamera()->GetTranslate();
 	modelSkydome_->SetTranslate(skyDomePos);
@@ -107,7 +108,6 @@ void PlayScene::Update()
 	}
 	modelSkydome_->Update();
 
-	UpdatePlayerCamera();
 	UpdateTerrain();
 
 	// スプライトの更新処理
@@ -118,12 +118,10 @@ void PlayScene::Update()
 
 void PlayScene::Draw()
 {
-    /*-- 描画処理 --*/
+	/*-- 描画処理 --*/
 	// Model
 	modelSkydome_->Draw();
-	for (auto& terrain : modelTerrains_) {
-		terrain->Draw();
-	}
+	modelTerrains_->Draw();
 	player_->Draw();
 	enemyMgr_->Draw();
 
@@ -155,7 +153,7 @@ void PlayScene::Shutdown()
 	sound->StopSE();
 	soundMgr->Unload("bgm_play");
 	CameraManager::GetInstance()->RemoveCamera("Camera1");
-    Editor::GetInstance()->Clear();
+	Editor::GetInstance()->Clear();
 }
 
 void PlayScene::DrawImGui()
@@ -187,7 +185,8 @@ void PlayScene::UpdatePlayerCamera()
 	auto camMgr = CameraManager::GetInstance();
 
 	// カメラスクロール
-	const float playerX = player_->GetPosition().x;
+	const Vector3 playerPos = player_->GetPosition();
+	const float playerX = playerPos.x;
 	const float offsetX = playerX - cameraX_;
 
 	if (offsetX > cameraDeadZone_) {
@@ -196,7 +195,7 @@ void PlayScene::UpdatePlayerCamera()
 		cameraX_ = playerX + cameraDeadZone_;
 	}
 
-	const float playerY = player_->GetPosition().y;
+	const float playerY = playerPos.y;
 	const float offsetY = playerY - cameraY_;
 
 	if (offsetY > cameraDeadZone_) {
@@ -207,14 +206,14 @@ void PlayScene::UpdatePlayerCamera()
 
 	const Vector3 scrollPos = player_->GetScrollPosition();
 	cameraX_ = std::clamp(cameraX_, scrollPos.x - cameraLimit_, scrollPos.x + cameraLimit_);
-	cameraY_ = std::clamp(cameraY_, scrollPos.y - cameraLimit_, scrollPos.x + cameraLimit_);
+	cameraY_ = std::clamp(cameraY_, scrollPos.y - cameraLimit_, scrollPos.y + cameraLimit_);
 
-	// カメラは操作位置ではなくルートの中心を追従する
+	// 上下左右は既存のスクロール範囲を保ち、奥行きはプレイヤーからの距離を保つ。
 	Camera* mainCamera = camMgr->GetCamera("MainCamera");
-	Vector3 camPos = scrollPos;
+	Vector3 camPos = playerPos;
 	camPos.x = cameraX_;
 	camPos.y = cameraY_;
-	camPos.z -= 50.0f;
+	camPos.z -= cameraDistance_;
 	mainCamera->SetTranslate(camPos);
 	camMgr->Update();
 }
@@ -277,22 +276,10 @@ void PlayScene::LoadModel()
 	modelSkydome_->SetPicked(false);
 	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 
-	for (int i = 0; i < kTerrainCount; ++i) {
-		auto& terrain = modelTerrains_[i];
-		terrain = std::make_unique<Entity3D>();
-		terrain->Init();
-		terrain->SetModel("greenTerrain");
-		terrain->SetScale({
-			terrainScale_,
-			terrainScale_,
-			terrainScale_
-			});
-		terrain->SetTranslate({
-			0.0f,
-			-20.0f,
-			terrainLength_ * static_cast<float>(i)
-			});
-	}
+	modelTerrains_ = std::make_unique<Entity3D>();
+	modelTerrains_->Init();
+	modelTerrains_->SetModel("greenTerrain");
+	modelTerrains_->SetTranslate(Vector3{ 0.0f, -20.0f, 900.0f });
 }
 
 void PlayScene::InitClass()
@@ -313,36 +300,9 @@ void PlayScene::UpdateTerrain()
 {
 	auto* cameraManager = CameraManager::GetInstance();
 	auto* camera = cameraManager->GetActiveCamera();
-	auto* debugCamera = cameraManager->GetDebugCamera();
-	if (cameraManager->GetIsDebug() ? !debugCamera : !camera) {
-		return;
+	
+	if (camera) {
+		modelTerrains_->SetCamera(camera);
 	}
-	const Vector3& cameraPosition = cameraManager->GetIsDebug()
-		? debugCamera->GetTranslate() : camera->GetTranslate();
-
-	const float halfLength = terrainLength_ * 0.5f;
-	const float totalLength = terrainLength_ * kTerrainCount;
-	// カメラから少し後ろで折り返す
-	const float recycleZ = cameraPosition.z - 45.0f;
-
-	const float moveAmount = phase_ == ScenePhase::MAIN ? terrainSpeed_ * Time::GetDeltaTime() : 0.0f;
-
-	for (auto& terrain : modelTerrains_) {
-		Vector3 pos = terrain->GetTranslate();
-
-		// 地形を手前へ動かす。
-		pos.z -= moveAmount;
-
-		// 地形の奥側の端までカメラ後方へ抜けたら、
-		// 3枚分先へ戻す。移動の余りも保持する。
-		while (pos.z + halfLength < recycleZ) {
-			pos.z += totalLength;
-		}
-
-		terrain->SetTranslate(pos);
-		if (camera) {
-			terrain->SetCamera(camera);
-		}
-		terrain->Update();
-	}
+	modelTerrains_->Update();
 }

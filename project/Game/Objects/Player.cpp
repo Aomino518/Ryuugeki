@@ -189,8 +189,8 @@ void Player::UpdateMovement()
 void Player::UpdateRotation(const Vector2& input)
 {
 	// スティックを倒した量から目標角度を決める
-	float targetRotX = input.y * maxTiltAngle_;
-	float targetRotY = input.x * maxTiltAngle_;
+	float targetRotX = input.y * maxTitleAngle_;
+	float targetRotY = input.x * maxTitleAngle_;
 
 	// 目標角度までの時間を0.0 ~ 1.0にする
 	float t = interpolationSpeed_ * Time::GetDeltaTime();
@@ -242,6 +242,7 @@ void Player::UpdatePosition()
 	Vector3 pos = modelPlayer_->GetTranslate();
 	pos.x += velocity_.x;
 	pos.y += velocity_.y;
+	pos.z += speed_;
 	// 移動範囲制限
 	pos.x = std::clamp(pos.x, scrollPosition_.x - 18.0f, scrollPosition_.x + 18.0f);
 	pos.y = std::clamp(pos.y, scrollPosition_.y - 10.0f, scrollPosition_.y + 12.0f);

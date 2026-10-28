@@ -1,4 +1,5 @@
 #include "MathFunc.h"
+#include "Entity3D.h"
 #include <cmath>
 #include <algorithm>
 #include "MathOperator.h"
@@ -491,4 +492,18 @@ Vector3 LerpCameraRotation(const Vector3& currentRot, const Vector3& targetRot, 
 {
 	float t = smoothSpeed * dt;
 	return Lerp(currentRot, targetRot, t);
+}
+
+void Move(Entity3D* entity, const Vector3& velocity)
+{
+	Vector3 pos = entity->GetTranslate();
+	pos += velocity;
+	entity->SetTranslate(pos);
+}
+
+void Rotate(Entity3D* entity, const Vector3& velocity)
+{
+	Vector3 rot = entity->GetRotate();
+	rot += velocity;
+	entity->SetRotate(rot);
 }

@@ -85,6 +85,7 @@ private:
 	// メンバ変数
 	// 速度
 	Vector2 velocity_ = { 0.0f, 0.0f };
+	float speed_ = 0.2f;
 	// 加速度
 	float acceleration = 0.05f;
 	float deceleration = 0.05f;
@@ -108,7 +109,7 @@ private:
 	bool debugIsHit_ = false;
 	int debugHitTimer_ = 0;
 	static constexpr float deadZone_ = 0.15f;
-	static constexpr float maxTiltAngle_ = 0.3f;
+	static constexpr float maxTitleAngle_ = 0.3f;
 	static constexpr float interpolationSpeed_ = 5.0f;
 
 	// 体力

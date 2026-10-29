@@ -178,6 +178,7 @@ void Model::MaterialInit()
 	materialData_->uvTransform = MakeIdentity4x4();
 	materialData_->enableLighting = true;
 	materialData_->shininess = 32.0f;
+	materialData_->specularStrength = 0.05f;
 	Logger::Write("MaterialResourceの作成完了");
 }
 

@@ -33,10 +33,12 @@ public:
 
 	Vector4& GetMaterial() const { return materialData_->color; }
 	bool GetIsLighting() const { return materialData_->enableLighting; }
+	float GetSpecularStrength() const { return materialData_->specularStrength; }
 	ModelData GetRootNode() const { return modelData_; }
 
 	void SetMaterial(const Vector4& material) { this->materialData_->color = material; }
 	void SetIsLighting(const bool isLighting) { this->materialData_->enableLighting = isLighting; }
+	void SetSpecularStrength(float strength) { this->materialData_->specularStrength = std::clamp(strength, 0.0f, 1.0f); }
 
 private:
 	void CreateBufferResources();

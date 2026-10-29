@@ -9,6 +9,7 @@ struct Material
     int enableLightig;
     float4x4 uvTransform;
     float shininess;
+    float specularStrength;
 };
 
 struct DirectionalLight
@@ -78,8 +79,9 @@ float3 CalcDirectionalLight(VertexShaderOutput input, float specularPow, float4 
     float NdotL = dot(normalize(input.normal), -gDiretionalLight.direction);
     float diffuseCos = saturate(NdotL);
     float3 diffuse = gMaterial.color.rgb * textureColor.rgb * gDiretionalLight.color.rgb * diffuseCos * gDiretionalLight.intensity;
-    float3 specular = gDiretionalLight.color.rgb * gDiretionalLight.intensity * specularPow;
-        
+    float3 specular = gDiretionalLight.color.rgb * gDiretionalLight.intensity * specularPow * gMaterial.specularStrength;
+    specular *= (NdotL > 0.0f ? 1.0f : 0.0f);
+    
     return diffuse + specular;
 }
 
@@ -97,7 +99,8 @@ float3 CalcPointLight(VertexShaderOutput input, float4 textureColor, PointLight 
     float NdotL = dot(normalize(input.normal), lightDirPoint);
     float diffuseCos = saturate(NdotL);
     float3 diffuse = gMaterial.color.rgb * textureColor.rgb * light.color.rgb * diffuseCos * light.intensity * factor;
-    float3 specular = light.color.rgb * light.intensity * specularPowPoint * factor;
+    float3 specular = light.color.rgb * light.intensity * specularPowPoint * factor * gMaterial.specularStrength;
+    specular *= (NdotL > 0.0f ? 1.0f : 0.0f);
     
     return diffuse + specular;
 }
@@ -118,7 +121,8 @@ float3 CalcSpotLight(VertexShaderOutput input, float4 textureColor, SpotLight li
     float NdotL = dot(normalize(input.normal), normalize(-spotLightDirectionOnSurface));
     float diffuseCos = saturate(NdotL);
     float3 diffuse = gMaterial.color.rgb * textureColor.rgb * light.color.rgb * diffuseCos * light.intensity * attenuationFactor * falloffFactor;
-    float3 specular = light.color.rgb * light.intensity * specularPowSpot * attenuationFactor * falloffFactor;
+    float3 specular = light.color.rgb * light.intensity * specularPowSpot * attenuationFactor * falloffFactor * gMaterial.specularStrength;
+    specular *= (NdotL > 0.0f ? 1.0f : 0.0f);
     
     return diffuse + specular;
 }

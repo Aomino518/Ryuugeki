@@ -32,7 +32,8 @@ struct Material {
 	float padding0[3];
 	Matrix4x4 uvTransform;
 	float shininess;
-	float padding1[3];
+	float specularStrength;
+	float padding1[2];
 };
 
 struct TransformationMatrix {

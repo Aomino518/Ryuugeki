@@ -31,6 +31,10 @@ public:
 
 	// 描画
 	void Draw();
+	// ピッキングは現在描画されているEditorに登録済のモデルに設定
+	void ResetPickingState() { drawnForPicking_ = false; }
+	bool Pick(float u, float v, float& depth) const;
+	void SetPicked(bool enabled) { picked_ = enabled; }
 
 	// Json保存と読み込み
 	json SaveToJson() const ;
@@ -65,6 +69,8 @@ private:
 	void ModelResourcesSetting();
 
 	Transform transform_;
+	bool drawnForPicking_ = false;
+	bool picked_ = true;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource_;
 	TransformationMatrix* transformationMatrixData_ = nullptr;

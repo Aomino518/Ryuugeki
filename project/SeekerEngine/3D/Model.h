@@ -11,6 +11,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include "Picking.h"
 
 class Model
 {
@@ -18,6 +19,7 @@ public:
 	void Init(const std::string& directoryPath, const std::string& filename, const std::string& path);
 
 	void Draw();
+	bool IntersectRay(const Picking::LocalRay& ray, float& distance) const;
 
 	/// <summary>
 	/// mtlファイルの読み取り
@@ -46,6 +48,7 @@ private:
 	Material* materialData_ = nullptr;
 	// モデルデータ
 	ModelData modelData_ = {};
+	DirectX::BoundingBox boundingBox_{};
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource_;
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource_;

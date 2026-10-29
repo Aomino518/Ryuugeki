@@ -7,6 +7,7 @@
 #include <format>
 #include <cassert>
 #include <thread>
+#include <utility>
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 
@@ -150,6 +151,34 @@ void Graphics::BeginFrame()
 
 	cmdList_->RSSetViewports(1, &viewport_); // Viewportを設定
 	cmdList_->RSSetScissorRects(1, &scissorRect_); // Scissorを設定
+}
+
+void Graphics::CopySceneToBackBuffer(ID3D12Resource* source)
+{
+	assert(source);
+	assert(source->GetDesc().Width == width_ && source->GetDesc().Height == height_);
+	// UNORM and UNORM_SRGB belong to the same copy-compatible format family.
+	D3D12_RESOURCE_BARRIER transitions[2]{};
+	for (auto& transition : transitions) {
+		transition.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		transition.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	}
+	transitions[0].Transition.pResource = source;
+	transitions[0].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	transitions[0].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+	transitions[1].Transition.pResource = backBuffers_[backBufferIndex_].Get();
+	transitions[1].Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	transitions[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+	cmdList_->ResourceBarrier(2, transitions);
+	cmdList_->CopyResource(backBuffers_[backBufferIndex_].Get(), source);
+	for (auto& transition : transitions) {
+		std::swap(transition.Transition.StateBefore, transition.Transition.StateAfter);
+	}
+	cmdList_->ResourceBarrier(2, transitions);
+	auto dsv = DsvHandle();
+	cmdList_->OMSetRenderTargets(1, &rtvHandles_[backBufferIndex_], false, &dsv);
+	cmdList_->RSSetViewports(1, &viewport_);
+	cmdList_->RSSetScissorRects(1, &scissorRect_);
 }
 
 void Graphics::EndFrame()
@@ -332,6 +361,15 @@ ComPtr<ID3D12DescriptorHeap> Graphics::CreateDescriptorHeap(
 	return descriptorHeap;
 }
 
+void Graphics::BindBackBuffer()
+{
+	auto rtv = CurrentRTV();
+	auto dsv = DsvHandle();
+
+	cmdList_->OMSetRenderTargets(1, &rtv, false, &dsv);
+	cmdList_->RSSetViewports(1, &viewport_);
+	cmdList_->RSSetScissorRects(1, &scissorRect_);
+}
 
 static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
 	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();

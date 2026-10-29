@@ -15,6 +15,9 @@ public:
 
 	void BeginFrame();
 	void EndFrame();
+	// Source must match the back buffer dimensions and be in PIXEL_SHADER_RESOURCE state.
+	// Restores that state after copying, then binds the back buffer for UI rendering.
+	void CopySceneToBackBuffer(ID3D12Resource* source);
 
 	// 同期待ち
 	void WaitGPU();
@@ -44,6 +47,8 @@ public:
 	static Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(
 		const Microsoft::WRL::ComPtr<ID3D12Device>& device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
   
+	void BindBackBuffer();
+
 private:
 	Graphics() = default;
 	~Graphics() = default;

@@ -4,6 +4,7 @@
 #include "RootSignatureFactory.h"
 #include "InputLayout.h"
 #include "PsoBuilder.h"
+#include "RenderTexture.h"
 
 class Application;
 class Graphics;
@@ -22,8 +23,11 @@ public:
 	Graphics* GetGraphics() const;
 	DxcCompiler GetDxcCompiler() const;
 	RootSignatureFactory GetRootSig() const;
+	// Scene image excludes ImGui. SRV remains stable when the window is resized.
+	const RenderTexture& GetSceneTexture() const { return sceneTexture_; }
 
 private:
+	RenderTexture sceneTexture_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rs3D_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rs2D_;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rsParticle_;

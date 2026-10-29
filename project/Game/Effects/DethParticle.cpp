@@ -1,4 +1,9 @@
 #include "DethParticle.h"
+#include "CameraManager.h"
+#include "EmitterManager.h"
+#include "ParticleEmitter.h"
+#include "ParticleManager.h"
+#include "TextureManager.h"
 
 void DethParticle::Init()
 {

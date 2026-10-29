@@ -58,3 +58,12 @@ const char* SceneManager::GetCurrentSceneName() const
 	}
 	return scene_->GetSceneName();
 }
+
+void SceneManager::DrawImGui()
+{
+#ifdef USE_IMGUI
+	if (scene_) {
+		scene_->DrawImGui();
+	}
+#endif
+}

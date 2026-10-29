@@ -1,4 +1,13 @@
 #include "Reticle.h"
+#include "Camera.h"
+#include "CameraManager.h"
+#include "Color.h"
+#include "Editor.h"
+#include "Graphics.h"
+#include "Input.h"
+#include "MathFunc.h"
+#include "TextureManager.h"
+#include "imgui.h"
 #include "Utilities/InputUtility.h"
 #include <algorithm>
 #include "Enemy.h"

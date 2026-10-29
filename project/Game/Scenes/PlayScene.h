@@ -1,5 +1,8 @@
 #pragma once
-#include "SceneIncludes.h"
+#include <cstdint>
+#include <memory>
+#include "Entity3D.h"
+#include "Sprite.h"
 #include "BaseScene.h"
 #include "Effects/Fade.h"
 #include "Player.h"
@@ -23,10 +26,13 @@ public:
 
 	const char* GetSceneName() const override { return "GAMEPLAY"; }
 
+	void DrawImGui() override;
+
 private:
 	// シーンフェーズ
 	enum struct ScenePhase {
 		FADEIN,
+		CAMMOTION,
 		MAIN,
 		FADEOUT
 	};

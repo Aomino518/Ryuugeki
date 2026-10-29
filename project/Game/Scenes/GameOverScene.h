@@ -1,6 +1,9 @@
 #pragma once
 #include "BaseScene.h"
-#include "SeekerEngine.h"
+#include <cstdint>
+#include <memory>
+#include "Entity3D.h"
+#include "Sprite.h"
 #include "Effects/Fade.h"
 
 class GameOverScene : public BaseScene
@@ -18,6 +21,8 @@ class GameOverScene : public BaseScene
 	void Shutdown() override;
 
 	const char* GetSceneName() const override { return "GAMEOVER"; }
+
+	void DrawImGui() override;
 
 private:
 	// シーンフェーズ

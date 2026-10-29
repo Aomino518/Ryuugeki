@@ -33,6 +33,8 @@ public:
     static Editor* GetInstance();
 
 	void Draw();
+	void BeginSceneFrame();
+	void PickModel(float u, float v);
 
     // 登録
     void RegisterSprite(const std::string& name, Sprite* sprite);

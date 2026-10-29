@@ -1,5 +1,11 @@
 #pragma once
-#include "SceneIncludes.h"
+#include <cstdint>
+#include <memory>
+#include <vector>
+#include "Entity3D.h"
+#include "Sprite.h"
+#include "MathFunc.h"
+#include "Vector4.h"
 #include "Vector3.h"
 #include "EnemyBullet.h"
 #include "Effects/DethParticle.h"

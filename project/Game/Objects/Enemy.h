@@ -1,6 +1,7 @@
 #pragma once
-#include "SeekerEngine.h"
-#include "SceneIncludes.h"
+#include <memory>
+#include "Entity3D.h"
+#include "MathFunc.h"
 #include "EnemyBullet.h"
 
 enum class EnemyPattern {

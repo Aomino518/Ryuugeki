@@ -9,10 +9,29 @@ void Model::Init(const std::string& directoryPath, const std::string& filename, 
 {
 	cmdList_ = Graphics::GetInstance()->GetCmdList();
 	LoadObjFile(directoryPath, filename, path);
+
+	// 全頂点を囲む箱を作成
+	if (!modelData_.vertices.empty()) {
+		std::vector<DirectX::XMFLOAT3> points;
+		// 頂点数分のメモリを先に確保
+		points.reserve(modelData_.vertices.size());
+		// 位置情報をpointsに追加
+		for (const auto& vertex : modelData_.vertices) {
+			points.emplace_back(vertex.position.x, vertex.position.y, vertex.position.z);
+		}
+		// すべての頂点を囲む軸に平行な箱を作る
+		DirectX::BoundingBox::CreateFromPoints(boundingBox_, points.size(), points.data(), sizeof(points[0]));
+	}
+
 	CreateBufferResources();
 	MaterialInit();
 	modelData_.material.textureIndex = TextureManager::GetInstance()->Load(modelData_.material.textureFilePath);
 	textureSrvHandleGPU_ = TextureManager::GetInstance()->GetGPUHandle(modelData_.material.textureIndex);
+}
+
+bool Model::IntersectRay(const Picking::LocalRay& ray, float& distance) const
+{
+	return Picking::IntersectMesh(ray, boundingBox_, modelData_.vertices, modelData_.indices, distance);
 }
 
 void Model::Draw()

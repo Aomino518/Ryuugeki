@@ -1,8 +1,12 @@
 #pragma once
-#include "SceneIncludes.h"
+#include <array>
+#include <memory>
+#include "Entity3D.h"
+#include "Sprite.h"
+#include "Vector3.h"
 #include "BaseScene.h"
-#include "Particle2DEmitter.h"
 #include "Effects/Fade.h"
+#include <cstdint>
 
 class TitleScene : public BaseScene
 {
@@ -12,6 +16,7 @@ public:
 	void Update() override;
 
 	void Draw() override;
+	void DrawImGui() override;
 
 	void Shutdown() override;
 
@@ -34,17 +39,17 @@ private:
 	};
 
 	// メンバ関数
-	void UpdateImGui();
 	void UpdateCamera();
 	void LoadSound();
 	void LoadCamera();
 	void LoadTexture();
 	void LoadSprite();
 	void LoadModel();
+	void UpdateTerrain();
 
 	// メンバ変数
-	float camSpeed_ = 0.1f;
 	int frameCount_ = 0;
+	static constexpr int32_t kTerrainCount = 9;
 
 	// テクスチャ
 	uint32_t texTitleLogo_;
@@ -59,9 +64,15 @@ private:
 	// モデル
 	std::unique_ptr<Entity3D> modelPlayer_;
 	std::unique_ptr<Entity3D> modelSkydome_;
+	std::array<std::unique_ptr<Entity3D>, kTerrainCount> modelTerrains_;
 
 	Vector3 camPos_;
 	Vector3 camRot_;
+
+	// terrainSetting
+	float terrainScale_ = 3.0f;
+	float terrainLength_ = 40.0f * terrainScale_;
+	float terrainSpeed_ = 45.0f;
 
 	// シーンフェーズ
 	ScenePhase phase_ = ScenePhase::FADEIN;

@@ -2,6 +2,10 @@
 #include "ImGuiUtils.h"
 #include "Logger.h"
 #include <Psapi.h>
+#include <numbers>
+#include <algorithm>
+#include <cstdio>
+#include <system_error>
 #include "Application.h"
 #include "Graphics.h"
 #include "SoundManager.h"
@@ -152,59 +156,441 @@ void ImGuiManager::EndInspector()
 #endif
 }
 
+namespace
+{
+    const std::filesystem::path kCameraDirectory = "resources/json/cameras";
+
+    std::string CameraPathText(const std::filesystem::path& path)
+    {
+		// utf-8として取り出す
+        const auto utf8 = path.generic_u8string();
+        return std::string(utf8.begin(), utf8.end());
+    }
+
+    std::string LowerCameraFileName(std::string text)
+    {
+        for (char& c : text) {
+            if (c >= 'A' && c <= 'Z') {
+                c = static_cast<char>(c - 'A' + 'a');
+            }
+        }
+        return text;
+    }
+
+#ifdef USE_IMGUI
+    bool MakeCameraSavePath(const char* input, std::filesystem::path& result, std::string& error)
+    {
+        const std::string name(input);
+        if (name.empty() || name.back() == ' ' || name.back() == '.') {
+            error = "Enter a file name without a trailing space or dot.";
+            return false;
+        }
+
+        if (name.find_first_of("<>:\"/\\|?*") != std::string::npos ||
+            std::any_of(name.begin(), name.end(), [](unsigned char c) { return c < 32; })) {
+            error = "Use a file name only, without path separators or reserved characters.";
+            return false;
+        }
+
+        const std::string base = LowerCameraFileName(name.substr(0, name.find('.')));
+        if (base == "con" || base == "prn" || base == "aux" || base == "nul" ||
+            (base.size() == 4 && (base.substr(0, 3) == "com" || base.substr(0, 3) == "lpt") &&
+                base[3] >= '1' && base[3] <= '9')) {
+            error = "This file name is reserved by Windows.";
+            return false;
+        }
+
+        auto fileName = std::filesystem::path(std::u8string(name.begin(), name.end()));
+        const std::string extension = LowerCameraFileName(CameraPathText(fileName.extension()));
+        if (extension.empty()) {
+            fileName += ".json";
+        } else if (extension != ".json") {
+            error = "The file extension must be .json.";
+            return false;
+        }
+
+        result = kCameraDirectory / fileName;
+        return true;
+    }
+#endif
+}
+
+void ImGuiManager::RefreshCameraFiles()
+{
+    auto& ui = cameraFileUi_;
+    ui.files.clear();
+    ui.selectedFile = -1;
+    ui.message.clear();
+
+    std::error_code ec;
+    std::filesystem::create_directories(kCameraDirectory, ec);
+    if (ec) {
+        ui.message = "Could not open camera folder: " + ec.message();
+        return;
+    }
+
+    std::filesystem::directory_iterator it(kCameraDirectory, ec);
+    const std::filesystem::directory_iterator end;
+    while (!ec && it != end) {
+        const bool regular = it->is_regular_file(ec);
+        if (ec) {
+            break;
+        }
+        if (regular && LowerCameraFileName(CameraPathText(it->path().extension())) == ".json") {
+            ui.files.push_back(it->path());
+        }
+        it.increment(ec);
+    }
+    if (ec) {
+        ui.files.clear();
+        ui.message = "Could not list camera files: " + ec.message();
+        return;
+    }
+    std::sort(ui.files.begin(), ui.files.end());
+}
+
+bool ImGuiManager::SaveCameraToPath(CameraManager* cameraManager, const std::filesystem::path& path)
+{
+    std::string error;
+    if (!cameraManager->SaveCameraFile(path, error)) {
+        cameraFileUi_.message = "Save failed: " + error;
+        return false;
+    }
+    cameraFileUi_.currentPath = path;
+    cameraFileUi_.message = "Saved: " + CameraPathText(path.filename());
+    return true;
+}
+
+void ImGuiManager::DrawCameraFileControls(CameraManager* cameraManager)
+{
+#ifdef USE_IMGUI
+    auto& ui = cameraFileUi_;
+    const char* scene = SceneManager::GetInstance()->GetCurrentSceneName();
+    const std::string sceneName = scene ? scene : "";
+    // 別シーンの編集を、前のシーンの保存先へ上書きしない。
+    if (ui.sceneName != sceneName) {
+        ui = CameraFileUiState{};
+        ui.sceneName = sceneName;
+    }
+
+    const auto& cameras = cameraManager->GetCameras();
+    const bool playing = std::any_of(cameras.begin(), cameras.end(), [](const auto& info) {
+        return info.camera && info.camera->GetIsLerp();
+    });
+    const bool hasCamera = std::any_of(cameras.begin(), cameras.end(), [](const auto& info) {
+        return info.camera != nullptr;
+    });
+
+    ImGui::SeparatorText("Camera Files");
+    ImGui::TextWrapped("Current file: %s", ui.currentPath.empty() ? "(not saved)" : CameraPathText(ui.currentPath).c_str());
+    ImGui::TextDisabled("Stores all normal cameras, poses A/B and duration.");
+    ImGui::BeginDisabled(playing || !hasCamera);
+    bool openSaveAs = false;
+    if (ImGui::Button("Save##CameraFile")) {
+        if (ui.currentPath.empty()) {
+            openSaveAs = true;
+        } else {
+            SaveCameraToPath(cameraManager, ui.currentPath);
+        }
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Save As...##CameraFile")) {
+        openSaveAs = true;
+    }
+
+    ImGui::SameLine();
+    if (ImGui::Button("Load...##CameraFile")) {
+        RefreshCameraFiles();
+        ImGui::OpenPopup("Load Camera File");
+    }
+
+    ImGui::EndDisabled();
+    if (playing) {
+        ImGui::TextDisabled("Stop playback before saving or loading.");
+    }
+
+    if (!ui.message.empty()) {
+        ImGui::TextWrapped("%s", ui.message.c_str());
+    }
+
+    if (openSaveAs) {
+        ui.confirmOverwrite = false;
+        ui.pendingSavePath.clear();
+        ui.message.clear();
+        const std::string name = ui.currentPath.empty() ? "" : CameraPathText(ui.currentPath.filename());
+        std::snprintf(ui.fileName, sizeof(ui.fileName), "%s", name.c_str());
+        ImGui::OpenPopup("Save Camera File As");
+    }
+
+    ImGui::SetNextWindowSize(ImVec2(480.0f, 0.0f), ImGuiCond_Appearing);
+    if (ImGui::BeginPopupModal("Save Camera File As", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::TextUnformatted("Folder: resources/json/cameras/");
+        if (ui.confirmOverwrite) {
+            ImGui::TextWrapped("Replace existing file: %s?", CameraPathText(ui.pendingSavePath.filename()).c_str());
+            ImGui::BeginDisabled(playing || !hasCamera);
+            if (ImGui::Button("Overwrite")) {
+                if (SaveCameraToPath(cameraManager, ui.pendingSavePath)) {
+                    ui.confirmOverwrite = false;
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+            ImGui::EndDisabled();
+            ImGui::SameLine();
+            if (ImGui::Button("Back")) {
+                ui.confirmOverwrite = false;
+                ui.message.clear();
+            }
+        } else {
+            ImGui::InputText("File Name", ui.fileName, sizeof(ui.fileName));
+            ImGui::TextDisabled("Example: title_intro.json (.json is added if omitted)");
+            ImGui::BeginDisabled(playing || !hasCamera);
+            if (ImGui::Button("Save File")) {
+                ui.message.clear();
+                if (MakeCameraSavePath(ui.fileName, ui.pendingSavePath, ui.message)) {
+                    std::error_code ec;
+                    const bool exists = std::filesystem::exists(ui.pendingSavePath, ec);
+                    if (ec) {
+                        ui.message = "Could not check file: " + ec.message();
+                    } else if (exists) {
+                        ui.confirmOverwrite = true;
+                    } else if (SaveCameraToPath(cameraManager, ui.pendingSavePath)) {
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+            }
+            ImGui::EndDisabled();
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel")) {
+            ui.confirmOverwrite = false;
+            ImGui::CloseCurrentPopup();
+        }
+
+        if (!ui.message.empty()) {
+            ImGui::TextWrapped("%s", ui.message.c_str());
+        }
+        ImGui::EndPopup();
+    }
+
+    ImGui::SetNextWindowSize(ImVec2(480.0f, 0.0f), ImGuiCond_Appearing);
+    if (ImGui::BeginPopupModal("Load Camera File", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::TextUnformatted("Folder: resources/json/cameras/");
+        if (ImGui::Button("Refresh")) {
+            RefreshCameraFiles();
+        }
+
+        if (ImGui::BeginListBox("##CameraFiles", ImVec2(440.0f, 180.0f))) {
+            for (int i = 0; i < static_cast<int>(ui.files.size()); ++i) {
+                const std::string name = CameraPathText(ui.files[i].filename());
+                ImGui::PushID(i);
+                if (ImGui::Selectable(name.c_str(), ui.selectedFile == i)) {
+                    ui.selectedFile = i;
+                }
+                ImGui::PopID();
+            }
+            ImGui::EndListBox();
+        }
+
+        if (ui.files.empty()) {
+            ImGui::TextDisabled("No camera JSON files found.");
+        }
+
+        ImGui::TextWrapped("Loading replaces matching camera settings and stops playback.");
+        const bool selected = ui.selectedFile >= 0 && ui.selectedFile < static_cast<int>(ui.files.size());
+        ImGui::BeginDisabled(playing || !hasCamera || !selected);
+        if (ImGui::Button("Load File")) {
+            const auto path = ui.files[ui.selectedFile];
+            std::string error;
+            if (cameraManager->LoadCameraFile(path, error)) {
+                ui.currentPath = path;
+                ui.message = "Loaded: " + CameraPathText(path.filename());
+                ImGui::CloseCurrentPopup();
+            } else {
+                ui.message = "Load failed: " + error;
+            }
+        }
+
+        ImGui::EndDisabled();
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel")) {
+            ImGui::CloseCurrentPopup();
+        }
+
+        if (!ui.message.empty()) {
+            ImGui::TextWrapped("%s", ui.message.c_str());
+        }
+        ImGui::EndPopup();
+    }
+#endif
+}
+
 void ImGuiManager::DrawCameraWindow(CameraManager* cameraManager)
 {
 #ifdef USE_IMGUI
-	if (windowState_.showCamera) {
-		ImGui::Begin("Camera Manager");
-
-		if (ImGui::CollapsingHeader("Debug Camera", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			bool selected = cameraManager->GetIsDebug();
-			if (ImGui::Selectable("DebugCamera", selected)) {
-				cameraManager->SetActiveCamera(true);
-			}
-		}
-
-		if (ImGui::CollapsingHeader("Normal Cameras", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			auto& cameras = cameraManager->GetCameras();
-
-			for (int i = 0; i < cameras.size(); i++)
-			{
-				bool selected = (!cameraManager->GetIsDebug() && cameraManager->GetActtiveCamIndex() == i);
-				Vector3 pos = cameras[i].camera->GetTranslate();
-				Vector3 rot = cameras[i].camera->GetRotate();
-
-				if (ImGui::Selectable(cameras[i].name.c_str(), selected))
-				{
-					cameraManager->SetActiveCamera(false, i);
-				}
-
-				// 展開してパラメータ編集
-				if (selected)
-				{
-					ImGui::PushID(cameras[i].name.c_str());
-					ImGui::Indent();
-
-					bool changed = false;
-					changed |= ImGui::DragFloat3("Position", (float*)&pos, 0.01f);
-					changed |= ImGui::DragFloat3("Rotation", (float*)&rot, 0.01f);
-
-					if (changed) {
-						cameras[i].camera->SetTranslate(pos);
-						cameras[i].camera->SetRotate(rot);
-					}
-
-					ImGui::Unindent();
-					ImGui::PopID();
-				}
-			}
-		}
-
+	if (!windowState_.showCamera || !cameraManager) {
+		return;
+	}
+	if (!ImGui::Begin("Camera Manager", &windowState_.showCamera)) {
 		ImGui::End();
+		return;
 	}
 
+	DrawCameraFileControls(cameraManager);
+
+	const auto& cameras = cameraManager->GetCameras();
+	Camera* camera = cameraManager->GetActiveCamera();
+	const bool playing = camera && camera->GetIsLerp();
+	const int activeIndex = cameraManager->GetActtiveCamIndex();
+	const char* cameraName = "No camera";
+	if (cameraManager->GetIsDebug()) {
+		cameraName = "Debug Camera";
+	} else if (activeIndex >= 0 && activeIndex < static_cast<int>(cameras.size())) {
+		cameraName = cameras[activeIndex].name.c_str();
+	}
+
+	ImGui::SeparatorText("Camera");
+	ImGui::BeginDisabled(playing);
+	if (ImGui::BeginCombo("Active Camera", cameraName)) {
+		if (ImGui::Selectable("Debug Camera", cameraManager->GetIsDebug())) {
+			cameraManager->SetActiveCamera(true);
+		}
+		for (int i = 0; i < static_cast<int>(cameras.size()); ++i) {
+			ImGui::PushID(i);
+			if (ImGui::Selectable(cameras[i].name.c_str(),
+				!cameraManager->GetIsDebug() && cameraManager->GetActtiveCamIndex() == i)) {
+				cameraManager->SetActiveCamera(false, i);
+			}
+			ImGui::PopID();
+		}
+		ImGui::EndCombo();
+	}
+	ImGui::EndDisabled();
+
+	camera = cameraManager->GetActiveCamera();
+	if (!camera) {
+		ImGui::TextWrapped("Select a normal camera to edit poses and preview a transition.");
+		ImGui::End();
+		return;
+	}
+
+	const bool isPlaying = camera->GetIsLerp();
+	bool manualEdit = cameraManager->GetIsManualEdit();
+	ImGui::BeginDisabled(isPlaying);
+	if (ImGui::Checkbox("Manual Edit", &manualEdit)) {
+		cameraManager->SetIsManualEdit(manualEdit);
+	}
+	ImGui::EndDisabled();
+	ImGui::Text("Status: %s", isPlaying ? "Playing A -> B" : (manualEdit ? "Manual editing" : "Scene control"));
+
+	// 入力用の配列にコピーし、変更された構図だけを書き戻す。
+	const auto editPose = [](Vector3& position, Vector3& rotation) {
+		constexpr float radToDeg = 180.0f / std::numbers::pi_v<float>;
+		constexpr float degToRad = std::numbers::pi_v<float> / 180.0f;
+		float xyz[3] = { position.x, position.y, position.z };
+		float degrees[3] = { rotation.x * radToDeg, rotation.y * radToDeg, rotation.z * radToDeg };
+		const bool positionChanged = ImGui::DragFloat3("Position", xyz, 0.1f);
+		const bool rotationChanged = ImGui::DragFloat3("Rotation (deg)", degrees, 0.1f);
+		if (positionChanged) {
+			position = { xyz[0], xyz[1], xyz[2] };
+		}
+
+		if (rotationChanged) {
+			rotation = { degrees[0] * degToRad, degrees[1] * degToRad, degrees[2] * degToRad };
+		}
+
+		return positionChanged || rotationChanged;
+	};
+
+	if (ImGui::CollapsingHeader("Current Pose", ImGuiTreeNodeFlags_DefaultOpen)) {
+		ImGui::PushID("Current");
+		ImGui::BeginDisabled(isPlaying || !manualEdit);
+		Vector3 position = camera->GetTranslate();
+		Vector3 rotation = camera->GetRotate();
+		if (editPose(position, rotation)) {
+			camera->SetTranslate(position);
+			camera->SetRotate(rotation);
+		}
+
+		ImGui::EndDisabled();
+		if (!manualEdit && !isPlaying) {
+			ImGui::TextDisabled("Enable Manual Edit to adjust the current pose.");
+		}
+
+		ImGui::PopID();
+	}
+
+	ImGui::BeginDisabled(isPlaying);
+	if (ImGui::CollapsingHeader("A - Start Pose", ImGuiTreeNodeFlags_DefaultOpen)) {
+		ImGui::PushID("Start");
+		if (ImGui::Button("Capture Current")) {
+			camera->SetStartPos(camera->GetTranslate());
+			camera->SetStartRot(camera->GetRotate());
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("Go to A")) {
+			cameraManager->SetIsManualEdit(true);
+			camera->SetTranslate(camera->GetStartPos());
+			camera->SetRotate(camera->GetStartRot());
+		}
+
+		Vector3 position = camera->GetStartPos();
+		Vector3 rotation = camera->GetStartRot();
+		if (editPose(position, rotation)) {
+			camera->SetStartPos(position);
+			camera->SetStartRot(rotation);
+		}
+		ImGui::PopID();
+	}
+
+	if (ImGui::CollapsingHeader("B - Target Pose", ImGuiTreeNodeFlags_DefaultOpen)) {
+		ImGui::PushID("Target");
+		if (ImGui::Button("Capture Current")) {
+			camera->SetTergetPos(camera->GetTranslate());
+			camera->SetTergetRot(camera->GetRotate());
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("Go to B")) {
+			cameraManager->SetIsManualEdit(true);
+			camera->SetTranslate(camera->GetTergetPos());
+			camera->SetRotate(camera->GetTergetRot());
+		}
+
+		Vector3 position = camera->GetTergetPos();
+		Vector3 rotation = camera->GetTergetRot();
+		if (editPose(position, rotation)) {
+			camera->SetTergetPos(position);
+			camera->SetTergetRot(rotation);
+		}
+
+		ImGui::PopID();
+	}
+
+	ImGui::SeparatorText("Playback");
+	float duration = camera->GetDuration();
+	if (ImGui::DragFloat("Duration (sec)", &duration, 0.1f, 0.01f, 120.0f,
+		"%.2f", ImGuiSliderFlags_AlwaysClamp)) {
+		camera->SetDuration(duration);
+	}
+	ImGui::TextDisabled("Ease in/out. Play restarts from A.");
+	ImGui::TextDisabled("Stop holds the current pose.");
+	if (ImGui::Button("Play A -> B")) {
+		cameraManager->SetIsManualEdit(true);
+		camera->StartLerp();
+	}
+	ImGui::EndDisabled();
+	ImGui::SameLine();
+	ImGui::BeginDisabled(!isPlaying);
+	if (ImGui::Button("Stop")) {
+		camera->SetIsLerp(false);
+		cameraManager->SetIsManualEdit(true);
+	}
+	ImGui::EndDisabled();
+
+	ImGui::End();
 #endif
 }
 
@@ -289,6 +675,49 @@ void ImGuiManager::DrawLoggerWindow()
 		ImGui::EndChild();
 		ImGui::End();
 	}
+#endif
+}
+
+void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uint32_t textureHeight)
+{
+#ifdef USE_IMGUI
+	if (ImGui::Begin("SceneWindow")) {
+		const ImVec2 available = ImGui::GetContentRegionAvail();
+
+		if (available.x > 0.0f && available.y > 0.0f &&
+			textureWidth > 0 && textureHeight > 0) {
+			const float scale = (std::min)(
+				available.x / static_cast<float>(textureWidth),
+				available.y / static_cast<float>(textureHeight));
+
+			const ImVec2 imageSize(
+				textureWidth * scale,
+				textureHeight * scale
+			);
+
+			// 画像を中央へ配置
+			const ImVec2 cursor = ImGui::GetCursorPos();
+			ImGui::SetCursorPos(ImVec2(
+				cursor.x + (available.x - imageSize.x) * 0.5f,
+				cursor.y + (available.y - imageSize.y) * 0.5f
+			));
+
+			const auto handle = SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex);
+
+			ImGui::Image(reinterpret_cast<ImTextureID>(handle.ptr), imageSize);
+		
+			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
+				!ImGui::IsMouseDown(ImGuiMouseButton_Right) && !ImGui::GetIO().KeyAlt) {
+				const ImVec2 mouse = ImGui::GetMousePos();
+				const ImVec2 origin = ImGui::GetItemRectMin();
+				Editor::GetInstance()->PickModel(
+					(mouse.x - origin.x) / imageSize.x,
+					(mouse.y - origin.y) / imageSize.y);
+			}
+		}
+	}
+
+	ImGui::End();
 #endif
 }
 
@@ -448,8 +877,8 @@ void ImGuiManager::ApplyStyle()
 void ImGuiManager::DrawDockSpace()
 {
 #ifdef USE_IMGUI
-	ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_PassthruCentralNode;
-	ImGuiWindowFlags windowFlags = 
+	ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+	ImGuiWindowFlags windowFlags =
 		ImGuiWindowFlags_NoDocking |
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoCollapse |

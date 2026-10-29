@@ -588,4 +588,11 @@
       <UniqueIdentifier>{918A52B8-2F24-4F89-9B23-350AC34797C1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SeekerEngine\2D\RenderTexture.cpp" />
+    <ClInclude Include="SeekerEngine\2D\RenderTexture.h" />
+	<ClInclude Include="SeekerEngine\3D\Picking.h">
+	  <Filter>Engine\3D</Filter>
+	</ClInclude>
+  </ItemGroup>
 </Project>

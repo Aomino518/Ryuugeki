@@ -11,8 +11,8 @@
 void Player::Init(const Vector3& position) {
 	modelPlayer_ = std::make_unique<Entity3D>();
 	modelPlayer_->Init();
-	modelPlayer_->SetModel("player");
-	Editor::GetInstance()->RegisterModel("player", modelPlayer_.get());
+	modelPlayer_->SetModel("AirShip");
+	Editor::GetInstance()->RegisterModel("AirShip", modelPlayer_.get());
 	rot_ = modelPlayer_->GetRotate();
 
 	// 武器の初期化

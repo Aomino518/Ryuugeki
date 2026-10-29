@@ -1,4 +1,9 @@
 #include "Enemy.h"
+#include <cmath>
+#include "CameraManager.h"
+#include "Color.h"
+#include "DebugDraw.h"
+#include "GameTime.h"
 #include <numbers>
 #include "Vector3.h"
 

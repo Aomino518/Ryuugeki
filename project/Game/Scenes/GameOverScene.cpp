@@ -49,6 +49,7 @@ void GameOverScene::Init()
 	modelSkydome_ = std::make_unique<Entity3D>();
 	modelSkydome_->Init();
 	modelSkydome_->SetModel("skydome");
+	modelSkydome_->SetPicked(false);
 	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 	
 	//===========================
@@ -103,15 +104,6 @@ void GameOverScene::Update()
 	sprUiSpaceBackTitle_->UpdateColorBlink(Color::WHITE, Color::YELLOW);
 	sprUiSpaceBackTitle_->Update();
 	fade_.Update();
-
-    ImGuiManager::GetInstance()->BeginFrame();
-    ImGuiManager::GetInstance()->DrawMainMenuBar();
-    ImGuiManager::GetInstance()->DrawCameraWindow(camMgr);
-    ImGuiManager::GetInstance()->DrawEditor();
-    ImGuiManager::GetInstance()->Stats();
-    ImGuiManager::GetInstance()->DrawSoundWindow();
-    ImGuiManager::GetInstance()->DrawLoggerWindow();
-    ImGuiManager::GetInstance()->EndFrame();
 }
 
 void GameOverScene::Draw()
@@ -124,8 +116,6 @@ void GameOverScene::Draw()
 	sprGameOver_->Draw();
 	sprUiSpaceBackTitle_->Draw();
 	fade_.Draw();
-
-    ImGuiManager::GetInstance()->Draw();
 }
 
 void GameOverScene::Shutdown()
@@ -136,4 +126,11 @@ void GameOverScene::Shutdown()
 	soundMgr->Unload("se_selected");
 	soundMgr->Unload("se_game_over");
     Editor::GetInstance()->Clear();
+}
+
+void GameOverScene::DrawImGui()
+{
+#ifdef USE_IMGUI
+
+#endif
 }

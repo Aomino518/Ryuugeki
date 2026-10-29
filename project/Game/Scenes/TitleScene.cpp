@@ -12,11 +12,7 @@ void TitleScene::Init()
 	fade_.Init();
 	fade_.Start(Fade::Status::FadeIn, 1.0f);
 	ImGuiManager::GetInstance()->LoadScenesJson();
-	auto* skyModel = ModelManager::GetInstance()->FindModel("skydome");
-
-	if (skyModel) {
-		skyModel->SetIsLighting(false);
-	}
+	modelSkydome_->SetIsLighting(false);
 
 	auto camMgr = CameraManager::GetInstance();
 	std::string error;

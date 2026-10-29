@@ -28,13 +28,6 @@ void PlayScene::Init()
 	startCamera->Update();
 	Entity3DCommon::GetInstance()->SetDefaultCamera(startCamera);
 
-	// SkyDomeだけライティングオフ
-	auto* skyModel = ModelManager::GetInstance()->FindModel("skydome");
-
-	if (skyModel) {
-		skyModel->SetIsLighting(false);
-	}
-
 	phase_ = ScenePhase::FADEIN;
 	fade_.Start(Fade::Status::FadeIn, 1.0f);
 
@@ -274,12 +267,14 @@ void PlayScene::LoadModel()
 	modelSkydome_->Init();
 	modelSkydome_->SetModel("skydome");
 	modelSkydome_->SetPicked(false);
+	modelSkydome_->SetIsLighting(false);
 	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 
 	modelTerrains_ = std::make_unique<Entity3D>();
 	modelTerrains_->Init();
 	modelTerrains_->SetModel("greenTerrain");
 	modelTerrains_->SetTranslate(Vector3{ 0.0f, -20.0f, 900.0f });
+	Editor::GetInstance()->RegisterModel("greenTerrain", modelTerrains_.get());
 }
 
 void PlayScene::InitClass()

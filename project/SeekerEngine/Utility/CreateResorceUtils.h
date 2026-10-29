@@ -26,7 +26,7 @@ struct VertexData {
 	Vector3 normal;
 };
 
-struct Material {
+struct MaterialConstants {
 	Vector4 color;
 	uint32_t enableLighting;
 	float padding0[3];

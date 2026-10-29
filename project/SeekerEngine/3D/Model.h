@@ -21,33 +21,14 @@ public:
 	void Draw();
 	bool IntersectRay(const Picking::LocalRay& ray, float& distance) const;
 
-	/// <summary>
-	/// mtlファイルの読み取り
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns>マテリアルデータ</returns>
-	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
 	void LoadObjFile(const std::string& directoryPath, const std::string& filename, const std::string& extension);
 
-	Vector4& GetMaterial() const { return materialData_->color; }
-	bool GetIsLighting() const { return materialData_->enableLighting; }
-	float GetSpecularStrength() const { return materialData_->specularStrength; }
 	ModelData GetRootNode() const { return modelData_; }
-
-	void SetMaterial(const Vector4& material) { this->materialData_->color = material; }
-	void SetIsLighting(const bool isLighting) { this->materialData_->enableLighting = isLighting; }
-	void SetSpecularStrength(float strength) { this->materialData_->specularStrength = std::clamp(strength, 0.0f, 1.0f); }
 
 private:
 	void CreateBufferResources();
-	void MaterialInit();
 	Node ReadNode(aiNode* node);
 
-	// マテリアルデータ
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;
-	Material* materialData_ = nullptr;
 	// モデルデータ
 	ModelData modelData_ = {};
 	DirectX::BoundingBox boundingBox_{};

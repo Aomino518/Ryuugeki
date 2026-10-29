@@ -1,13 +1,13 @@
 #include "Object2D.hlsli"
 
-struct Material
+struct MaterialConstants
 {
     float4 color;
     int enableLightig;
     float4x4 uvTransform;
 };
 
-ConstantBuffer<Material> gMaterial : register(b0);
+ConstantBuffer<MaterialConstants> gMaterial : register(b0);
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 

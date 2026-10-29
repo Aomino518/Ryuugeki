@@ -16,6 +16,8 @@
 #include "LightManager.h"
 #include <nlohmann/json.hpp>
 #include "JsonTransform.h"
+#include "Material.h"
+#include <memory>
 
 class Entity3DCommon;
 class TextureManager;
@@ -45,8 +47,9 @@ public:
 	const Vector3& GetScale() const { return transform_.scale; }
 	const Vector3& GetRotate() const { return transform_.rotate; }
 	const Vector3& GetTranslate() const { return transform_.translate; }
-	const Vector4& GetMaterial() const { return model_->GetMaterial(); }
-	const bool GetIsLighting() const { return model_->GetIsLighting(); }
+	const Vector4& GetMaterial() const { return material_->GetMaterial(); }
+	const float GetSpecularStrength() const { return material_->GetSpecularStrength(); }
+	const bool GetIsLighting() const { return material_->GetIsLighting(); }
 	const BlendMode& GetBlendMode() { return mode_; }
 	const Vector3& GetLightDirection() const { return directionalLightData_->direction; }
 	const Vector3& GetPointLightPos() const { return pointLightData_->position; }
@@ -57,7 +60,9 @@ public:
 	void SetRotate(const Vector3& rotate) { this->transform_.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
 	void SetCamera(Camera* camera) { this->camera_ = camera; }
-	void SetMaterial(const Vector4& material) { model_->SetMaterial(material); }
+	void SetMaterial(const Vector4& material) { material_->SetMaterial(material); }
+	void SetSpecularStrength(float strength) { material_->SetSpecularStrength(strength); }
+	void SetIsLighting(bool isLighting) { material_->SetIsLighting(isLighting); }
 	void SetBlendMode(BlendMode mode);
 	void SetLightDirection(const Vector3& pos) { this->directionalLightData_->direction = pos; }
 	void SetPointLightPos(const Vector3& pos) { this->pointLightData_->position = pos; }
@@ -90,8 +95,8 @@ private:
 	Camera* camera_ = nullptr;
 	DebugCamera* debugCamera_ = nullptr;
 	CameraManager* cameraManager_ = nullptr;
+	std::unique_ptr<Material> material_;
 
 	// ブレンドモード取得
 	BlendMode mode_ = kBlendModeNone;
 };
-

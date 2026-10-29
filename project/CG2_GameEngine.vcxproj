@@ -164,6 +164,7 @@
     <ClCompile Include="Game\UI\Reticle.cpp" />
     <ClCompile Include="Game\Effects\DethParticle.cpp" />
     <ClCompile Include="Game\UI\HpBar.cpp" />
+    <ClCompile Include="SeekerEngine\3D\Material.cpp" />
     <ClCompile Include="SeekerEngine\3D\AccelerationField.cpp" />
     <ClCompile Include="SeekerEngine\2D\AccelerationField2D.cpp" />
     <ClCompile Include="SeekerEngine\Editor\Editor.cpp" />
@@ -342,6 +343,7 @@
     <ClInclude Include="Game\UI\Reticle.h" />
     <ClInclude Include="Game\Effects\DethParticle.h" />
     <ClInclude Include="Game\UI\HpBar.h" />
+    <ClInclude Include="SeekerEngine\3D\Material.h" />
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h" />
     <ClInclude Include="SeekerEngine\Editor\Editor.h" />
     <ClInclude Include="SeekerEngine\Effect\Emitter2DManager.h" />
@@ -459,6 +461,6 @@
   <ItemGroup>
     <ClCompile Include="SeekerEngine\2D\RenderTexture.cpp" />
     <ClInclude Include="SeekerEngine\2D\RenderTexture.h" />
-	<ClInclude Include="SeekerEngine\3D\Picking.h" />
+    <ClInclude Include="SeekerEngine\3D\Picking.h" />
   </ItemGroup>
 </Project>

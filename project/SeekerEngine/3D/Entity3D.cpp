@@ -13,6 +13,8 @@ void Entity3D::Init()
 	cmdList_ = Entity3DCommon::GetInstance()->GetCmdList();
 	mode_ = Entity3DCommon::GetInstance()->GetBlendMode();
 	ModelResourcesSetting();
+	material_ = std::make_unique<Material>();
+	material_->Init();
 
 	transform_ = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
 }
@@ -72,6 +74,7 @@ void Entity3D::Draw()
 	cmdList_->SetGraphicsRootConstantBufferView(6, LightManager::GetInstance()->GetSpotLightGroupResource()->GetGPUVirtualAddress());
 
 	if (model_) {
+		material_->Draw(LightManager::GetInstance()->GetIsLighting());
 		model_->Draw();
 		drawnForPicking_ = true;
 	}
@@ -104,7 +107,7 @@ json Entity3D::SaveToJson() const
 	return json{
 	   {"transform", TransformToJson(transform_)},
 	   {"blendMode", static_cast<int>(mode_)},
-	   {"material", ToJson(model_->GetMaterial())}
+	   {"material", ToJson(material_->GetMaterial())}
 	};
 }
 
@@ -162,11 +165,14 @@ void Entity3D::ModelResourcesSetting()
 
 void Entity3D::DrawImGui() {
 #ifdef USE_IMGUI
-	Vector4 material = model_->GetMaterial();
+	Vector4 material = material_->GetMaterial();
+	float specularStrength = material_->GetSpecularStrength();
 	ImGui::DragFloat3("Position", reinterpret_cast<float*>(&transform_.translate), 0.01f);
 	ImGui::DragFloat3("Rotation", reinterpret_cast<float*>(&transform_.rotate), 0.01f);
 	ImGui::DragFloat3("Scale", reinterpret_cast<float*>(&transform_.scale), 0.01f, 0.0f);
 	ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&material));
-	model_->SetMaterial(material);
+	ImGui::DragFloat("Specular", reinterpret_cast<float*>(&specularStrength), 0.01f, 0.0f, 1.0f);
+	material_->SetMaterial(material);
+	material_->SetSpecularStrength(specularStrength);
 #endif
 }

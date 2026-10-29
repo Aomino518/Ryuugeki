@@ -6,6 +6,7 @@
 #include "ParticleManager.h"
 #include "Particle2DManager.h"
 #include "ModelManager.h"
+#include "LightManager.h"
 #include "Logger.h"
 #include "ImGuiManager.h"
 #include "WorldFieldManager.h"
@@ -87,7 +88,7 @@ void Editor::SaveSceneJson(const std::string& path) const
 	root["models"] = json::object();
 	root["particles2D"] = json::object();
 	root["particles"] = json::object();
-	root["isLighting"] = ModelManager::GetInstance()->GetIsModelLighting();
+	root["isLighting"] = LightManager::GetInstance()->GetIsLighting();
 	root["worldField2D"] = json::object();
 	root["worldField"] = json::object();
 	root["cameras"] = json::array();
@@ -175,7 +176,7 @@ void Editor::LoadSceneJson(const std::string& path)
 	}
 	
 	if (root.contains("isLighting") && root["isLighting"].is_boolean()) {
-		ModelManager::GetInstance()->SetIsLighting(root["isLighting"].get<bool>());
+		LightManager::GetInstance()->SetIsLighting(root["isLighting"].get<bool>());
 	}
 
 	if (root.contains("sprites")) {
@@ -271,12 +272,12 @@ void Editor::DrawHierarchy()
 #ifdef USE_IMGUI
 	ImGui::Begin("Hierarchy");
 	// ライティングのオンオフ
-	bool isLighting = ModelManager::GetInstance()->GetIsModelLighting();
+	bool isLighting = LightManager::GetInstance()->GetIsLighting();
 	bool isChangedLighting = false;
 
 	isChangedLighting |= ImGui::Checkbox("isLighting", &isLighting);
 	if (isChangedLighting) {
-		ModelManager::GetInstance()->SetIsLighting(isLighting);
+		LightManager::GetInstance()->SetIsLighting(isLighting);
 	}
 
 	// =========================

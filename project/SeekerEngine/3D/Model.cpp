@@ -24,7 +24,6 @@ void Model::Init(const std::string& directoryPath, const std::string& filename, 
 	}
 
 	CreateBufferResources();
-	MaterialInit();
 	modelData_.material.textureIndex = TextureManager::GetInstance()->Load(modelData_.material.textureFilePath);
 	textureSrvHandleGPU_ = TextureManager::GetInstance()->GetGPUHandle(modelData_.material.textureIndex);
 }
@@ -38,39 +37,11 @@ void Model::Draw()
 {
 	cmdList_->IASetVertexBuffers(0, 1, &vertexBufferView_); // VBVを設定
 	cmdList_->IASetIndexBuffer(&indexBufferView_);
-	// 形状を設定。PSOに設定しているものとはまた別。同じものを設定する。
-	cmdList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	// SRVのDescriptorTableの先頭を設定。2はrootParameter[2]である。
 	cmdList_->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
 	// 描画 (DrawCall)。
 	cmdList_->DrawIndexedInstanced(UINT(modelData_.indices.size()), 1, 0, 0, 0);
 	Graphics::GetInstance()->AddDrawCallCount();
-}
-
-MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename)
-{
-	// 必要な変数宣言とファイルを開く
-	MaterialData materialData; // 構築するMaterialData
-	std::string line; // ファイルから読んだ1行を格納するもの
-	std::ifstream file(directoryPath + "/" + filename); // ファイルを開く
-	assert(file.is_open()); // 開けなかったら止める
-
-	// ファイルを読み、MaterialDataを構築
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-
-		// identifierに応じた処理
-		if (identifier == "map_Kd") {
-			std::string textureFilename;
-			s >> textureFilename;
-			// 連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilename;
-		}
-	}
-
-	return materialData;
 }
 
 void Model::LoadObjFile(const std::string& directoryPath, const std::string& filename, const std::string& extension)
@@ -166,20 +137,6 @@ void Model::CreateBufferResources()
 	indexResource_->Unmap(0, nullptr);
 	indexData_ = nullptr;
 	Logger::Write("モデルのindexDataに書き込み完了");
-}
-
-void Model::MaterialInit()
-{
-	// マテリアル用のリソースを作る。今回はcolor1つ分のサイズを用意する
-	materialResource_ = CreateBufferResource(Graphics::GetDevice(), sizeof(Material));
-	// 書き込むためのアドレスを取得
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	materialData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData_->uvTransform = MakeIdentity4x4();
-	materialData_->enableLighting = true;
-	materialData_->shininess = 32.0f;
-	materialData_->specularStrength = 0.05f;
-	Logger::Write("MaterialResourceの作成完了");
 }
 
 Node Model::ReadNode(aiNode* node)

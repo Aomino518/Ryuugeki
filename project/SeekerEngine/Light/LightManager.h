@@ -11,6 +11,8 @@ public:
 	void Init();
 	void Update();
 	void Shutdown();
+	bool GetIsLighting() const { return isLighting_; }
+	void SetIsLighting(bool enabled) { isLighting_ = enabled; }
 
 	// ライト作成関数
 	void CreatePointLight(const std::string& name);
@@ -47,6 +49,8 @@ public:
 	void DrawSpotLightImGui(const std::string& name);
 
 private:
+	// Master switch; individual materials keep their own lighting settings.
+	bool isLighting_ = true;
 	LightManager() = default;
 	~LightManager() = default;
 	LightManager(const LightManager&) = delete;

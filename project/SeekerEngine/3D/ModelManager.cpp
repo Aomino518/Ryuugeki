@@ -42,15 +42,6 @@ Model* ModelManager::FindModel(const std::string& filePath)
 	return nullptr;
 }
 
-void ModelManager::SetIsLighting(bool isLighting) {
-	isModelLighting_ = isLighting;
-	for (auto& model : models_) {
-		if (model.second) {
-			model.second->SetIsLighting(isModelLighting_);
-		}
-	}
-}
-
 std::vector<std::string> ModelManager::Split(std::string str, char del)
 {
 	std::vector<std::string> result;

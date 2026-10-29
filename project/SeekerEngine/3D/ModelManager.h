@@ -31,18 +31,11 @@ public:
 	/// <returns>モデル</returns>
 	Model* FindModel(const std::string& filePath);
 
-	// Getter
-	bool GetIsModelLighting() const { return this->isModelLighting_; }
-
-	// Setter
-	void SetIsLighting(bool isLighting);
-
 private:
 	ModelManager() = default;
 	~ModelManager() = default;
 	ModelManager(const ModelManager&) = delete;
 	ModelManager& operator=(const ModelManager&) = delete;
-	bool isModelLighting_ = true;
 
 	/// <summary>
 	/// 文字列を分離する関数

@@ -3,7 +3,7 @@
 static const int kMaxPointLights = 512;
 static const int kMaxSpotLights = 512;
 
-struct Material
+struct MaterialConstants
 {
     float4 color;
     int enableLightig;
@@ -61,7 +61,7 @@ struct Camera
     float3 worldPosition;
 };
 
-ConstantBuffer<Material> gMaterial : register(b0);
+ConstantBuffer<MaterialConstants> gMaterial : register(b0);
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 ConstantBuffer<DirectionalLight> gDiretionalLight : register(b1);

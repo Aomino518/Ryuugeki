@@ -108,7 +108,7 @@ private:
     D3D12_INDEX_BUFFER_VIEW  ibView_{};
 
     Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
-    Material* materialData = nullptr;
+    MaterialConstants* materialData = nullptr;
 
     uint32_t width_;
     uint32_t height_;

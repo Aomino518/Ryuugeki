@@ -102,7 +102,7 @@ private:
 	D3D12_INDEX_BUFFER_VIEW indexBufferView;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
-	Material* materialData = nullptr;
+	MaterialConstants* materialData = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource;
 	TransformationMatrix* transformationMatrixData = nullptr;

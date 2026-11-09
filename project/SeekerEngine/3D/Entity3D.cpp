@@ -104,11 +104,13 @@ bool Entity3D::Pick(float u, float v, float& depth) const
 
 json Entity3D::SaveToJson() const
 {
-	return json{
-	   {"transform", TransformToJson(transform_)},
-	   {"blendMode", static_cast<int>(mode_)},
-	   {"material", ToJson(material_->GetMaterial())}
-	};
+	json root;
+	root["transform"] = TransformToJson(transform_);
+	root["blendMode"] = static_cast<int>(mode_);
+	root["material"]["color"] = ToJson(material_->GetMaterial());
+	root["material"]["specularStrength"] = material_->GetSpecularStrength();
+	root["material"]["enableLighting"] = material_->GetIsLighting();
+	return root;
 }
 
 void Entity3D::LoadFromJson(const json& j)

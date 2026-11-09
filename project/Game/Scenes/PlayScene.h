@@ -51,8 +51,7 @@ private:
 	// メンバ変数
 	bool isClear = false;
 	bool isGameOver = false;
-	static constexpr int kTerrainCount = 4;
-
+	
 	// テクスチャ
 	uint32_t texReticle_;
 	uint32_t texUiPlayOperate_;
@@ -64,7 +63,7 @@ private:
 
 	// モデル
 	std::unique_ptr<Entity3D> modelSkydome_;
-	std::array<std::unique_ptr<Entity3D>, kTerrainCount> modelTerrains_;
+	std::unique_ptr<Entity3D> modelTerrains_;
 
 	// シーンフェーズ
 	ScenePhase phase_ = ScenePhase::FADEIN;
@@ -76,14 +75,12 @@ private:
 	Reticle reticle_;
 
 	bool isController_ = false;
-	float terrainScale_ = 3.0f;
-	float terrainLength_ = 40.0f * terrainScale_;
-	float terrainSpeed_ = 45.0f;
 
 	float cameraX_ = 0.0f;
 	float cameraY_ = 0.0f;
 	float cameraDeadZone_ = 2.0f;
 	float cameraLimit_ = 2.0f;
+	static constexpr float cameraDistance_ = 50.0f;
 
 #ifdef _DEBUG
 	// ゲーム一時停止

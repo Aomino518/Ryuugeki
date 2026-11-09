@@ -12,7 +12,6 @@ void RenderTexture::Create(uint32_t width, uint32_t height)
     assert(!resource_);
 
     if (!descriptorAllocated_) {
-        // Own the RTV heap so shutdown/recreation does not consume shared RTV slots.
         rtvHeap_ = Graphics::CreateDescriptorHeap(Graphics::GetDevice(),
             D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1, false);
         rtvHandle_ = rtvHeap_->GetCPUDescriptorHandleForHeapStart();
@@ -35,7 +34,6 @@ void RenderTexture::Resize(uint32_t width, uint32_t height)
 
     assert(descriptorAllocated_);
 
-    // Call before recording commands for the new frame.
     Graphics::GetInstance()->WaitGPU();
     resource_.Reset();
 

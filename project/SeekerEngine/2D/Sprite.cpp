@@ -62,7 +62,7 @@ void Sprite::Init() {
 	Logger::Write("indexDataに割り当て完了");
 
 	// マテリアルリソースを作る
-	materialResource = CreateBufferResource(Graphics::GetDevice(), sizeof(Material));
+	materialResource = CreateBufferResource(Graphics::GetDevice(), sizeof(MaterialConstants));
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// SpriteはLightingしないのでfalseを設定する
 	materialData->color = Vector4(1, 1, 1, 1);

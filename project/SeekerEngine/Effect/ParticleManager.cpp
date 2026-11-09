@@ -18,7 +18,7 @@ void ParticleManager::Init(DxcCompiler& dxcCompiler, ID3D12RootSignature* rootSi
 	randomEngine_ = std::mt19937(seed());
 
 	// マテリアルリソースを作る
-	materialResource = CreateBufferResource(Graphics::GetDevice(), sizeof(Material));
+	materialResource = CreateBufferResource(Graphics::GetDevice(), sizeof(MaterialConstants));
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// SpriteはLightingしないのでfalseを設定する
 	materialData->color = Vector4(1, 1, 1, 1);

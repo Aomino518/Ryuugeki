@@ -7,6 +7,8 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
+class Entity3D;
+
 struct Sphere {
 	Vector3 center;
 	Vector3 radius;
@@ -173,3 +175,6 @@ Vector3 LerpCameraTranslate(const Vector3& currentPos, const Vector3& targetPos,
 /// <param name="dt">デルタタイム</param>
 /// <returns>補間した角度</returns>
 Vector3 LerpCameraRotation(const Vector3& currentRot, const Vector3& targetRot, float smoothSpeed, float dt);
+
+void Move(Entity3D* entity, const Vector3& velocity);
+void Rotate(Entity3D* entity, const Vector3& velocity);

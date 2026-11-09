@@ -49,7 +49,6 @@ public:
 	void DrawSpotLightImGui(const std::string& name);
 
 private:
-	// Master switch; individual materials keep their own lighting settings.
 	bool isLighting_ = true;
 	LightManager() = default;
 	~LightManager() = default;

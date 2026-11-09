@@ -126,48 +126,6 @@ void TitleScene::UpdateCamera()
 		return;
 	}
 
-	/*if (!camMgr->GetIsManualEdit()) {
-		const float dt = Time::GetDeltaTime();
-		const bool starting = phase_ == ScenePhase::FADEOUT;
-		if (!starting) {
-			cameraTime_ += dt;
-		}
-
-		const Vector3 playerPos = modelPlayer_->GetTranslate();
-
-		const float angle = std::sin(cameraTime_ * 1.0f) * 1.0f;
-		const float distance = starting ? 32.0f : 50.0f;
-
-		const Vector3 targetPos = {
-		  playerPos.x + std::sin(angle) * distance,
-		  playerPos.y + 10.0f,
-		  playerPos.z + std::cos(angle) * distance
-		};
-
-		const float smoothSpeed = starting ? 3.0f : 0.2f;
-		camPos_ = LerpCameraTranslate(camPos_, targetPos, smoothSpeed, dt);
-
-		const Vector3 focus = {
-			playerPos.x,
-			playerPos.y,
-			playerPos.z
-		};
-
-		const float dx = focus.x - camPos_.x;
-		const float dy = focus.y - camPos_.y;
-		const float dz = focus.z - camPos_.z;
-		const float horizontal = std::sqrt(dx * dx + dz * dz);
-
-		camRot_ = {
-			-std::atan2(dy, horizontal),
-			 std::atan2(dx, dz),
-			 0.0f
-		};
-
-		camera->SetTranslate(camPos_);
-		camera->SetRotate(camRot_);
-	}*/
-
 	switch (camPhase_) {
 	case CameraPhase::BACK:
 		if (camMgr->GetCamera("MainCamera")->GetIsLerpEnd()) {

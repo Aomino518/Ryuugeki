@@ -18,7 +18,6 @@ public:
 	void SetSpecularStrength(float strength) { this->materialData_->specularStrength = std::clamp(strength, 0.0f, 1.0f); }
 
 private:
-	// Preserve the local setting when global lighting is disabled.
 	bool isLighting_ = true;
 	// マテリアルデータ
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource_ = nullptr;

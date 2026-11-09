@@ -252,7 +252,12 @@
     <ClCompile Include="Game\Utilities\InputUtility.cpp">
       <Filter>Game\Utilities</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\3D\Material.cpp" />
+    <ClCompile Include="SeekerEngine\3D\Material.cpp">
+      <Filter>Engine\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="SeekerEngine\2D\RenderTexture.cpp">
+      <Filter>Engine\2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h">
@@ -495,7 +500,12 @@
     <ClInclude Include="Game\Utilities\InputUtility.h">
       <Filter>Game\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="SeekerEngine\3D\Material.h" />
+    <ClInclude Include="SeekerEngine\3D\Material.h">
+      <Filter>Engine\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="SeekerEngine\2D\RenderTexture.h">
+      <Filter>Engine\2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\hlsl\DebugShape3D.hlsli">
@@ -591,8 +601,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SeekerEngine\2D\RenderTexture.cpp" />
-    <ClInclude Include="SeekerEngine\2D\RenderTexture.h" />
     <ClInclude Include="SeekerEngine\3D\Picking.h">
       <Filter>Engine\3D</Filter>
     </ClInclude>

@@ -49,6 +49,7 @@ void ClearScene::Init()
 	modelSkydome_ = std::make_unique<Entity3D>();
 	modelSkydome_->Init();
 	modelSkydome_->SetModel("skydome");
+	modelSkydome_->SetIsLighting(false);
 	modelSkydome_->SetPicked(false);
 	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 

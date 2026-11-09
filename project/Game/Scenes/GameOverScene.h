@@ -25,6 +25,8 @@ class GameOverScene : public BaseScene
 	void DrawImGui() override;
 
 private:
+	void Animation();
+
 	// シーンフェーズ
 	enum struct ScenePhase {
 		FADEIN,
@@ -42,11 +44,15 @@ private:
 
 	// モデル
 	std::unique_ptr<Entity3D> modelSkydome_;
+	std::unique_ptr<Entity3D> modelPlayer_;
 
 	// シーンフェーズ
 	ScenePhase phase_ = ScenePhase::FADEIN;
 
 	// クラス
 	Fade fade_;
+
+	float kAnimeTime = 5.0f;
+	float timer_ = 0.0f;
 };
 

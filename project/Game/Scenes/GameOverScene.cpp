@@ -1,6 +1,7 @@
 #include "GameOverScene.h"
 #include "SeekerEngine.h"
 #include "SceneIncludes.h"
+#include "MathFunc.h"
 
 void GameOverScene::Init()
 {
@@ -51,6 +52,14 @@ void GameOverScene::Init()
 	modelSkydome_->SetModel("skydome");
 	modelSkydome_->SetPicked(false);
 	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
+
+	// プレイヤー
+	modelPlayer_ = std::make_unique<Entity3D>();
+	modelPlayer_->Init();
+	modelPlayer_->SetModel("AirShip");
+	modelPlayer_->SetTranslate(Vector3{0.0f, 30.0f, -25.0f});
+	modelPlayer_->SetRotate(Vector3{1.460f, -3.210f, 0.0f});
+	Editor::GetInstance()->RegisterModel("AirShip", modelPlayer_.get());
 	
 	//===========================
 	// クラス
@@ -68,6 +77,7 @@ void GameOverScene::Update()
 	switch (phase_) {
 	case ScenePhase::FADEIN:
 		if (fade_.IsFinished()) {
+			timer_ = kAnimeTime;
 			phase_ = ScenePhase::MAIN;
 		}
 		break;
@@ -78,6 +88,8 @@ void GameOverScene::Update()
 			phase_ = ScenePhase::FADEOUT;
 		}
 
+		Animation();
+
 		break;
 	case ScenePhase::FADEOUT:
 		if (fade_.IsFinished()) {
@@ -86,18 +98,19 @@ void GameOverScene::Update()
 		}
 		break;
 	}
-
-	// カメラの更新処理
-	camMgr->Update();
-
 	// モデルの更新処理
 	if (!camMgr->GetIsDebug()) {
 		Camera* camera = camMgr->GetActiveCamera();
 
 		modelSkydome_->SetCamera(camera);
+		modelPlayer_->SetCamera(camera);
 	}
 
+	// カメラの更新処理
+	camMgr->Update();
+
 	modelSkydome_->Update();
+	modelPlayer_->Update();
 
 	// スプライトの更新処理
 	sprGameOver_->Update();
@@ -111,6 +124,7 @@ void GameOverScene::Draw()
 	/*-- 描画処理 --*/
 	// Model
 	modelSkydome_->Draw();
+	modelPlayer_->Draw();
 
 	// Sprite
 	sprGameOver_->Draw();
@@ -133,4 +147,15 @@ void GameOverScene::DrawImGui()
 #ifdef USE_IMGUI
 
 #endif
+}
+
+void GameOverScene::Animation()
+{
+	timer_ -= Time::GetDeltaTime();
+	if (timer_ > 0.0f) {
+		Move(modelPlayer_.get(), Vector3{ 0.0f, -0.3f, 0.0f });
+		Rotate(modelPlayer_.get(), Vector3{ 0.0f, 0.5f, 0.0f });
+	} else {
+		timer_ = 0.0f;
+	}
 }

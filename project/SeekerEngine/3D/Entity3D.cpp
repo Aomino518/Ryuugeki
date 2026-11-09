@@ -124,9 +124,15 @@ void Entity3D::LoadFromJson(const json& j)
 	}
 
 	if (j.contains("material")) {
-		Vector4 material{};
-		FromJson(j.at("material"), material);
+		const auto& materialJson = j.at("material");
+		Vector4 material = material_->GetMaterial();
+		const auto& colorJson = materialJson.contains("color") ? materialJson.at("color") : materialJson;
+		const float specularStrength = materialJson.value("specularStrength", material_->GetSpecularStrength());
+		const bool enableLighting = materialJson.value("enableLighting", material_->GetIsLighting());
+		FromJson(colorJson, material);
 		SetMaterial(material);
+		SetSpecularStrength(specularStrength);
+		SetIsLighting(enableLighting);
 	}
 }
 

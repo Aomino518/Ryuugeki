@@ -224,6 +224,14 @@ void EnemyManager::UpdateBoss()
 		isBossSpawned_ = true;
 	}
 
+	bool isBossAlive = boss_->GetIsAlive();
+
+	if (wasBossAlive_ && !isBossAlive && boss_->GetHp() == 0) {
+		dethParticle_.SpawnHitEffect(boss_->GetPosition());
+	}
+
+	wasBossAlive_ = isBossAlive;
+
 	// bossを倒したら終了
 	if (isBossSpawned_ && !boss_->GetIsAlive()) {
 		isFinished_ = true;

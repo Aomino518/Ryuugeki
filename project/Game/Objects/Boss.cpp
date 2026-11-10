@@ -42,7 +42,6 @@ void Boss::Init(const Vector3& position, const Vector3& playerPosition)
 	isBurstAttacking_ = false;
 	burstShotCount_ = 0;
 	phase_ = BossPhase::Phase1;
-	dethParticle_.Init();
 	const uint32_t texWhite = TextureManager::GetInstance()->Load("resources/sprites/texWhite.png");
 	rushWarning_ = std::make_unique<Sprite>();
 	rushWarning_->Init();
@@ -86,7 +85,6 @@ void Boss::Update(const Vector3& playerPosition)
 	}
 
 	UpdateBullets();
-	dethParticle_.Update();
 
 	hpBar_.SetVisible(isAlive_);
 	if (isAlive_) {
@@ -105,7 +103,6 @@ void Boss::Draw()
 		bullet->Draw();
 	}
 
-	dethParticle_.Draw();
 	hpBar_.Draw();
 }
 

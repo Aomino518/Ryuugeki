@@ -19,8 +19,11 @@ void Enemy::Init(EnemyPattern pattern, const Vector3& position) {
 	bullet_ = std::make_unique<EnemyBullet>();
 	bullet_->Init(position);
 	timer_ = shotInterval_;
-	enemyState_ = EnemyState::Approach;
+	// 入場からスタートする
+	enemyState_ = EnemyState::Enter;
 	isMoveStop_ = false;
+	enterTarget_ = position;
+	enterStart_ = { position.x, position.y + 50.0f, position.z };
 }
 
 void Enemy::Update() {
@@ -145,15 +148,34 @@ void Enemy::UpdateKeepStop()
 //=================================
 void Enemy::UpdateState()
 {
+	if (!isAlive_ || isMoveStop_) {
+		return;
+	}
+
+	const bool isActive = enemyState_ == EnemyState::Approach || enemyState_ == EnemyState::Hover;
+
+	if (isActive) {
+		activeElapsed_ += Time::GetDeltaTime();
+
+		if (activeElapsed_ >= activeDuration_) {
+			BeginExit();
+		}
+	}
+
 	switch (enemyState_) {
+	case EnemyState::Enter:
+		UpdateEnter();
+		break;
 	case EnemyState::Approach:
 		UpdateApproach();
 		break;
 	case EnemyState::Hover:
 		UpdateHover();
 		break;
+	case EnemyState::Exit:
+		UpdateExit();
+		break;
 	case EnemyState::Dead:
-
 		break;
 	}
 }
@@ -205,4 +227,38 @@ void Enemy::EnterHover()
 	enemyState_ = EnemyState::Hover;
 	hoverOrigin_ = transform_.translate;
 	hoverTimer_ = 0.0f;
+}
+
+void Enemy::UpdateEnter()
+{
+	enterElapsed_ += Time::GetDeltaTime();
+	// 経過時間を0～1に変換
+	const float t = std::clamp(enterElapsed_ / enterDuration_, 0.0f, 1.0f);
+	const float rate = 1.0f - std::pow(1.0f - t, 3.0f);
+	transform_.translate = enterStart_ + (enterTarget_ - enterStart_) * rate;
+
+	if (t >= 1.0f) {
+		activeElapsed_ = 0.0f;
+		enemyState_ = EnemyState::Approach;
+	}
+}
+
+void Enemy::UpdateExit()
+{
+	exitElapsed_ += Time::GetDeltaTime();
+	// 経過時間を0～1に変換
+	const float t = std::clamp(exitElapsed_ / exitDuration_, 0.0f, 1.0f);
+	const float rate = t * t * t;
+	transform_.translate = exitStart_ + (exitTarget_ - exitStart_) * rate;
+	if (t >= 1.0f) {
+		exitFinished_ = true;
+	}
+}
+ 
+void Enemy::BeginExit()
+{
+	exitStart_ = transform_.translate;
+	exitTarget_ = exitStart_ + Vector3{ 0.0f, 20.0f, 0.0f };
+	exitElapsed_ = 0.0f;
+	enemyState_ = EnemyState::Exit;
 }

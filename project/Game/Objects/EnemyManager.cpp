@@ -248,7 +248,7 @@ void EnemyManager::UpdateEnemy()
 	for (auto it = enemies_.begin(); it != enemies_.end();) {
 		(*it)->Update();
 
-		if ((*it)->GetPosition().z < player->GetPosition().z - 50.0f) {
+		if ((*it)->GetExitFinished() || (*it)->GetPosition().z < player->GetPosition().z - 50.0f) {
 			it = enemies_.erase(it);
 		} else {
 			++it;

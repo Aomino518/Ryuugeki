@@ -290,5 +290,14 @@ void EnemyManager::ChackPlayerCollisions()
 			IsCollision(player->GetSphere(), boss_->GetSphere())) {
 			player->Damage();
 		}
+
+		auto& bossBullets = boss_->GetBullets();
+
+		for (auto& bullet : bossBullets) {
+			if (bullet->GetIsShot() && IsCollision(player->GetSphere(), bullet->GetSphere())) {
+				player->Damage();
+				bullet->SetIsShot(false);
+			}
+		}
 	}
 }

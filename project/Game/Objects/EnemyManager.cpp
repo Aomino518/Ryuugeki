@@ -123,18 +123,6 @@ EnemyPattern EnemyManager::ConvertEnemyPattern(const std::string& patternName) c
 		return EnemyPattern::Straight;
 	}
 
-	if (patternName == "SinWave") {
-		return EnemyPattern::SinWave;
-	}
-
-	if (patternName == "ZigZag") {
-		return EnemyPattern::ZigZag;
-	}
-
-	if (patternName == "SlowFast") {
-		return EnemyPattern::SlowFast;
-	}
-
 	if (patternName == "KeepStop") {
 		return EnemyPattern::KeepStop;
 	}

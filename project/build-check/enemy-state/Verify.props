@@ -1,0 +1,8 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup>
+    <ClCompile><DebugInformationFormat>OldStyle</DebugInformationFormat></ClCompile>
+  <Link><AdditionalOptions>/ignore:4075 %(AdditionalOptions)</AdditionalOptions><EnableCOMDATFolding>false</EnableCOMDATFolding><OptimizeReferences>false</OptimizeReferences><GenerateDebugInformation>false</GenerateDebugInformation></Link></ItemDefinitionGroup>
+</Project>
+
+
+

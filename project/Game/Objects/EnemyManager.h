@@ -64,5 +64,6 @@ private:
 	bool isFinished_ = false;
 	bool isStopFrame_ = false;
 	bool isBossSpawned_ = false;
+	bool wasBossAlive_ = false;
 };
 

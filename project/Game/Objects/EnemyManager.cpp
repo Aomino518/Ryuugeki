@@ -123,18 +123,6 @@ EnemyPattern EnemyManager::ConvertEnemyPattern(const std::string& patternName) c
 		return EnemyPattern::Straight;
 	}
 
-	if (patternName == "SinWave") {
-		return EnemyPattern::SinWave;
-	}
-
-	if (patternName == "ZigZag") {
-		return EnemyPattern::ZigZag;
-	}
-
-	if (patternName == "SlowFast") {
-		return EnemyPattern::SlowFast;
-	}
-
 	if (patternName == "KeepStop") {
 		return EnemyPattern::KeepStop;
 	}
@@ -224,6 +212,14 @@ void EnemyManager::UpdateBoss()
 		isBossSpawned_ = true;
 	}
 
+	bool isBossAlive = boss_->GetIsAlive();
+
+	if (wasBossAlive_ && !isBossAlive && boss_->GetHp() == 0) {
+		dethParticle_.SpawnHitEffect(boss_->GetPosition());
+	}
+
+	wasBossAlive_ = isBossAlive;
+
 	// bossを倒したら終了
 	if (isBossSpawned_ && !boss_->GetIsAlive()) {
 		isFinished_ = true;
@@ -289,6 +285,15 @@ void EnemyManager::ChackPlayerCollisions()
 		if (boss_->GetIsAlive() &&
 			IsCollision(player->GetSphere(), boss_->GetSphere())) {
 			player->Damage();
+		}
+
+		auto& bossBullets = boss_->GetBullets();
+
+		for (auto& bullet : bossBullets) {
+			if (bullet->GetIsShot() && IsCollision(player->GetSphere(), bullet->GetSphere())) {
+				player->Damage();
+				bullet->SetIsShot(false);
+			}
 		}
 	}
 }

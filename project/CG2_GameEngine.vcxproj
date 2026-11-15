@@ -83,7 +83,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Objects\Enemy;$(ProjectDir)Game\Objects\Player;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -111,7 +111,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Objects\Enemy;$(ProjectDir)Game\Objects\Player;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,7 +140,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Objects\Enemy;$(ProjectDir)Game\Objects\Player;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,12 +158,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game\Objects\Boss.cpp" />
-    <ClCompile Include="Game\Objects\EnemyBullet.cpp" />
+    <ClCompile Include="Game\Objects\Enemy\EnemyBullet.cpp" />
     <ClCompile Include="Game\Utilities\InputUtility.cpp" />
-    <ClCompile Include="Game\Objects\Weapon.cpp" />
+    <ClCompile Include="Game\Objects\Player\Weapon.cpp" />
     <ClCompile Include="Game\UI\Reticle.cpp" />
     <ClCompile Include="Game\Effects\DethParticle.cpp" />
     <ClCompile Include="Game\UI\HpBar.cpp" />
+    <ClCompile Include="Game\Objects\Player\PlayerAliveState.cpp" />
+    <ClCompile Include="Game\Objects\Player\PlayerDeadState.cpp" />
     <ClCompile Include="SeekerEngine\3D\Material.cpp" />
     <ClCompile Include="SeekerEngine\3D\AccelerationField.cpp" />
     <ClCompile Include="SeekerEngine\2D\AccelerationField2D.cpp" />
@@ -187,9 +189,9 @@
     </ClCompile>
     <ClCompile Include="Game\Objects\EnemyManager.cpp" />
     <ClCompile Include="Game\Objects\Bullet.cpp" />
-    <ClCompile Include="Game\Objects\Enemy.cpp" />
+    <ClCompile Include="Game\Objects\Enemy\Enemy.cpp" />
     <ClCompile Include="Game\Effects\Fade.cpp" />
-    <ClCompile Include="Game\Objects\Player.cpp" />
+    <ClCompile Include="Game\Objects\Player\Player.cpp" />
     <ClCompile Include="SeekerEngine\Scene\BaseScene.cpp" />
     <ClCompile Include="Game\Scenes\ClearScene.cpp" />
     <ClCompile Include="Game\Scenes\GameOverScene.cpp" />
@@ -337,12 +339,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Objects\Boss.h" />
-    <ClInclude Include="Game\Objects\EnemyBullet.h" />
+    <ClInclude Include="Game\Objects\Enemy\EnemyBullet.h" />
     <ClInclude Include="Game\Utilities\InputUtility.h" />
-    <ClInclude Include="Game\Objects\Weapon.h" />
+    <ClInclude Include="Game\Objects\Player\Weapon.h" />
     <ClInclude Include="Game\UI\Reticle.h" />
     <ClInclude Include="Game\Effects\DethParticle.h" />
     <ClInclude Include="Game\UI\HpBar.h" />
+    <ClInclude Include="Game\Objects\Player\IPlayerState.h" />
+    <ClInclude Include="Game\Objects\Player\PlayerAliveState.h" />
+    <ClInclude Include="Game\Objects\Player\PlayerDeadState.h" />
     <ClInclude Include="SeekerEngine\3D\Material.h" />
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h" />
     <ClInclude Include="SeekerEngine\Editor\Editor.h" />
@@ -366,9 +371,9 @@
     <ClInclude Include="SeekerEngine\Utility\ImGuiUtils.h" />
     <ClInclude Include="Game\Objects\EnemyManager.h" />
     <ClInclude Include="Game\Objects\Bullet.h" />
-    <ClInclude Include="Game\Objects\Enemy.h" />
+    <ClInclude Include="Game\Objects\Enemy\Enemy.h" />
     <ClInclude Include="Game\Effects\Fade.h" />
-    <ClInclude Include="Game\Objects\Player.h" />
+    <ClInclude Include="Game\Objects\Player\Player.h" />
     <ClInclude Include="SeekerEngine\Math\Matrix3x3.h" />
     <ClInclude Include="SeekerEngine\Math\Matrix4x4.h" />
     <ClInclude Include="SeekerEngine\Scene\AbstractSceneFactory.h" />
@@ -462,5 +467,24 @@
     <ClCompile Include="SeekerEngine\2D\RenderTexture.cpp" />
     <ClInclude Include="SeekerEngine\2D\RenderTexture.h" />
     <ClInclude Include="SeekerEngine\3D\Picking.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Game\Objects\Enemy\EnemyEnterState.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game\Objects\Enemy\IEnemyState.h" />
+    <ClInclude Include="Game\Objects\Enemy\EnemyEnterState.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Game\Objects\Enemy\EnemyActiveState.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game\Objects\Enemy\EnemyActiveState.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Game\Objects\Enemy\EnemyExitState.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game\Objects\Enemy\EnemyExitState.h" />
   </ItemGroup>
 </Project>

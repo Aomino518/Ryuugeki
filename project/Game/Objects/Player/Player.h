@@ -4,10 +4,13 @@
 #include "Weapon.h"
 #include "Effects/DethParticle.h"
 #include "UI/HpBar.h"
+#include "IPlayerState.h"
 
 class Player
 {
 public:
+	void RequestStateChange(std::unique_ptr<IPlayerState> nextState);
+
 	/// <summary>
 	/// 初期化処理関数
 	/// </summary>
@@ -41,6 +44,13 @@ public:
 	void SetAimTarget(const Vector3& target) { aimTarget_ = target; }
 
 	void Damage();
+	void UpdateAlive();
+	bool ApplyDamage();
+	int GetHp() const { return hp_; };
+
+	void BeginDeth();
+	void UpdateDeth();
+
 private:
 
 	// メンバ関数
@@ -78,7 +88,11 @@ private:
 	void UpdateCamera();
 	
 	void UpdateHitEffect();
-	
+	void ApplyStateChange();
+
+	std::unique_ptr<IPlayerState> state_;
+	std::unique_ptr<IPlayerState> nextState_;
+
 	// モデル
 	std::unique_ptr<Entity3D> modelPlayer_;
 

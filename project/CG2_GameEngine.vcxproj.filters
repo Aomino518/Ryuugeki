@@ -234,19 +234,19 @@
     <ClCompile Include="Game\Objects\Bullet.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Objects\Enemy.cpp">
+    <ClCompile Include="Game\Objects\Enemy\Enemy.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Objects\EnemyBullet.cpp">
+    <ClCompile Include="Game\Objects\Enemy\EnemyBullet.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Game\Objects\EnemyManager.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Objects\Player.cpp">
+    <ClCompile Include="Game\Objects\Player\Player.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Objects\Weapon.cpp">
+    <ClCompile Include="Game\Objects\Player\Weapon.cpp">
       <Filter>Game\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Game\Utilities\InputUtility.cpp">
@@ -258,6 +258,8 @@
     <ClCompile Include="SeekerEngine\2D\RenderTexture.cpp">
       <Filter>Engine\2D</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Objects\Player\PlayerAliveState.cpp" />
+    <ClCompile Include="Game\Objects\Player\PlayerDeadState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h">
@@ -482,19 +484,19 @@
     <ClInclude Include="Game\Objects\Bullet.h">
       <Filter>Game\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Objects\Enemy.h">
+    <ClInclude Include="Game\Objects\Enemy\Enemy.h">
       <Filter>Game\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Objects\EnemyBullet.h">
+    <ClInclude Include="Game\Objects\Enemy\EnemyBullet.h">
       <Filter>Game\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Game\Objects\EnemyManager.h">
       <Filter>Game\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Objects\Player.h">
+    <ClInclude Include="Game\Objects\Player\Player.h">
       <Filter>Game\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Objects\Weapon.h">
+    <ClInclude Include="Game\Objects\Player\Weapon.h">
       <Filter>Game\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Game\Utilities\InputUtility.h">
@@ -506,6 +508,9 @@
     <ClInclude Include="SeekerEngine\2D\RenderTexture.h">
       <Filter>Engine\2D</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Objects\Player\IPlayerState.h" />
+    <ClInclude Include="Game\Objects\Player\PlayerAliveState.h" />
+    <ClInclude Include="Game\Objects\Player\PlayerDeadState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\hlsl\DebugShape3D.hlsli">
@@ -604,5 +609,24 @@
     <ClInclude Include="SeekerEngine\3D\Picking.h">
       <Filter>Engine\3D</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Game\Objects\Enemy\EnemyEnterState.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game\Objects\Enemy\IEnemyState.h" />
+    <ClInclude Include="Game\Objects\Enemy\EnemyEnterState.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Game\Objects\Enemy\EnemyActiveState.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game\Objects\Enemy\EnemyActiveState.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Game\Objects\Enemy\EnemyExitState.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Game\Objects\Enemy\EnemyExitState.h" />
   </ItemGroup>
 </Project>

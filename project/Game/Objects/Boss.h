@@ -27,6 +27,7 @@ public:
 	const bool GetIsAlive() const { return isAlive_; };
 	const Sphere& GetSphere() const { return sphere_; }
 	std::vector<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
+	int GetHp() const { return hp_; }
 
 	// Setter
 	void SetIsAlive(bool isAlive) { this->isAlive_ = isAlive; }
@@ -110,8 +111,7 @@ private:
 	// ボスの段階
 	BossPhase phase_ = BossPhase::Phase1;
 	Vector4 color_ = { 1.0f, 1.0f, 1.0f, 1.0f };
-	DethParticle dethParticle_;
-
+	
 	// 段階の移行
 	float transitionTime_ = 0.0f;
 	float transitionDuration_ = 2.0f;

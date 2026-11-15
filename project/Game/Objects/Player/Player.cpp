@@ -3,6 +3,12 @@
 #include "Vector3.h"
 #include "SceneIncludes.h"
 #include "Utilities/InputUtility.h"
+#include "PlayerAliveState.h"
+
+void Player::RequestStateChange(std::unique_ptr<IPlayerState> nextState)
+{
+	nextState_ = std::move(nextState);
+}
 
 /// <summary>
 /// 初期化処理関数
@@ -23,6 +29,16 @@ void Player::Init(const Vector3& position) {
 	scrollPosition_ = position;
 	sphere_ = { Vector3{position.x, position.y, position.z - 0.5f}, Vector3{3.0f, 2.0f, 3.0f} };
 	hpBar_.Init(Vector2{ 25.0f, 670.0f }, Vector2{300.0f, 30.0f}, Color::GREEN);
+	state_.reset();
+	nextState_.reset();
+
+	hp_ = kMaxHp;
+	isAlive_ = true;
+	hitEffectTimer_ = 0.0f;
+	invincibleTimer_ = 0.0f;
+
+	RequestStateChange(std::make_unique<PlayerAliveState>());
+	ApplyStateChange();
 }
 
 void Player::SetScrollPosition(const Vector3& position)
@@ -44,14 +60,10 @@ void Player::Update() {
 		}
 	}
 
-	if (isAlive_) {
-		UpdateMovement();
-		UpdateShooting();
-		Vector3 pos = modelPlayer_->GetTranslate();
-		sphere_.center = pos;
-	} else {
-		dethParticle_.Update();
+	if (state_) {
+		state_->Update(*this);
 	}
+	ApplyStateChange();
 
 	UpdateCamera();
 	weapon_.Update();
@@ -105,20 +117,46 @@ void Player::SetIsDebugHit()
 
 void Player::Damage()
 {
+	if (state_) {
+		state_->OnDamage(*this);
+	}
+
+	ApplyStateChange();
+}
+
+void Player::UpdateAlive()
+{
+	UpdateMovement();
+	UpdateShooting();
+
+	sphere_.center = modelPlayer_->GetTranslate();
+}
+
+bool Player::ApplyDamage()
+{
 	if (!isAlive_ || invincibleTimer_ > 0.0f) {
-		return;
+		return false;
 	}
 
 	hitEffectTimer_ = kHitEffectDuration;
 	invincibleTimer_ = invincibleTime_;
 
-	hp_--;
-
-	if (hp_ <= 0) {
-		hp_ = 0;
-		isAlive_ = false;
-		dethParticle_.SpawnHitEffect(modelPlayer_->GetTranslate());
+	if (hp_ > 0) {
+		--hp_;
 	}
+
+	return true;
+}
+
+void Player::BeginDeth()
+{
+	isAlive_ = false;
+	dethParticle_.SpawnHitEffect(modelPlayer_->GetTranslate());
+}
+
+void Player::UpdateDeth()
+{
+	dethParticle_.Update();
 }
 
 /// <summary>
@@ -308,4 +346,18 @@ void Player::UpdateHitEffect()
 		modelPlayer_->SetRotate(drawRotation);
 		modelPlayer_->SetMaterial(color);
 	}
+}
+
+void Player::ApplyStateChange()
+{
+	if (!nextState_) {
+		return;
+	}
+
+	if (state_) {
+		state_->Exit(*this);
+	}
+
+	state_ = std::move(nextState_);
+	state_->Enter(*this);
 }

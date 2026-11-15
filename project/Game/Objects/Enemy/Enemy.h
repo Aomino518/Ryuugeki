@@ -3,21 +3,11 @@
 #include "Entity3D.h"
 #include "MathFunc.h"
 #include "EnemyBullet.h"
+#include "IEnemyState.h"
 
 enum class EnemyPattern {
 	Straight,
-	SinWave,
-	ZigZag,
-	SlowFast,
 	KeepStop
-};
-
-enum class EnemyState {
-	Approach, // 接近
-	Enter,
-	Hover, // 停止・浮遊
-	Exit,
-	Dead
 };
 
 enum class ApproachBehavior {
@@ -28,6 +18,8 @@ enum class ApproachBehavior {
 class Enemy
 {
 public:
+	void RequestStateChange(std::unique_ptr<IEnemyState> nextState);
+
 	void Init(EnemyPattern pattern, const Vector3& position);
 
 	void Update();
@@ -48,14 +40,21 @@ public:
 
 	bool GetExitFinished() const { return exitFinished_; }
 
+	void Move(const Vector3& offset);
+	float GetSpeed() const { return speed_; }
+
+	// 状態クラスから使う操作。座標はEnemyが保持する。
+	Vector3 GetStatePosition() const { return transform_.translate; }
+	void SetStatePosition(const Vector3& position) { transform_.translate = position; }
+	void FinishExit() { exitFinished_ = true; }
+	void UpdateActiveMovement();
+	EnemyPattern GetEnemyPattern() const { return pattern_; }
+
 private:
 	// メンバ関数
 	void UpdateMovement();
 	// 行動の更新
 	void UpdateStraight();
-	void UpdateSinWave();
-	void UpdateZigZag();
-	void UpdateSlowFast();
 	void UpdateKeepStop();
 	void UpdateState();
 	// 状態の更新
@@ -63,22 +62,21 @@ private:
 	void UpdateHover();
 	void UpdateShooting();
 	void EnterHover();
-	// スポーン時と退場の動きの更新
-	void UpdateEnter();
-	void UpdateExit();
-	void BeginExit();
+
+	void ApplyStateChange();
+	
+	std::unique_ptr<IEnemyState> state_;
+	std::unique_ptr<IEnemyState> nextState_;
 
 	Transform transform_{};
 	std::unique_ptr<Entity3D> model_;
 	// 敵の弾
 	std::unique_ptr<EnemyBullet> bullet_;
 
-	float speed = 0.3f;
-	float amplitude = 0.5f;
-	float theta = 0.0f;
+	float speed_ = 0.3f;
+
 	bool isAlive_ = false;
-	int switchDirTimer = 30;
-	float dir = 1.0f;
+
 	EnemyPattern pattern_;
 	Sphere sphere_;
 
@@ -91,7 +89,7 @@ private:
 
 	bool isMoveStop_ = false;
 
-	EnemyState enemyState_ = EnemyState::Approach;
+	bool isHover_ = false;
 	ApproachBehavior approachBehavior_ = ApproachBehavior::KeepMoving;
 
 	Vector3 hoverOrigin_{};
@@ -101,18 +99,6 @@ private:
 	float distance = 0.0f;
 	float maxDistance = 40.0f;
 
-	// 入場開始時に保存する値 
-	Vector3 enterStart_;
-	Vector3 enterTarget_;
-	float enterElapsed_ = 0.0f;
-	float enterDuration_ = 1.0f;
-
-	float activeElapsed_ = 0.0f;
-	float activeDuration_ = 3.0f;
-	Vector3 exitStart_{};
-	Vector3 exitTarget_{};
-	float exitElapsed_ = 0.0f;
-	float exitDuration_ = 1.0f;
 	bool exitFinished_ = false;
 
 };

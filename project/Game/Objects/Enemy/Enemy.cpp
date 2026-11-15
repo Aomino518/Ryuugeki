@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "EnemyEnterState.h"
 #include <cmath>
 #include "CameraManager.h"
 #include "Color.h"
@@ -6,6 +7,11 @@
 #include "GameTime.h"
 #include <numbers>
 #include "Vector3.h"
+
+void Enemy::RequestStateChange(std::unique_ptr<IEnemyState> nextState)
+{
+	nextState_ = std::move(nextState);
+}
 
 void Enemy::Init(EnemyPattern pattern, const Vector3& position) {
 	model_ = std::make_unique<Entity3D>();
@@ -20,10 +26,18 @@ void Enemy::Init(EnemyPattern pattern, const Vector3& position) {
 	bullet_->Init(position);
 	timer_ = shotInterval_;
 	// 入場からスタートする
-	enemyState_ = EnemyState::Enter;
+	state_.reset();
+	nextState_.reset();
+	exitFinished_ = false;
+	isHover_ = false;
+	distance = 0.0f;
+	approachBehavior_ = ApproachBehavior::KeepMoving;
 	isMoveStop_ = false;
-	enterTarget_ = position;
-	enterStart_ = { position.x, position.y + 50.0f, position.z };
+
+	RequestStateChange(std::make_unique<EnemyEnterState>());
+	ApplyStateChange();
+	model_->SetTranslate(transform_.translate);
+	sphere_.center = transform_.translate;
 }
 
 void Enemy::Update() {
@@ -74,20 +88,16 @@ void Enemy::SetIsDebugHit()
 	debugHitTimer_ = 10;
 }
 
+void Enemy::Move(const Vector3& offset)
+{
+	transform_.translate += offset;
+}
+
 void Enemy::UpdateMovement()
 {
 	switch (pattern_) {
 		case EnemyPattern::Straight:
 			UpdateStraight();
-			break;
-		case EnemyPattern::SinWave:
-			UpdateSinWave();
-			break;
-		case EnemyPattern::ZigZag:
-			UpdateZigZag();
-			break;
-		case EnemyPattern::SlowFast:
-			UpdateSlowFast();
 			break;
 		case EnemyPattern::KeepStop:
 			UpdateKeepStop();
@@ -103,44 +113,31 @@ void Enemy::UpdateMovement()
 //=================================
 void Enemy::UpdateStraight()
 {
-	transform_.translate.z -= speed;
-}
-
-void Enemy::UpdateSinWave()
-{
-	theta += std::numbers::pi_v<float> / 60.0f;
-	transform_.translate.x += sin(theta) * amplitude;
-	transform_.translate.z -= speed;
-}
-
-void Enemy::UpdateZigZag()
-{
-	switchDirTimer--;
-
-	if (switchDirTimer <= 0) {
-		dir = -dir;
-		switchDirTimer = 30;
-	}
-
-	transform_.translate.x += dir * speed;
-	transform_.translate.z -= speed;
-}
-
-void Enemy::UpdateSlowFast()
-{
-	// 徐々に加速
-	speed += 0.02f;
-	transform_.translate.z -= speed;
+	transform_.translate.z -= speed_;
 }
 
 void Enemy::UpdateKeepStop()
 {
-	transform_.translate.z -= speed;
-	distance += speed;
+	transform_.translate.z -= speed_;
+	distance += speed_;
 	if (distance >= maxDistance) {
 		distance = 0.0f;
 		approachBehavior_ = ApproachBehavior::StopAtTarget;
 	}
+}
+
+void Enemy::ApplyStateChange()
+{
+	if (!nextState_) {
+		return;
+	}
+
+	if (state_) {
+		state_->Exit(*this);
+	}
+
+	state_ = std::move(nextState_);
+	state_->Enter(*this);
 }
 
 //=================================
@@ -152,32 +149,11 @@ void Enemy::UpdateState()
 		return;
 	}
 
-	const bool isActive = enemyState_ == EnemyState::Approach || enemyState_ == EnemyState::Hover;
-
-	if (isActive) {
-		activeElapsed_ += Time::GetDeltaTime();
-
-		if (activeElapsed_ >= activeDuration_) {
-			BeginExit();
-		}
+	if (state_) {
+		state_->Update(*this);
 	}
 
-	switch (enemyState_) {
-	case EnemyState::Enter:
-		UpdateEnter();
-		break;
-	case EnemyState::Approach:
-		UpdateApproach();
-		break;
-	case EnemyState::Hover:
-		UpdateHover();
-		break;
-	case EnemyState::Exit:
-		UpdateExit();
-		break;
-	case EnemyState::Dead:
-		break;
-	}
+	ApplyStateChange();
 }
 
 void Enemy::UpdateApproach()
@@ -190,7 +166,6 @@ void Enemy::UpdateApproach()
 
 	if (approachBehavior_ == ApproachBehavior::StopAtTarget) {
 		EnterHover();
-		enemyState_ = EnemyState::Hover;
 	}
 }
 
@@ -224,41 +199,16 @@ void Enemy::UpdateShooting()
 
 void Enemy::EnterHover()
 {
-	enemyState_ = EnemyState::Hover;
+	isHover_ = true;
 	hoverOrigin_ = transform_.translate;
 	hoverTimer_ = 0.0f;
 }
 
-void Enemy::UpdateEnter()
+void Enemy::UpdateActiveMovement()
 {
-	enterElapsed_ += Time::GetDeltaTime();
-	// 経過時間を0～1に変換
-	const float t = std::clamp(enterElapsed_ / enterDuration_, 0.0f, 1.0f);
-	const float rate = 1.0f - std::pow(1.0f - t, 3.0f);
-	transform_.translate = enterStart_ + (enterTarget_ - enterStart_) * rate;
-
-	if (t >= 1.0f) {
-		activeElapsed_ = 0.0f;
-		enemyState_ = EnemyState::Approach;
+	if (isHover_) {
+		UpdateHover();
+	} else {
+		UpdateApproach();
 	}
-}
-
-void Enemy::UpdateExit()
-{
-	exitElapsed_ += Time::GetDeltaTime();
-	// 経過時間を0～1に変換
-	const float t = std::clamp(exitElapsed_ / exitDuration_, 0.0f, 1.0f);
-	const float rate = t * t * t;
-	transform_.translate = exitStart_ + (exitTarget_ - exitStart_) * rate;
-	if (t >= 1.0f) {
-		exitFinished_ = true;
-	}
-}
- 
-void Enemy::BeginExit()
-{
-	exitStart_ = transform_.translate;
-	exitTarget_ = exitStart_ + Vector3{ 0.0f, 20.0f, 0.0f };
-	exitElapsed_ = 0.0f;
-	enemyState_ = EnemyState::Exit;
 }

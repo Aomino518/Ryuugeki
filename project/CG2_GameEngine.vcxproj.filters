@@ -90,9 +90,6 @@
     <ClCompile Include="Game\main.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="SeekerEngine\Scene\BaseScene.cpp">
-      <Filter>Engine\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Scenes\ClearScene.cpp">
       <Filter>Game\Scenes</Filter>
     </ClCompile>

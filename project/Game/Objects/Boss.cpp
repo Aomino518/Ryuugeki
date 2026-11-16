@@ -75,13 +75,7 @@ void Boss::Update(const Vector3& playerPosition)
 			UpdateAttack(playerPosition);
 		}
 
-		auto camMgr = CameraManager::GetInstance();
-		if (!camMgr->GetIsDebug()) {
-			Camera* camera = camMgr->GetActiveCamera();
-			model_->SetCamera(camera);
-		}
-
-		model_->Update();
+		UpdateVisuals();
 	}
 
 	UpdateBullets();
@@ -90,6 +84,21 @@ void Boss::Update(const Vector3& playerPosition)
 	if (isAlive_) {
 		hpBar_.Update(hp_, kMaxHp);
 	}
+}
+
+void Boss::UpdateVisuals()
+{
+	if (!model_) {
+		return;
+	}
+
+	auto* camMgr = CameraManager::GetInstance();
+	if (!camMgr->GetIsDebug()) {
+		Camera* camera = camMgr->GetActiveCamera();
+		model_->SetCamera(camera);
+	}
+
+	model_->Update();
 }
 
 void Boss::Draw()

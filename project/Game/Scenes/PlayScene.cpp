@@ -109,6 +109,28 @@ void PlayScene::Update()
 	fade_.Update();
 }
 
+void PlayScene::EditorUpdate()
+{
+	auto* camMgr = CameraManager::GetInstance();
+	if (!camMgr->GetIsDebug()) {
+		modelSkydome_->SetCamera(camMgr->GetActiveCamera());
+	}
+	// 背景モデルの座標・描画用行列を更新
+	modelSkydome_->Update();
+	UpdateTerrain();
+	enemyMgr_->UpdateVisuals();
+
+	player_->UpdateVisuals();
+
+	// UIの編集内容を反映
+	sprUiPlayOperate_->Update();
+	sprUiConroller_->Update();
+
+	ParticleManager::GetInstance()->UpdateVisuals(
+		CameraManager::GetInstance()
+	);
+}
+
 void PlayScene::Draw()
 {
 	/*-- 描画処理 --*/
@@ -135,7 +157,9 @@ void PlayScene::Draw()
 		sprUiConroller_->Draw();
 	}
 
-	fade_.Draw();
+	if (sceneManager_->IsPlaying()) {
+		fade_.Draw();
+	}
 }
 
 void PlayScene::Shutdown()
@@ -156,6 +180,54 @@ void PlayScene::DrawImGui()
 	enemyMgr_->DrawImGui();
 	player_->DrawImGui();
 #endif
+}
+
+void PlayScene::OnEnterPlay()
+{
+	auto* camMgr = CameraManager::GetInstance();
+	camMgr->SetActiveCamera(false, savedGameCameraIndex_);
+
+	// 行列のみ更新、演出の時間は進めない
+	if (auto* camera = camMgr->GetActiveCamera()) {
+		camera->Update();
+	}
+
+	SoundManager::GetInstance()->PlayBGM("bgm_play");
+}
+
+void PlayScene::OnEnterEdit()
+{
+	auto* soundMgr = SoundManager::GetInstance();
+
+	soundMgr->StopBGM();
+	soundMgr->StopSE();
+
+	auto* camMgr = CameraManager::GetInstance();
+	// 元のゲームカメラの番号を保存
+	savedGameCameraIndex_ = camMgr->GetActtiveCamIndex();
+
+	auto* gameCamera = camMgr->GetActiveCamera();
+	auto* debugCamera = camMgr->GetDebugCamera();
+
+	if (gameCamera && debugCamera) {
+		// ゲームカメラの位置と向きから編集開始
+		auto translate = gameCamera->GetTranslate();
+		auto matRot = MakeAffineMatrix(
+			Vector3{ 1.0f, 1.0f, 1.0f },
+			gameCamera->GetRotate(),
+			Vector3{ 0.0f, 0.0f, 0.0f });
+		debugCamera->SetTranslate(translate);
+		debugCamera->SetMatRot(matRot);
+
+		// 前回の右ドラッグ状態を持ち越さない
+		debugCamera->SetIsRightDrag(false);
+	}
+
+	camMgr->SetActiveCamera(true, savedGameCameraIndex_);
+
+	if (debugCamera) {
+		debugCamera->Update();
+	}
 }
 
 void PlayScene::UpdatePlay()

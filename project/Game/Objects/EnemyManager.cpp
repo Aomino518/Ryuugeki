@@ -75,6 +75,21 @@ void EnemyManager::SetIsMoveStop(bool flag)
 	}
 }
 
+void EnemyManager::UpdateVisuals()
+{
+	for (auto& enemy : enemies_) {
+		enemy->UpdateVisuals();
+	}
+
+	if (boss_) {
+		for (auto& bullet : boss_->GetBullets()) {
+			bullet->UpdateVisuals();
+		}
+		boss_->UpdateVisuals();
+	}
+
+}
+
 bool EnemyManager::LoadSpawnSchedule(const std::string& filePath)
 {
 	std::ifstream file(filePath);

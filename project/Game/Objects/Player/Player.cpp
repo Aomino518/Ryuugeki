@@ -65,14 +65,20 @@ void Player::Update() {
 	}
 	ApplyStateChange();
 
-	UpdateCamera();
 	weapon_.Update();
 	UpdateHitEffect();
-	modelPlayer_->Update();
+	UpdateVisuals();
 	hpBar_.SetVisible(true);
 	if (isAlive_) {
 		hpBar_.Update(hp_, kMaxHp);
 	}
+}
+
+void Player::UpdateVisuals()
+{
+	UpdateCamera();
+	modelPlayer_->Update();
+	weapon_.UpdateVisuals();
 }
 
 void Player::Draw() {

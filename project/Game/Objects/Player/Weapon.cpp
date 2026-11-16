@@ -26,6 +26,13 @@ void Weapon::Update()
 	}
 }
 
+void Weapon::UpdateVisuals()
+{
+	for (auto& bullet : bullets_) {
+		bullet->UpdateVisuals();
+	}
+}
+
 void Weapon::Draw()
 {
 	for (auto& bullet : bullets_) {

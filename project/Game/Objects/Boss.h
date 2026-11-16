@@ -16,6 +16,7 @@ class Boss
 public:
 	void Init(const Vector3& position, const Vector3& playerPosition);
 	void Update(const Vector3& playerPosition);
+	void UpdateVisuals();
 	void Draw();
 	void DrawRushWarning();
 	void DrawDebug();

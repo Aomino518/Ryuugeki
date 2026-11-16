@@ -19,6 +19,9 @@ public:
 
 	void Update();
 
+	// モデルの表示だけ更新
+	void UpdateVisuals();
+
 	void Draw();
 
 	void DebugDraw();

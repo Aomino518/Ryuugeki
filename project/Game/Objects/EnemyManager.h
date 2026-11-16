@@ -38,6 +38,8 @@ public:
 
 	std::vector<std::unique_ptr<Enemy>>& GetEnemies() { return enemies_; }
 
+	void UpdateVisuals();
+
 private:
 	// メンバ関数
 	// JSONから出現スケジュールを読み込む

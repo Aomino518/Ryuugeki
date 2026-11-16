@@ -107,6 +107,48 @@ void ParticleManager::Update(CameraManager* cameraManager)
 	}
 }
 
+void ParticleManager::UpdateVisuals(CameraManager* cameraManager)
+{
+	cameraManager_ = cameraManager;
+	debugCamera_ = cameraManager->GetDebugCamera();
+	camera_ = cameraManager->GetActiveCamera();
+
+	bool isDebug = cameraManager_->GetIsDebug();
+
+	for (auto& [name, group] : particleGroups) {
+		group.instanceCount = 0;
+
+		for (const auto& particle : group.particles) {
+			if (group.instanceCount >= kNumMaxInstance_) {
+				break;
+			}
+
+			// 時間を進めず、現在の色を求める
+			float t = particle.lifeTime > 0.0f
+				? particle.currentTime / particle.lifeTime
+				: 1.0f;
+			t = std::clamp(t, 0.0f, 1.0f);
+
+			const Vector4 color =
+				particle.startColor * (1.0f - t)
+				+ particle.endColor * t;
+
+			// 現在の位置・大きさを、新しい視点で描画する
+			const Matrix4x4 worldMatrix =
+				CalculateWorldMatrix(particle, name, isDebug);
+			const Matrix4x4 wvpMatrix =
+				CalculateWVPMatrix(worldMatrix, isDebug);
+
+			auto& instance = group.instanceData[group.instanceCount];
+			instance.World = worldMatrix;
+			instance.WVP = wvpMatrix;
+			instance.color = color;
+
+			++group.instanceCount;
+		}
+	}
+}
+
 void ParticleManager::Draw()
 {
 	for (auto& [name, group] : particleGroups) {

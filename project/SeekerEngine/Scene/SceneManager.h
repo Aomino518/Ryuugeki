@@ -4,6 +4,11 @@
 #include <memory>
 #include <string>
 
+enum class RunMode {
+	Edit, // 編集中
+	Play // ゲーム実行中
+};
+
 class SceneManager
 {
 public:
@@ -31,6 +36,14 @@ public:
 
 	void DrawImGui();
 
+	// 編集モード切り替え用
+	// 現在モードの取得
+	RunMode GetRunMode() const { return runMode_; }
+	// ゲームが実行中か確認
+	bool IsPlaying() const { return runMode_ == RunMode::Play; }
+	// モード変更
+	void SetRunMode(RunMode mode) { requestedRunMode_ = mode; }
+
 private:
 	SceneManager() = default;
 	~SceneManager() = default;
@@ -40,5 +53,10 @@ private:
 	std::unique_ptr<BaseScene> scene_;
 	std::unique_ptr<BaseScene> nextScene_;
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
+
+	// 現在のモード
+	RunMode runMode_ = RunMode::Play;
+	// 次に切り替えたいモード
+	RunMode requestedRunMode_ = RunMode::Play;
 };
 

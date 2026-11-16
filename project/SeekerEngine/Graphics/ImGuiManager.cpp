@@ -621,6 +621,22 @@ void ImGuiManager::DrawMainMenuBar()
 			ImGui::MenuItem("Console", nullptr, &windowState_.showConsole);
 			ImGui::EndMenu();
 		}
+		
+		// 現在の編集モードに対応したボタンの表示
+		auto* sceneMgr = SceneManager::GetInstance();
+
+		if (sceneMgr->IsPlaying()) {
+			if (ImGui::Button("Stop")) {
+				sceneMgr->SetRunMode(RunMode::Edit);
+			}
+		} else {
+			if (ImGui::Button("Play")) {
+				sceneMgr->SetRunMode(RunMode::Play);
+			}
+		}
+
+		// 現在のモードを表示
+		ImGui::Text("Mode: %s", sceneMgr->IsPlaying() ? "Play" : "Edit");
 
 		ImGui::EndMainMenuBar();
 	}

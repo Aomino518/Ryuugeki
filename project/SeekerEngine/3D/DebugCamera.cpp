@@ -41,7 +41,7 @@ void DebugCamera::Update()
 
 		move = { 0, 0, speed };
 		move = TransformNormal(move, matRot_);
-		translation_ = translation_ + move;
+		translate_ = translate_ + move;
 	}
 
 	if (GetAsyncKeyState('S') & 0x8000) {
@@ -49,7 +49,7 @@ void DebugCamera::Update()
 
 		move = { 0, 0, -speed };
 		move = TransformNormal(move, matRot_);
-		translation_ = translation_ + move;
+		translate_ = translate_ + move;
 	}
 
 	if (GetAsyncKeyState('D') & 0x8000) {
@@ -57,7 +57,7 @@ void DebugCamera::Update()
 
 		move = { speed, 0, 0 };
 		move = TransformNormal(move, matRot_);
-		translation_ = translation_ + move;
+		translate_ = translate_ + move;
 	}
 
 	if (GetAsyncKeyState('A') & 0x8000) {
@@ -65,7 +65,7 @@ void DebugCamera::Update()
 
 		move = { -speed, 0, 0 };
 		move = TransformNormal(move, matRot_);
-		translation_ = translation_ + move;
+		translate_ = translate_ + move;
 	}
 
 	if (GetAsyncKeyState('E') & 0x8000) {
@@ -73,7 +73,7 @@ void DebugCamera::Update()
 
 		move = { 0, speed, 0 };
 		move = TransformNormal(move, matRot_);
-		translation_ = translation_ + move;
+		translate_ = translate_ + move;
 	}
 
 	if (GetAsyncKeyState('Q') & 0x8000) {
@@ -81,11 +81,11 @@ void DebugCamera::Update()
 
 		move = { 0, -speed, 0 };
 		move = TransformNormal(move, matRot_);
-		translation_ = translation_ + move;
+		translate_ = translate_ + move;
 	}
 
 	// 移動行列
-	Matrix4x4 matTrans = MakeTranslateMatrix(translation_);
+	Matrix4x4 matTrans = MakeTranslateMatrix(translate_);
 
 	// ワールド行列
 	Matrix4x4 matWorld = Multiply(matRot_, matTrans);

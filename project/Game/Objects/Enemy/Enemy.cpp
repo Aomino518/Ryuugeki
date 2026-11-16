@@ -46,7 +46,6 @@ void Enemy::Update() {
 	sphere_.center = transform_.translate;
 	UpdateShooting();
 
-	auto camMgr = CameraManager::GetInstance();
 	if (debugHitTimer_ > 0) {
 		debugHitTimer_--;
 
@@ -55,6 +54,13 @@ void Enemy::Update() {
 		}
 	}
 
+	UpdateVisuals();
+}
+
+void Enemy::UpdateVisuals()
+{
+	auto* camMgr = CameraManager::GetInstance();
+	bullet_->UpdateVisuals();
 	if (!camMgr->GetIsDebug()) {
 		Camera* camera = camMgr->GetActiveCamera();
 		model_->SetCamera(camera);
@@ -193,8 +199,6 @@ void Enemy::UpdateShooting()
 			timer_ = shotInterval_;
 		}
 	}
-
-	bullet_->Update();
 }
 
 void Enemy::EnterHover()

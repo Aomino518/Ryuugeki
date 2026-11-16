@@ -14,6 +14,8 @@ public:
 	// 更新
 	void Update();
 
+	void UpdateVisuals();
+
 	// 描画
 	void Draw();
 

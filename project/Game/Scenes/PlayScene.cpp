@@ -114,7 +114,7 @@ void PlayScene::Draw()
 	/*-- 描画処理 --*/
 	// Model
 	modelSkydome_->Draw();
-	modelTerrains_->Draw();
+	modelCity_->Draw();
 	player_->Draw();
 	enemyMgr_->Draw();
 
@@ -260,8 +260,8 @@ void PlayScene::LoadModel()
 	auto modelMgr = ModelManager::GetInstance();
 	modelMgr->LoadModel("bullet.obj");
 	modelMgr->LoadModel("enemy.obj");
-	modelMgr->LoadModel("greenTerrain.obj");
 	modelMgr->LoadModel("boss.obj");
+	modelMgr->LoadModel("city.obj");
 
 	modelSkydome_ = std::make_unique<Entity3D>();
 	modelSkydome_->Init();
@@ -270,11 +270,11 @@ void PlayScene::LoadModel()
 	modelSkydome_->SetIsLighting(false);
 	Editor::GetInstance()->RegisterModel("skydome", modelSkydome_.get());
 
-	modelTerrains_ = std::make_unique<Entity3D>();
-	modelTerrains_->Init();
-	modelTerrains_->SetModel("greenTerrain");
-	modelTerrains_->SetTranslate(Vector3{ 0.0f, -20.0f, 900.0f });
-	Editor::GetInstance()->RegisterModel("greenTerrain", modelTerrains_.get());
+	modelCity_ = std::make_unique<Entity3D>();
+	modelCity_->Init();
+	modelCity_->SetModel("city");
+	modelCity_->SetTranslate(Vector3{ 0.0f, -20.0f, 0.0f });
+	Editor::GetInstance()->RegisterModel("city", modelCity_.get());
 }
 
 void PlayScene::InitClass()
@@ -297,7 +297,7 @@ void PlayScene::UpdateTerrain()
 	auto* camera = cameraManager->GetActiveCamera();
 	
 	if (camera) {
-		modelTerrains_->SetCamera(camera);
+		modelCity_->SetCamera(camera);
 	}
-	modelTerrains_->Update();
+	modelCity_->Update();
 }

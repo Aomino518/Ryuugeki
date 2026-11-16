@@ -64,6 +64,7 @@ private:
 	// モデル
 	std::unique_ptr<Entity3D> modelSkydome_;
 	std::unique_ptr<Entity3D> modelTerrains_;
+	std::unique_ptr<Entity3D> modelCity_;
 
 	// シーンフェーズ
 	ScenePhase phase_ = ScenePhase::FADEIN;

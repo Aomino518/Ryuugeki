@@ -166,7 +166,8 @@ void Editor::LoadSceneJson(const std::string& path)
 	try {
 		ifs >> root;
 	} catch (const nlohmann::json::parse_error& e) {
-		Logger::Write(Logger::LogLevel::Warning, "Failed to parse json. Keep current scene values: " + std::string(e.what()));
+		Logger::Write(Logger::LogLevel::Warning, 
+			"Failed to parse json. Keep current scene values: " + std::string(e.what()));
 		return;
 	}
 

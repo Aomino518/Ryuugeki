@@ -25,7 +25,6 @@ void TitleScene::Init()
 		Logger::Write(Logger::LogLevel::Warning, "カメラ設定の読み込みに失敗しました: " + error);
 	}
 
-	camMgr->SetActiveCameraByName("MainCamera");
 	camMgr->GetCamera("MainCamera")->StartLerp();
 }
 
@@ -45,7 +44,6 @@ void TitleScene::Update()
 			fade_.Start(Fade::Status::FadeOut, 1.0f);
 			phase_ = ScenePhase::FADEOUT;
 		}
-
 		break;
 	case ScenePhase::FADEOUT:
 		if (fade_.IsFinished()) {
@@ -173,13 +171,15 @@ void TitleScene::LoadSound()
 void TitleScene::LoadCamera()
 {
 	auto camMgr = CameraManager::GetInstance();
+	camMgr->SetActiveCameraByName("MainCamera");
+	auto* camera = camMgr->GetCamera("MainCamera");
+
 	auto entityCommon = Entity3DCommon::GetInstance();
 	entityCommon->SetCameraManager(camMgr);
 	entityCommon->SetDebugCamera(camMgr->GetDebugCamera());
 	entityCommon->SetDefaultCamera(camMgr->GetActiveCamera());
 
 	// カメラの初期位置設定
-	auto camera = camMgr->GetActiveCamera();
 	camPos_ = { 0.0f, 7.3f, -50.0f };
 	camRot_ = { 0.14f, 0.0f, 0.0f };
 	camera->SetTranslate(camPos_);

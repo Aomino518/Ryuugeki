@@ -1,0 +1,107 @@
+{
+    "cameras": [
+        {
+            "camera": {
+                "duration": {
+                    "value": 3.0
+                },
+                "smoothSpeedPos": {
+                    "value": 1.0
+                },
+                "smoothSpeedRot": {
+                    "value": 1.0
+                },
+                "startPos": {
+                    "x": 61.5,
+                    "y": -17.399999618530273,
+                    "z": 23.200000762939453
+                },
+                "startRot": {
+                    "x": -0.43458685278892517,
+                    "y": 4.649539470672607,
+                    "z": 0.0
+                },
+                "targetPos": {
+                    "x": 0.0,
+                    "y": 18.0,
+                    "z": 40.0
+                },
+                "targetRot": {
+                    "x": 0.3490658402442932,
+                    "y": 3.1415927410125732,
+                    "z": 0.0
+                },
+                "transform": {
+                    "rotate": {
+                        "x": 0.3490658402442932,
+                        "y": 3.1415927410125732,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 18.0,
+                        "z": 40.0
+                    }
+                }
+            },
+            "name": "MainCamera"
+        },
+        {
+            "camera": {
+                "duration": {
+                    "value": 3.0
+                },
+                "smoothSpeedPos": {
+                    "value": 1.0
+                },
+                "smoothSpeedRot": {
+                    "value": 1.0
+                },
+                "startPos": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "startRot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "targetPos": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "targetRot": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 10.0,
+                        "z": -10.0
+                    }
+                }
+            },
+            "name": "EntranceCamera"
+        }
+    ],
+    "version": 1
+}

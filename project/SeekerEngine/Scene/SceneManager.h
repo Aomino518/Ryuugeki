@@ -3,6 +3,8 @@
 #include "AbstractSceneFactory.h"
 #include <memory>
 #include <string>
+#include <nlohmann/json.hpp>
+#include <optional>
 
 enum class RunMode {
 	Edit, // 編集中

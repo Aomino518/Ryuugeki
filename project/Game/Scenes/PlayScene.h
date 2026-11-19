@@ -8,6 +8,8 @@
 #include "Player.h"
 #include "EnemyManager.h"
 #include "UI/Reticle.h"
+#include "KeybordInput.h"
+#include "GamepadInput.h"
 #include <array>
 
 class PlayScene : public BaseScene
@@ -91,6 +93,9 @@ private:
 
 	// Editに入る直前に使っていたゲームカメラ
 	int savedGameCameraIndex_ = 0;
+
+	KeybordInput keyboardInput_;
+	GamepadInput gamepadInput_;
 
 #ifdef _DEBUG
 	// ゲーム一時停止

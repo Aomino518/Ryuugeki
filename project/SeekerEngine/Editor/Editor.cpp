@@ -81,7 +81,8 @@ void Editor::RegisterParticle2D(const std::string& name)
 	particles2D_[name] = Emitter2DManager::GetInstance()->GetEmitter(name);
 }
 
-void Editor::SaveSceneJson(const std::string& path) const
+// 現在の編集内容をJSONとして取得
+nlohmann::json Editor::CaptureSceneJson() const
 {
 	json root;
 	root["sprites"] = json::object();
@@ -117,7 +118,7 @@ void Editor::SaveSceneJson(const std::string& path) const
 		json managerJson = Particle2DManager::GetInstance()->SaveToJson(name);
 
 		particle2DJson["blendMode"] = managerJson["blendMode"];
-		
+
 		root["particles2D"][name] = particle2DJson;
 	}
 
@@ -145,37 +146,17 @@ void Editor::SaveSceneJson(const std::string& path) const
 
 	root["cameras"] = CameraManager::GetInstance()->SaveToJson();
 
-	std::ofstream ofs(path);
-	if (!ofs.is_open()) {
-		Logger::Write(Logger::LogLevel::Error, "Failed to open file" + path);
-		return;
-	}
-
-	ofs << std::setw(4) << root << std::endl;
+	return root;
 }
 
-void Editor::LoadSceneJson(const std::string& path)
+// JSONの内容を登録済みオブジェクトに反映
+void Editor::ApplySceneJson(const nlohmann::json& root)
 {
-	std::ifstream ifs(path);
-	if (!ifs.is_open()) {
-		Logger::Write(Logger::LogLevel::Error, "Failed to open file" + path);
-		return;
-	}
-
-	json root;
-	try {
-		ifs >> root;
-	} catch (const nlohmann::json::parse_error& e) {
-		Logger::Write(Logger::LogLevel::Warning, 
-			"Failed to parse json. Keep current scene values: " + std::string(e.what()));
-		return;
-	}
-
 	if (root.is_null() || root.empty()) {
 		Logger::Write(Logger::LogLevel::Warning, "Json is empty. Keep current scene values.");
 		return;
 	}
-	
+
 	if (root.contains("isLighting") && root["isLighting"].is_boolean()) {
 		LightManager::GetInstance()->SetIsLighting(root["isLighting"].get<bool>());
 	}
@@ -237,7 +218,39 @@ void Editor::LoadSceneJson(const std::string& path)
 	if (root.contains("cameras")) {
 		CameraManager::GetInstance()->LoadFromJson(root["cameras"]);
 	}
+}
 
+void Editor::SaveSceneJson(const std::string& path) const
+{
+	const auto root = CaptureSceneJson();
+
+	std::ofstream ofs(path);
+	if (!ofs.is_open()) {
+		Logger::Write(Logger::LogLevel::Error, "Failed to open file" + path);
+		return;
+	}
+
+	ofs << std::setw(4) << root << std::endl;
+}
+
+void Editor::LoadSceneJson(const std::string& path)
+{
+	std::ifstream ifs(path);
+	if (!ifs.is_open()) {
+		Logger::Write(Logger::LogLevel::Error, "Failed to open file" + path);
+		return;
+	}
+
+	json root;
+	try {
+		ifs >> root;
+	} catch (const nlohmann::json::parse_error& e) {
+		Logger::Write(Logger::LogLevel::Warning, 
+			"Failed to parse json. Keep current scene values: " + std::string(e.what()));
+		return;
+	}
+
+	ApplySceneJson(root);
 }
 
 void Editor::ClearSceneJson(const std::string& path)

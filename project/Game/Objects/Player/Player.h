@@ -5,6 +5,7 @@
 #include "Effects/DethParticle.h"
 #include "UI/HpBar.h"
 #include "IPlayerState.h"
+#include "IInputStrategy.h"
 
 class Player
 {
@@ -45,6 +46,7 @@ public:
 	void SetScrollPosition(const Vector3& position);
 	void SetIsAlive(bool isAlive) { isAlive_ = isAlive; }
 	void SetAimTarget(const Vector3& target) { aimTarget_ = target; }
+	void SetInputStrategy(IInputStrategy* strategy, bool isController);
 
 	void Damage();
 	void UpdateAlive();
@@ -140,5 +142,7 @@ private:
 	static constexpr float kHitShakeAngle = 0.30f;
 	float invincibleTimer_ = 0.0f;
 	float invincibleTime_ = 2.0f;
+
+	IInputStrategy* inputStrategy_ = nullptr;
 };
 

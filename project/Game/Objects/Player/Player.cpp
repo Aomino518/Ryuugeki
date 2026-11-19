@@ -121,6 +121,12 @@ void Player::SetIsDebugHit()
 	debugHitTimer_ = 10;
 }
 
+void Player::SetInputStrategy(IInputStrategy* strategy, bool isController)
+{
+	inputStrategy_ = strategy;
+	isController_ = isController;
+}
+
 void Player::Damage()
 {
 	if (state_) {
@@ -171,43 +177,11 @@ void Player::UpdateDeth()
 /// <returns>入力値</returns>
 Vector2 Player::GetMovementInput()
 {
-	auto input = Input::GetInstance();
-	Vector2 direction{};
-
-	// 移動入力
-	if (input->IsPress(DIK_W)) {
-		direction.y += 1.0f;
-		isController_ = false;
+	if (!inputStrategy_) {
+		return Vector2{ 0.0f, 0.0f };
 	}
 
-	if (input->IsPress(DIK_S)) {
-		direction.y -= 1.0f;
-		isController_ = false;
-	}
-
-	if (input->IsPress(DIK_A)) {
-		direction.x -= 1.0f;
-		isController_ = false;
-	}
-
-	if (input->IsPress(DIK_D)) {
-		direction.x += 1.0f;
-		isController_ = false;
-	}
-
-	//=========================================
-	// コントローラーの左スティック
-	//=========================================
-	Vector2 leftStick = input->GetXbLeftStickVector();
-	leftStick = InputUtility::ApplyDeadZone(leftStick, deadZone_);
-
-	if (leftStick.x != 0.0f || leftStick.y != 0.0f) {
-		direction.x += leftStick.x;
-		direction.y += leftStick.y;
-		isController_ = true;
-	}
-
-	return direction;
+	return inputStrategy_->GetMoveDirection();;
 }
 
 /// <summary>

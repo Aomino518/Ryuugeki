@@ -30,7 +30,7 @@ void PlayScene::Init()
 
 	phase_ = ScenePhase::FADEIN;
 	fade_.Start(Fade::Status::FadeIn, 1.0f);
-
+	player_->SetInputStrategy(&keyboardInput_, false);
 }
 
 void PlayScene::Update()
@@ -82,6 +82,25 @@ void PlayScene::Update()
 #endif
 	reticle_.Update(player_->GetPosition(), enemyMgr_->GetEnemies());
 	player_->SetAimTarget(reticle_.GetAimTarget());
+	auto* input = Input::GetInstance();
+
+	// GamepadInput内のデッドゾーン適用後の値
+	const Vector2 stick = gamepadInput_.GetMoveDirection();
+
+	const bool gamepadUsed = stick.x != 0.0f || stick.y != 0.0f || input->GetXbRightTrigger() > 0.1f;
+
+	const bool keyboardUsed =
+		input->IsPress(DIK_W) ||
+		input->IsPress(DIK_A) ||
+		input->IsPress(DIK_S) ||
+		input->IsPress(DIK_D) ||
+		input->IsPress(DIK_SPACE);
+
+	if (gamepadUsed) {
+		player_->SetInputStrategy(&gamepadInput_, true);
+	} else if (keyboardUsed) {
+		player_->SetInputStrategy(&keyboardInput_, false);
+	}
 
 	player_->Update();
 	UpdatePlayerCamera();

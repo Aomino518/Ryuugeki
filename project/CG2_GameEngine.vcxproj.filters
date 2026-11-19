@@ -257,6 +257,8 @@
     </ClCompile>
     <ClCompile Include="Game\Objects\Player\PlayerAliveState.cpp" />
     <ClCompile Include="Game\Objects\Player\PlayerDeadState.cpp" />
+    <ClCompile Include="SeekerEngine\Input\KeybordInput.cpp" />
+    <ClCompile Include="GamepadInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h">
@@ -508,6 +510,9 @@
     <ClInclude Include="Game\Objects\Player\IPlayerState.h" />
     <ClInclude Include="Game\Objects\Player\PlayerAliveState.h" />
     <ClInclude Include="Game\Objects\Player\PlayerDeadState.h" />
+    <ClInclude Include="SeekerEngine\Input\IInputStrategy.h" />
+    <ClInclude Include="SeekerEngine\Input\KeybordInput.h" />
+    <ClInclude Include="GamepadInput.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\hlsl\DebugShape3D.hlsli">

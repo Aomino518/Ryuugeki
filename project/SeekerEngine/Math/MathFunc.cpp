@@ -464,6 +464,16 @@ bool IsCollision(const AABB2D& aabb, const Vector3& point)
 		(aabb.min.y <= point.y && point.y <= aabb.max.y);
 }
 
+float Lerp(const float& v1, const float& v2, float t)
+{
+	return v1 + (v2 - v1) * t;
+}
+
+Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t)
+{
+	return v1 + (v2 - v1) * t;
+}
+
 // 線形補間関数
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t)
 {
@@ -492,6 +502,20 @@ Vector3 LerpCameraRotation(const Vector3& currentRot, const Vector3& targetRot, 
 {
 	float t = smoothSpeed * dt;
 	return Lerp(currentRot, targetRot, t);
+}
+
+float EaseOutElastic(float progress)
+{
+	if (progress <= 0.0f) {
+		return 0.0f;
+	}
+
+	if (progress >= 1.0f) {
+		return 1.0f;
+	}
+
+	const float c4 = (2.0f * std::numbers::pi_v<float>) / 3.0f;
+	return pow(2.0f, -10.0f * progress) * sin((progress * 10.0f - 0.75f) * c4) + 1.0f;
 }
 
 void Move(Entity3D* entity, const Vector3& velocity)

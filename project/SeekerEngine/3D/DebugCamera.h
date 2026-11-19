@@ -18,15 +18,20 @@ public:
   
 	const Matrix4x4& GetViewMatrix() const{ return viewMatrix_; }
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix_; }
-	const Vector3& GetTranslate() const { return translation_; }
+	const Vector3& GetTranslate() const { return translate_; }
+	const Matrix4x4& GetMatRot() const { return matRot_; }
+	const bool IsRightDrag() const { return isRightDrag_; }
 	Matrix4x4 GetBillboardMatrix();
 
-	// X,Y,Z軸回りのローカル回転角
-	//Vector3 rotation_ = { 0, 0, 0 };
+	void SetTranslate(Vector3& translate) { translate_ = translate; }
+	void SetMatRot(Matrix4x4& matRot) { matRot_ = matRot; }
+	void SetIsRightDrag(bool enable) { isRightDrag_ = enable; }
+
+private:
 	// 累積回転行列
 	Matrix4x4 matRot_;
 	// ローカル座標
-	Vector3 translation_ = { 0.0f, 0.0f, -50.0f };
+	Vector3 translate_ = { 0.0f, 0.0f, -50.0f };
 	// ビュー行列
 	Matrix4x4 viewMatrix_;
 	// 射影行列

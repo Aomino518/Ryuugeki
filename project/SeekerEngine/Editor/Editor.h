@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
+#include <nlohmann/json.hpp>
 
 enum class InspectorCategory {
     None,
@@ -43,6 +44,8 @@ public:
     void RegisterParticle2D(const std::string& name);
 
     // 保存と読み込み
+    nlohmann::json CaptureSceneJson() const;
+    void ApplySceneJson(const nlohmann::json& root);
     void SaveSceneJson(const std::string& path) const;
     void LoadSceneJson(const std::string& path);
     void ClearSceneJson(const std::string& path);

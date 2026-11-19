@@ -8,6 +8,8 @@
 #include "Player.h"
 #include "EnemyManager.h"
 #include "UI/Reticle.h"
+#include "KeybordInput.h"
+#include "GamepadInput.h"
 #include <array>
 
 class PlayScene : public BaseScene
@@ -19,6 +21,8 @@ public:
 	// 更新
 	void Update() override;
 
+	void EditorUpdate() override;
+
 	// 描画
 	void Draw() override;
 
@@ -27,6 +31,10 @@ public:
 	const char* GetSceneName() const override { return "GAMEPLAY"; }
 
 	void DrawImGui() override;
+
+	void OnEnterPlay() override;
+
+	void OnEnterEdit() override;
 
 private:
 	// シーンフェーズ
@@ -64,6 +72,7 @@ private:
 	// モデル
 	std::unique_ptr<Entity3D> modelSkydome_;
 	std::unique_ptr<Entity3D> modelTerrains_;
+	std::unique_ptr<Entity3D> modelCity_;
 
 	// シーンフェーズ
 	ScenePhase phase_ = ScenePhase::FADEIN;
@@ -81,6 +90,12 @@ private:
 	float cameraDeadZone_ = 2.0f;
 	float cameraLimit_ = 2.0f;
 	static constexpr float cameraDistance_ = 50.0f;
+
+	// Editに入る直前に使っていたゲームカメラ
+	int savedGameCameraIndex_ = 0;
+
+	KeybordInput keyboardInput_;
+	GamepadInput gamepadInput_;
 
 #ifdef _DEBUG
 	// ゲーム一時停止

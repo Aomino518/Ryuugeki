@@ -28,6 +28,16 @@ public:
 
 	// シーン固有のImGuiを描画
 	virtual void DrawImGui() {}
+
+	// 編集中の表示更新
+	virtual void EditorUpdate() {}
+
+	// Playに切り替わった瞬間に呼ばれる
+	virtual void OnEnterPlay() {}
+
+	// Editに切り替わった瞬間に呼ばれる
+	virtual void OnEnterEdit() {}
+
 protected:
 	SceneManager* sceneManager_ = nullptr;
 	bool isEndRequest_ = false;

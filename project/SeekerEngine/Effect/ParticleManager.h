@@ -39,6 +39,8 @@ public:
 
 	void Update(CameraManager* cameraManager);
 
+    void UpdateVisuals(CameraManager* cameraManager);
+
 	void Draw();
 
     void Shutdown();

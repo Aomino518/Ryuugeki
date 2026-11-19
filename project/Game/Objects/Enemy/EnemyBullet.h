@@ -12,6 +12,8 @@ public:
 
 	void Update();
 
+	void UpdateVisuals();
+
 	void Draw();
 
 	void DebuDraw();

@@ -24,9 +24,24 @@ void SceneManager::Update() {
 		scene_->Init();
 	}
 
+	// 予約されたモードが現在と違う場合に切り替え
+	if (scene_ && runMode_ != requestedRunMode_) {
+		runMode_ = requestedRunMode_;
+
+		if (IsPlaying()) {
+			scene_->OnEnterPlay();
+		} else {
+			scene_->OnEnterEdit();
+		}
+	}
+
 	// 実行中シーンを更新する
 	if (scene_) {
-		scene_->Update();
+		if (IsPlaying()) {
+			scene_->Update();
+		} else {
+			scene_->EditorUpdate();
+		}
 	}
 }
 

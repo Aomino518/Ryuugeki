@@ -1,0 +1,321 @@
+{
+    "cameras": [
+        {
+            "camera": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.3490658402442932,
+                        "y": 3.1415927410125732,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 18.0,
+                        "z": 40.0
+                    }
+                }
+            },
+            "name": "MainCamera"
+        },
+        {
+            "camera": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 10.0,
+                        "z": -10.0
+                    }
+                }
+            },
+            "name": "EntranceCamera"
+        }
+    ],
+    "isLighting": true,
+    "lights": {
+        "directionalLight": {
+            "color": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "direction": {
+                "x": 0.664884090423584,
+                "y": -0.7071067690849304,
+                "z": 0.24068468809127808
+            },
+            "intensity": 1.0
+        }
+    },
+    "models": {
+        "AirShip": {
+            "blendMode": 1,
+            "material": {
+                "color": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "enableLighting": true,
+                "specularStrength": 0.05000000074505806
+            },
+            "transform": {
+                "rotate": {
+                    "x": 0.0,
+                    "y": 1.5,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translate": {
+                    "x": -6.0,
+                    "y": 9.442440032958984,
+                    "z": 19.0
+                }
+            }
+        },
+        "skydome": {
+            "blendMode": 1,
+            "material": {
+                "color": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "enableLighting": false,
+                "specularStrength": 0.05000000074505806
+            },
+            "transform": {
+                "rotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "translate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                }
+            }
+        }
+    },
+    "particles": {},
+    "particles2D": {
+        "ClearSpark": {
+            "blendMode": 2,
+            "boxMax": {
+                "x": 10.0,
+                "y": 10.0,
+                "z": 0.5
+            },
+            "boxMin": {
+                "x": -10.0,
+                "y": -10.0,
+                "z": -0.5
+            },
+            "count": 30,
+            "endColorMax": {
+                "w": 0.0,
+                "x": 1.0,
+                "y": 0.8354430198669434,
+                "z": 0.0
+            },
+            "endColorMin": {
+                "w": 0.0,
+                "x": 0.9282700419425964,
+                "y": 0.5316455364227295,
+                "z": 0.0
+            },
+            "endScaleMax": {
+                "x": 1.5,
+                "y": 1.5,
+                "z": 1.5
+            },
+            "endScaleMin": {
+                "x": 0.5,
+                "y": 0.5,
+                "z": 0.5
+            },
+            "frequency": 0.10000000149011612,
+            "localField": {
+                "acceleration": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "areaMax": {
+                    "x": 32.0,
+                    "y": 32.0
+                },
+                "areaMin": {
+                    "x": -32.0,
+                    "y": -32.0
+                },
+                "isActive": false,
+                "translate": {
+                    "x": 0.0,
+                    "y": 0.0
+                }
+            },
+            "loop": false,
+            "maxLifeTime": 3.0,
+            "maxRotate": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "maxRotateVelocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "maxVelocity": {
+                "x": 200.0,
+                "y": 200.0,
+                "z": 0.10000000149011612
+            },
+            "minLifeTime": 1.0,
+            "minRotate": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "minRotateVelocity": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "minVelocity": {
+                "x": -200.0,
+                "y": -200.0,
+                "z": -0.10000000149011612
+            },
+            "shape": 0,
+            "sphereRadius": 1.0,
+            "startColorMax": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 0.8860759735107422,
+                "z": 0.0
+            },
+            "startColorMin": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 0.37974679470062256,
+                "z": 0.0
+            },
+            "startScaleMax": {
+                "x": 30.0,
+                "y": 30.0,
+                "z": 1.0
+            },
+            "startScaleMin": {
+                "x": 30.0,
+                "y": 30.0,
+                "z": 0.5
+            },
+            "transform": {
+                "rotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 32.0,
+                    "y": 32.0,
+                    "z": 0.0
+                },
+                "translate": {
+                    "x": 620.0,
+                    "y": 215.0,
+                    "z": 0.0
+                }
+            }
+        }
+    },
+    "sprites": {
+        "sprGameClear": {
+            "blendMode": 1,
+            "material": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "transform": {
+                "rotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 896.0,
+                    "y": 144.0,
+                    "z": 1.0
+                },
+                "translate": {
+                    "x": 620.0,
+                    "y": 215.0,
+                    "z": 0.0
+                }
+            }
+        },
+        "sprUiSpaceBackTitle": {
+            "blendMode": 1,
+            "material": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 0.7212603092193604
+            },
+            "transform": {
+                "rotate": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "scale": {
+                    "x": 560.0,
+                    "y": 64.0,
+                    "z": 1.0
+                },
+                "translate": {
+                    "x": 370.0,
+                    "y": 510.0,
+                    "z": 0.0
+                }
+            }
+        }
+    },
+    "windowState": {
+        "showCamera": true,
+        "showSound": false,
+        "showStats": false
+    },
+    "worldField": null,
+    "worldField2D": null
+}

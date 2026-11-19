@@ -158,271 +158,271 @@ void ImGuiManager::EndInspector()
 
 namespace
 {
-    const std::filesystem::path kCameraDirectory = "resources/json/cameras";
+	const std::filesystem::path kCameraDirectory = "resources/json/cameras";
 
-    std::string CameraPathText(const std::filesystem::path& path)
-    {
+	std::string CameraPathText(const std::filesystem::path& path)
+	{
 		// utf-8として取り出す
-        const auto utf8 = path.generic_u8string();
-        return std::string(utf8.begin(), utf8.end());
-    }
+		const auto utf8 = path.generic_u8string();
+		return std::string(utf8.begin(), utf8.end());
+	}
 
-    std::string LowerCameraFileName(std::string text)
-    {
-        for (char& c : text) {
-            if (c >= 'A' && c <= 'Z') {
-                c = static_cast<char>(c - 'A' + 'a');
-            }
-        }
-        return text;
-    }
+	std::string LowerCameraFileName(std::string text)
+	{
+		for (char& c : text) {
+			if (c >= 'A' && c <= 'Z') {
+				c = static_cast<char>(c - 'A' + 'a');
+			}
+		}
+		return text;
+	}
 
 #ifdef USE_IMGUI
-    bool MakeCameraSavePath(const char* input, std::filesystem::path& result, std::string& error)
-    {
-        const std::string name(input);
-        if (name.empty() || name.back() == ' ' || name.back() == '.') {
-            error = "Enter a file name without a trailing space or dot.";
-            return false;
-        }
+	bool MakeCameraSavePath(const char* input, std::filesystem::path& result, std::string& error)
+	{
+		const std::string name(input);
+		if (name.empty() || name.back() == ' ' || name.back() == '.') {
+			error = "Enter a file name without a trailing space or dot.";
+			return false;
+		}
 
-        if (name.find_first_of("<>:\"/\\|?*") != std::string::npos ||
-            std::any_of(name.begin(), name.end(), [](unsigned char c) { return c < 32; })) {
-            error = "Use a file name only, without path separators or reserved characters.";
-            return false;
-        }
+		if (name.find_first_of("<>:\"/\\|?*") != std::string::npos ||
+			std::any_of(name.begin(), name.end(), [](unsigned char c) { return c < 32; })) {
+			error = "Use a file name only, without path separators or reserved characters.";
+			return false;
+		}
 
-        const std::string base = LowerCameraFileName(name.substr(0, name.find('.')));
-        if (base == "con" || base == "prn" || base == "aux" || base == "nul" ||
-            (base.size() == 4 && (base.substr(0, 3) == "com" || base.substr(0, 3) == "lpt") &&
-                base[3] >= '1' && base[3] <= '9')) {
-            error = "This file name is reserved by Windows.";
-            return false;
-        }
+		const std::string base = LowerCameraFileName(name.substr(0, name.find('.')));
+		if (base == "con" || base == "prn" || base == "aux" || base == "nul" ||
+			(base.size() == 4 && (base.substr(0, 3) == "com" || base.substr(0, 3) == "lpt") &&
+				base[3] >= '1' && base[3] <= '9')) {
+			error = "This file name is reserved by Windows.";
+			return false;
+		}
 
-        auto fileName = std::filesystem::path(std::u8string(name.begin(), name.end()));
-        const std::string extension = LowerCameraFileName(CameraPathText(fileName.extension()));
-        if (extension.empty()) {
-            fileName += ".json";
-        } else if (extension != ".json") {
-            error = "The file extension must be .json.";
-            return false;
-        }
+		auto fileName = std::filesystem::path(std::u8string(name.begin(), name.end()));
+		const std::string extension = LowerCameraFileName(CameraPathText(fileName.extension()));
+		if (extension.empty()) {
+			fileName += ".json";
+		} else if (extension != ".json") {
+			error = "The file extension must be .json.";
+			return false;
+		}
 
-        result = kCameraDirectory / fileName;
-        return true;
-    }
+		result = kCameraDirectory / fileName;
+		return true;
+	}
 #endif
 }
 
 void ImGuiManager::RefreshCameraFiles()
 {
-    auto& ui = cameraFileUi_;
-    ui.files.clear();
-    ui.selectedFile = -1;
-    ui.message.clear();
+	auto& ui = cameraFileUi_;
+	ui.files.clear();
+	ui.selectedFile = -1;
+	ui.message.clear();
 
-    std::error_code ec;
-    std::filesystem::create_directories(kCameraDirectory, ec);
-    if (ec) {
-        ui.message = "Could not open camera folder: " + ec.message();
-        return;
-    }
+	std::error_code ec;
+	std::filesystem::create_directories(kCameraDirectory, ec);
+	if (ec) {
+		ui.message = "Could not open camera folder: " + ec.message();
+		return;
+	}
 
-    std::filesystem::directory_iterator it(kCameraDirectory, ec);
-    const std::filesystem::directory_iterator end;
-    while (!ec && it != end) {
-        const bool regular = it->is_regular_file(ec);
-        if (ec) {
-            break;
-        }
-        if (regular && LowerCameraFileName(CameraPathText(it->path().extension())) == ".json") {
-            ui.files.push_back(it->path());
-        }
-        it.increment(ec);
-    }
-    if (ec) {
-        ui.files.clear();
-        ui.message = "Could not list camera files: " + ec.message();
-        return;
-    }
-    std::sort(ui.files.begin(), ui.files.end());
+	std::filesystem::directory_iterator it(kCameraDirectory, ec);
+	const std::filesystem::directory_iterator end;
+	while (!ec && it != end) {
+		const bool regular = it->is_regular_file(ec);
+		if (ec) {
+			break;
+		}
+		if (regular && LowerCameraFileName(CameraPathText(it->path().extension())) == ".json") {
+			ui.files.push_back(it->path());
+		}
+		it.increment(ec);
+	}
+	if (ec) {
+		ui.files.clear();
+		ui.message = "Could not list camera files: " + ec.message();
+		return;
+	}
+	std::sort(ui.files.begin(), ui.files.end());
 }
 
 bool ImGuiManager::SaveCameraToPath(CameraManager* cameraManager, const std::filesystem::path& path)
 {
-    std::string error;
-    if (!cameraManager->SaveCameraFile(path, error)) {
-        cameraFileUi_.message = "Save failed: " + error;
-        return false;
-    }
-    cameraFileUi_.currentPath = path;
-    cameraFileUi_.message = "Saved: " + CameraPathText(path.filename());
-    return true;
+	std::string error;
+	if (!cameraManager->SaveCameraFile(path, error)) {
+		cameraFileUi_.message = "Save failed: " + error;
+		return false;
+	}
+	cameraFileUi_.currentPath = path;
+	cameraFileUi_.message = "Saved: " + CameraPathText(path.filename());
+	return true;
 }
 
 void ImGuiManager::DrawCameraFileControls(CameraManager* cameraManager)
 {
 #ifdef USE_IMGUI
-    auto& ui = cameraFileUi_;
-    const char* scene = SceneManager::GetInstance()->GetCurrentSceneName();
-    const std::string sceneName = scene ? scene : "";
-    // 別シーンの編集を、前のシーンの保存先へ上書きしない。
-    if (ui.sceneName != sceneName) {
-        ui = CameraFileUiState{};
-        ui.sceneName = sceneName;
-    }
+	auto& ui = cameraFileUi_;
+	const char* scene = SceneManager::GetInstance()->GetCurrentSceneName();
+	const std::string sceneName = scene ? scene : "";
+	// 別シーンの編集を、前のシーンの保存先へ上書きしない。
+	if (ui.sceneName != sceneName) {
+		ui = CameraFileUiState{};
+		ui.sceneName = sceneName;
+	}
 
-    const auto& cameras = cameraManager->GetCameras();
-    const bool playing = std::any_of(cameras.begin(), cameras.end(), [](const auto& info) {
-        return info.camera && info.camera->GetIsLerp();
-    });
-    const bool hasCamera = std::any_of(cameras.begin(), cameras.end(), [](const auto& info) {
-        return info.camera != nullptr;
-    });
+	const auto& cameras = cameraManager->GetCameras();
+	const bool playing = std::any_of(cameras.begin(), cameras.end(), [](const auto& info) {
+		return info.camera && info.camera->GetIsLerp();
+		});
+	const bool hasCamera = std::any_of(cameras.begin(), cameras.end(), [](const auto& info) {
+		return info.camera != nullptr;
+		});
 
-    ImGui::SeparatorText("Camera Files");
-    ImGui::TextWrapped("Current file: %s", ui.currentPath.empty() ? "(not saved)" : CameraPathText(ui.currentPath).c_str());
-    ImGui::TextDisabled("Stores all normal cameras, poses A/B and duration.");
-    ImGui::BeginDisabled(playing || !hasCamera);
-    bool openSaveAs = false;
-    if (ImGui::Button("Save##CameraFile")) {
-        if (ui.currentPath.empty()) {
-            openSaveAs = true;
-        } else {
-            SaveCameraToPath(cameraManager, ui.currentPath);
-        }
-    }
+	ImGui::SeparatorText("Camera Files");
+	ImGui::TextWrapped("Current file: %s", ui.currentPath.empty() ? "(not saved)" : CameraPathText(ui.currentPath).c_str());
+	ImGui::TextDisabled("Stores all normal cameras, poses A/B and duration.");
+	ImGui::BeginDisabled(playing || !hasCamera);
+	bool openSaveAs = false;
+	if (ImGui::Button("Save##CameraFile")) {
+		if (ui.currentPath.empty()) {
+			openSaveAs = true;
+		} else {
+			SaveCameraToPath(cameraManager, ui.currentPath);
+		}
+	}
 
-    ImGui::SameLine();
-    if (ImGui::Button("Save As...##CameraFile")) {
-        openSaveAs = true;
-    }
+	ImGui::SameLine();
+	if (ImGui::Button("Save As...##CameraFile")) {
+		openSaveAs = true;
+	}
 
-    ImGui::SameLine();
-    if (ImGui::Button("Load...##CameraFile")) {
-        RefreshCameraFiles();
-        ImGui::OpenPopup("Load Camera File");
-    }
+	ImGui::SameLine();
+	if (ImGui::Button("Load...##CameraFile")) {
+		RefreshCameraFiles();
+		ImGui::OpenPopup("Load Camera File");
+	}
 
-    ImGui::EndDisabled();
-    if (playing) {
-        ImGui::TextDisabled("Stop playback before saving or loading.");
-    }
+	ImGui::EndDisabled();
+	if (playing) {
+		ImGui::TextDisabled("Stop playback before saving or loading.");
+	}
 
-    if (!ui.message.empty()) {
-        ImGui::TextWrapped("%s", ui.message.c_str());
-    }
+	if (!ui.message.empty()) {
+		ImGui::TextWrapped("%s", ui.message.c_str());
+	}
 
-    if (openSaveAs) {
-        ui.confirmOverwrite = false;
-        ui.pendingSavePath.clear();
-        ui.message.clear();
-        const std::string name = ui.currentPath.empty() ? "" : CameraPathText(ui.currentPath.filename());
-        std::snprintf(ui.fileName, sizeof(ui.fileName), "%s", name.c_str());
-        ImGui::OpenPopup("Save Camera File As");
-    }
+	if (openSaveAs) {
+		ui.confirmOverwrite = false;
+		ui.pendingSavePath.clear();
+		ui.message.clear();
+		const std::string name = ui.currentPath.empty() ? "" : CameraPathText(ui.currentPath.filename());
+		std::snprintf(ui.fileName, sizeof(ui.fileName), "%s", name.c_str());
+		ImGui::OpenPopup("Save Camera File As");
+	}
 
-    ImGui::SetNextWindowSize(ImVec2(480.0f, 0.0f), ImGuiCond_Appearing);
-    if (ImGui::BeginPopupModal("Save Camera File As", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::TextUnformatted("Folder: resources/json/cameras/");
-        if (ui.confirmOverwrite) {
-            ImGui::TextWrapped("Replace existing file: %s?", CameraPathText(ui.pendingSavePath.filename()).c_str());
-            ImGui::BeginDisabled(playing || !hasCamera);
-            if (ImGui::Button("Overwrite")) {
-                if (SaveCameraToPath(cameraManager, ui.pendingSavePath)) {
-                    ui.confirmOverwrite = false;
-                    ImGui::CloseCurrentPopup();
-                }
-            }
-            ImGui::EndDisabled();
-            ImGui::SameLine();
-            if (ImGui::Button("Back")) {
-                ui.confirmOverwrite = false;
-                ui.message.clear();
-            }
-        } else {
-            ImGui::InputText("File Name", ui.fileName, sizeof(ui.fileName));
-            ImGui::TextDisabled("Example: title_intro.json (.json is added if omitted)");
-            ImGui::BeginDisabled(playing || !hasCamera);
-            if (ImGui::Button("Save File")) {
-                ui.message.clear();
-                if (MakeCameraSavePath(ui.fileName, ui.pendingSavePath, ui.message)) {
-                    std::error_code ec;
-                    const bool exists = std::filesystem::exists(ui.pendingSavePath, ec);
-                    if (ec) {
-                        ui.message = "Could not check file: " + ec.message();
-                    } else if (exists) {
-                        ui.confirmOverwrite = true;
-                    } else if (SaveCameraToPath(cameraManager, ui.pendingSavePath)) {
-                        ImGui::CloseCurrentPopup();
-                    }
-                }
-            }
-            ImGui::EndDisabled();
-        }
+	ImGui::SetNextWindowSize(ImVec2(480.0f, 0.0f), ImGuiCond_Appearing);
+	if (ImGui::BeginPopupModal("Save Camera File As", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::TextUnformatted("Folder: resources/json/cameras/");
+		if (ui.confirmOverwrite) {
+			ImGui::TextWrapped("Replace existing file: %s?", CameraPathText(ui.pendingSavePath.filename()).c_str());
+			ImGui::BeginDisabled(playing || !hasCamera);
+			if (ImGui::Button("Overwrite")) {
+				if (SaveCameraToPath(cameraManager, ui.pendingSavePath)) {
+					ui.confirmOverwrite = false;
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			ImGui::EndDisabled();
+			ImGui::SameLine();
+			if (ImGui::Button("Back")) {
+				ui.confirmOverwrite = false;
+				ui.message.clear();
+			}
+		} else {
+			ImGui::InputText("File Name", ui.fileName, sizeof(ui.fileName));
+			ImGui::TextDisabled("Example: title_intro.json (.json is added if omitted)");
+			ImGui::BeginDisabled(playing || !hasCamera);
+			if (ImGui::Button("Save File")) {
+				ui.message.clear();
+				if (MakeCameraSavePath(ui.fileName, ui.pendingSavePath, ui.message)) {
+					std::error_code ec;
+					const bool exists = std::filesystem::exists(ui.pendingSavePath, ec);
+					if (ec) {
+						ui.message = "Could not check file: " + ec.message();
+					} else if (exists) {
+						ui.confirmOverwrite = true;
+					} else if (SaveCameraToPath(cameraManager, ui.pendingSavePath)) {
+						ImGui::CloseCurrentPopup();
+					}
+				}
+			}
+			ImGui::EndDisabled();
+		}
 
-        ImGui::SameLine();
-        if (ImGui::Button("Cancel")) {
-            ui.confirmOverwrite = false;
-            ImGui::CloseCurrentPopup();
-        }
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel")) {
+			ui.confirmOverwrite = false;
+			ImGui::CloseCurrentPopup();
+		}
 
-        if (!ui.message.empty()) {
-            ImGui::TextWrapped("%s", ui.message.c_str());
-        }
-        ImGui::EndPopup();
-    }
+		if (!ui.message.empty()) {
+			ImGui::TextWrapped("%s", ui.message.c_str());
+		}
+		ImGui::EndPopup();
+	}
 
-    ImGui::SetNextWindowSize(ImVec2(480.0f, 0.0f), ImGuiCond_Appearing);
-    if (ImGui::BeginPopupModal("Load Camera File", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::TextUnformatted("Folder: resources/json/cameras/");
-        if (ImGui::Button("Refresh")) {
-            RefreshCameraFiles();
-        }
+	ImGui::SetNextWindowSize(ImVec2(480.0f, 0.0f), ImGuiCond_Appearing);
+	if (ImGui::BeginPopupModal("Load Camera File", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGui::TextUnformatted("Folder: resources/json/cameras/");
+		if (ImGui::Button("Refresh")) {
+			RefreshCameraFiles();
+		}
 
-        if (ImGui::BeginListBox("##CameraFiles", ImVec2(440.0f, 180.0f))) {
-            for (int i = 0; i < static_cast<int>(ui.files.size()); ++i) {
-                const std::string name = CameraPathText(ui.files[i].filename());
-                ImGui::PushID(i);
-                if (ImGui::Selectable(name.c_str(), ui.selectedFile == i)) {
-                    ui.selectedFile = i;
-                }
-                ImGui::PopID();
-            }
-            ImGui::EndListBox();
-        }
+		if (ImGui::BeginListBox("##CameraFiles", ImVec2(440.0f, 180.0f))) {
+			for (int i = 0; i < static_cast<int>(ui.files.size()); ++i) {
+				const std::string name = CameraPathText(ui.files[i].filename());
+				ImGui::PushID(i);
+				if (ImGui::Selectable(name.c_str(), ui.selectedFile == i)) {
+					ui.selectedFile = i;
+				}
+				ImGui::PopID();
+			}
+			ImGui::EndListBox();
+		}
 
-        if (ui.files.empty()) {
-            ImGui::TextDisabled("No camera JSON files found.");
-        }
+		if (ui.files.empty()) {
+			ImGui::TextDisabled("No camera JSON files found.");
+		}
 
-        ImGui::TextWrapped("Loading replaces matching camera settings and stops playback.");
-        const bool selected = ui.selectedFile >= 0 && ui.selectedFile < static_cast<int>(ui.files.size());
-        ImGui::BeginDisabled(playing || !hasCamera || !selected);
-        if (ImGui::Button("Load File")) {
-            const auto path = ui.files[ui.selectedFile];
-            std::string error;
-            if (cameraManager->LoadCameraFile(path, error)) {
-                ui.currentPath = path;
-                ui.message = "Loaded: " + CameraPathText(path.filename());
-                ImGui::CloseCurrentPopup();
-            } else {
-                ui.message = "Load failed: " + error;
-            }
-        }
+		ImGui::TextWrapped("Loading replaces matching camera settings and stops playback.");
+		const bool selected = ui.selectedFile >= 0 && ui.selectedFile < static_cast<int>(ui.files.size());
+		ImGui::BeginDisabled(playing || !hasCamera || !selected);
+		if (ImGui::Button("Load File")) {
+			const auto path = ui.files[ui.selectedFile];
+			std::string error;
+			if (cameraManager->LoadCameraFile(path, error)) {
+				ui.currentPath = path;
+				ui.message = "Loaded: " + CameraPathText(path.filename());
+				ImGui::CloseCurrentPopup();
+			} else {
+				ui.message = "Load failed: " + error;
+			}
+		}
 
-        ImGui::EndDisabled();
-        ImGui::SameLine();
-        if (ImGui::Button("Cancel")) {
-            ImGui::CloseCurrentPopup();
-        }
+		ImGui::EndDisabled();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
 
-        if (!ui.message.empty()) {
-            ImGui::TextWrapped("%s", ui.message.c_str());
-        }
-        ImGui::EndPopup();
-    }
+		if (!ui.message.empty()) {
+			ImGui::TextWrapped("%s", ui.message.c_str());
+		}
+		ImGui::EndPopup();
+	}
 #endif
 }
 
@@ -501,7 +501,7 @@ void ImGuiManager::DrawCameraWindow(CameraManager* cameraManager)
 		}
 
 		return positionChanged || rotationChanged;
-	};
+		};
 
 	if (ImGui::CollapsingHeader("Current Pose", ImGuiTreeNodeFlags_DefaultOpen)) {
 		ImGui::PushID("Current");
@@ -621,6 +621,37 @@ void ImGuiManager::DrawMainMenuBar()
 			ImGui::MenuItem("Console", nullptr, &windowState_.showConsole);
 			ImGui::EndMenu();
 		}
+		auto* sceneMgr = SceneManager::GetInstance();
+
+		if (ImGui::Button("TITLE")) {
+			sceneMgr->ChangeScene("TITLE");
+		}
+
+		if (ImGui::Button("GAMEPLAY")) {
+			sceneMgr->ChangeScene("GAMEPLAY");
+		}
+
+		if (ImGui::Button("CLEAR")) {
+			sceneMgr->ChangeScene("CLEAR");
+		}
+
+		if (ImGui::Button("GAMEOVER")) {
+			sceneMgr->ChangeScene("GAMEOVER");
+		}
+
+		// 現在の編集モードに対応したボタンの表示
+		if (sceneMgr->IsPlaying()) {
+			if (ImGui::Button("Stop")) {
+				sceneMgr->SetRunMode(RunMode::Edit);
+			}
+		} else {
+			if (ImGui::Button("Play")) {
+				sceneMgr->SetRunMode(RunMode::Play);
+			}
+		}
+
+		// 現在のモードを表示
+		ImGui::Text("Mode: %s", sceneMgr->IsPlaying() ? "Play" : "Edit");
 
 		ImGui::EndMainMenuBar();
 	}
@@ -705,7 +736,7 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 			const auto handle = SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex);
 
 			ImGui::Image(reinterpret_cast<ImTextureID>(handle.ptr), imageSize);
-		
+
 			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
 				!ImGui::IsMouseDown(ImGuiMouseButton_Right) && !ImGui::GetIO().KeyAlt) {
 				const ImVec2 mouse = ImGui::GetMousePos();
@@ -979,7 +1010,7 @@ void ImGuiManager::SaveScenesJson()
 		Editor::GetInstance()->SaveSceneJson("resources/json/playScene.json");
 	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("GAMEOVER")) {
 		Editor::GetInstance()->SaveSceneJson("resources/json/gameOverScene.json");
-	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("CLAER")) {
+	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("CLEAR")) {
 		Editor::GetInstance()->SaveSceneJson("resources/json/clearScene.json");
 	}
 }
@@ -991,7 +1022,7 @@ void ImGuiManager::LoadScenesJson() {
 		Editor::GetInstance()->LoadSceneJson("resources/json/playScene.json");
 	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("GAMEOVER")) {
 		Editor::GetInstance()->LoadSceneJson("resources/json/gameOverScene.json");
-	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("CLAER")) {
+	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("CLEAR")) {
 		Editor::GetInstance()->LoadSceneJson("resources/json/clearScene.json");
 	}
 }
@@ -1004,7 +1035,7 @@ void ImGuiManager::ClearScenesJson()
 		Editor::GetInstance()->ClearSceneJson("resources/json/playScene.json");
 	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("GAMEOVER")) {
 		Editor::GetInstance()->ClearSceneJson("resources/json/gameOverScene.json");
-	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("CLAER")) {
+	} else if (SceneManager::GetInstance()->GetCurrentSceneName() == std::string("CLEAR")) {
 		Editor::GetInstance()->ClearSceneJson("resources/json/clearScene.json");
 	}
 }

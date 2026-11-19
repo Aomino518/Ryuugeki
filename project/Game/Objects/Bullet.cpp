@@ -11,7 +11,6 @@ void Bullet::Init(const Vector3& position) {
 }
 
 void Bullet::Update() {
-	auto camMgr = CameraManager::GetInstance();
 	if (debugHitTimer_ > 0) {
 		debugHitTimer_--;
 
@@ -42,6 +41,12 @@ void Bullet::Update() {
 		}
 	}
 
+	UpdateVisuals();
+}
+
+void Bullet::UpdateVisuals()
+{
+	auto* camMgr = CameraManager::GetInstance();
 	if (!camMgr->GetIsDebug()) {
 		Camera* camera = camMgr->GetActiveCamera();
 

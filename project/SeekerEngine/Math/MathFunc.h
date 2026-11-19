@@ -142,6 +142,7 @@ Matrix4x4& operator*=(Matrix4x4& mat, float scalar);
 
 Matrix4x4& operator*=(Matrix4x4& lhs, const Matrix4x4& rhs);
 
+Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t);
 // 線形補間関数Vector3
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 // 線形補間関数Vector4
@@ -175,6 +176,8 @@ Vector3 LerpCameraTranslate(const Vector3& currentPos, const Vector3& targetPos,
 /// <param name="dt">デルタタイム</param>
 /// <returns>補間した角度</returns>
 Vector3 LerpCameraRotation(const Vector3& currentRot, const Vector3& targetRot, float smoothSpeed, float dt);
+
+float EaseOutElastic(float progress);
 
 void Move(Entity3D* entity, const Vector3& velocity);
 void Rotate(Entity3D* entity, const Vector3& velocity);

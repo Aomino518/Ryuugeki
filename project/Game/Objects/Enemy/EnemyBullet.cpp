@@ -19,8 +19,6 @@ void EnemyBullet::Init(const Vector3& position)
 
 void EnemyBullet::Update()
 {
-	auto camMgr = CameraManager::GetInstance();
-
 	if (debugHitTimer_ > 0) {
 		debugHitTimer_--;
 
@@ -42,6 +40,12 @@ void EnemyBullet::Update()
 		}
 	}
 
+	UpdateVisuals();
+}
+
+void EnemyBullet::UpdateVisuals()
+{
+	auto* camMgr = CameraManager::GetInstance();
 	if (!camMgr->GetIsDebug()) {
 		Camera* camera = camMgr->GetActiveCamera();
 

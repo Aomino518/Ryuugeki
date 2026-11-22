@@ -8,7 +8,7 @@
 #include "Player.h"
 #include "EnemyManager.h"
 #include "UI/Reticle.h"
-#include "KeybordInput.h"
+#include "KeyboardInput.h"
 #include "GamepadInput.h"
 #include <array>
 
@@ -94,7 +94,7 @@ private:
 	// Editに入る直前に使っていたゲームカメラ
 	int savedGameCameraIndex_ = 0;
 
-	KeybordInput keyboardInput_;
+	KeyboardInput keyboardInput_;
 	GamepadInput gamepadInput_;
 
 #ifdef _DEBUG

@@ -157,7 +157,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GamepadInput.cpp" />
+    <ClCompile Include="SeekerEngine\Input\GamepadInput.cpp" />
     <ClCompile Include="Game\Objects\Boss.cpp" />
     <ClCompile Include="Game\Objects\Enemy\EnemyBullet.cpp" />
     <ClCompile Include="Game\Utilities\InputUtility.cpp" />
@@ -167,7 +167,7 @@
     <ClCompile Include="Game\UI\HpBar.cpp" />
     <ClCompile Include="Game\Objects\Player\PlayerAliveState.cpp" />
     <ClCompile Include="Game\Objects\Player\PlayerDeadState.cpp" />
-    <ClCompile Include="SeekerEngine\Input\KeybordInput.cpp" />
+    <ClCompile Include="SeekerEngine\Input\KeyboardInput.cpp" />
     <ClCompile Include="SeekerEngine\3D\Material.cpp" />
     <ClCompile Include="SeekerEngine\3D\AccelerationField.cpp" />
     <ClCompile Include="SeekerEngine\2D\AccelerationField2D.cpp" />
@@ -339,7 +339,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GamepadInput.h" />
+    <ClInclude Include="SeekerEngine\Input\GamepadInput.h" />
     <ClInclude Include="Game\Objects\Boss.h" />
     <ClInclude Include="Game\Objects\Enemy\EnemyBullet.h" />
     <ClInclude Include="Game\Utilities\InputUtility.h" />
@@ -350,7 +350,7 @@
     <ClInclude Include="Game\Objects\Player\IPlayerState.h" />
     <ClInclude Include="Game\Objects\Player\PlayerAliveState.h" />
     <ClInclude Include="Game\Objects\Player\PlayerDeadState.h" />
-    <ClInclude Include="SeekerEngine\Input\KeybordInput.h" />
+    <ClInclude Include="SeekerEngine\Input\KeyboardInput.h" />
     <ClInclude Include="SeekerEngine\Input\IInputStrategy.h" />
     <ClInclude Include="SeekerEngine\3D\Material.h" />
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h" />

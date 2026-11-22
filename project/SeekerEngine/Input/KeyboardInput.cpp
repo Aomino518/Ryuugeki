@@ -1,7 +1,7 @@
-#include "KeybordInput.h"
+#include "KeyboardInput.h"
 #include "Input.h"
 
-Vector2 KeybordInput::GetMoveDirection()
+Vector2 KeyboardInput::GetMoveDirection()
 {
 	Vector2 direction{};
 

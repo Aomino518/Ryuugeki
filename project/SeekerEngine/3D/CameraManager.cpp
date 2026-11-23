@@ -66,7 +66,7 @@ void CameraManager::Init()
 	SetActiveCamera(false, 0);
 }
 
-void CameraManager::Update()
+void CameraManager::Update(bool advanceAnimation)
 {
 	if (activeIsDebug_) {
 		if (debugCamera_) {
@@ -77,7 +77,7 @@ void CameraManager::Update()
 			return;
 		}
 
-		if (!isManualEdit_ || cameras_[activeCamIndex_].camera->GetIsLerp()) {
+		if (advanceAnimation && (!isManualEdit_ || cameras_[activeCamIndex_].camera->GetIsLerp())) {
 			cameras_[activeCamIndex_].camera->UpdateLerpCamera();
 		}
 		cameras_[activeCamIndex_].camera->Update();
@@ -188,29 +188,44 @@ void CameraManager::LoadFromJson(const nlohmann::json& j)
 		return;
 	}
 
-	std::vector<CameraInfo> loadedCameras;
 	for (const auto& item : j) {
-		if (!item.is_object() || !item.contains("camera") || !item["camera"].is_object()) {
+		if (!item.is_object() || 
+			!item.contains("name") ||
+			!item["name"].is_string() || 
+			!item.contains("camera") || 
+			!item["camera"].is_object()) {
 			continue;
 		}
 
-		CameraInfo info;
-		info.name = item.value("name", "untitled");
-
-		info.camera = std::make_unique<Camera>();
-		if (item["camera"].contains("transform")) {
-			info.camera->LoadFromJson(item["camera"]);
+		const std::string name = item["name"].get<std::string>();
+		if (name.empty()) {
+			continue;
 		}
-		loadedCameras.push_back(std::move(info));
+
+		Camera* targetCamera = nullptr;
+
+		for (auto& info : cameras_) {
+			if (info.name == name) {
+				targetCamera = info.camera.get();
+				break;
+			}
+		}
+
+		if (!targetCamera) {
+			CreateCamera(name);
+			targetCamera = GetCamera(name);
+		}
+
+		if (!targetCamera) {
+			continue;
+		}
+
+		targetCamera->LoadFromJson(item["camera"]);
+
+		targetCamera->Update();
 	}
 
-	if (loadedCameras.empty()) {
-		Logger::Write(Logger::LogLevel::Warning, "No valid cameras in JSON. Keep current cameras.");
-		return;
-	}
 
-	cameras_ = std::move(loadedCameras);
-	SetActiveCamera(false, activeCamIndex_);
 }
 
 nlohmann::json CameraManager::SaveLerpCamera() const

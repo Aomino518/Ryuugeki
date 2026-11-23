@@ -18,6 +18,8 @@ void ClearScene::Init()
 	// カメラマネージャー
 	//===========================
 	auto camMgr = CameraManager::GetInstance();
+	camMgr->SetActiveCameraByName("MainCamera");
+	camMgr->GetCamera("MainCamera")->SetIsLerp(false);
 	auto entityCommon = Entity3DCommon::GetInstance();
 	entityCommon->SetCameraManager(camMgr);
 	entityCommon->SetDebugCamera(camMgr->GetDebugCamera());
@@ -85,7 +87,9 @@ void ClearScene::Init()
 	basePosition_ = modelPlayer_->GetTranslate();
 	clearSprBaseSize_ = sprGameClear_->GetSize();
 	clearSprTime_ = 0.0f;
-	sprGameClear_->SetSize({ 0.0f, 0.0f });
+	if (sceneManager_->IsPlaying()) {
+		sprGameClear_->SetSize({ 0.0f, 0.0f });
+	}
 
 	std::string error;
 	if (!camMgr->LoadCameraFile(
@@ -129,7 +133,7 @@ void ClearScene::Update()
 	}
 
 	// カメラの更新処理
-	camMgr->Update();
+	camMgr->Update(SceneManager::GetInstance()->IsPlaying());
 
 	// モデルの更新処理
 	if (!camMgr->GetIsDebug()) {
@@ -156,6 +160,24 @@ void ClearScene::Update()
 	fade_.Update();
 }
 
+void ClearScene::EditorUpdate()
+{
+	auto* camMgr = CameraManager::GetInstance();
+
+	if (auto* camera = camMgr->GetActiveCamera()) {
+		camera->Update();
+
+		modelSkydome_->SetCamera(camera);
+		modelPlayer_->SetCamera(camera);
+	}
+
+	modelSkydome_->Update();
+	modelPlayer_->Update();
+
+	sprGameClear_->Update();
+	sprUiSpaceBackTitle_->Update();
+}
+
 void ClearScene::Draw()
 {
 	/*-- 描画処理 --*/
@@ -165,7 +187,7 @@ void ClearScene::Draw()
 
 	// Sprite
 	sprGameClear_->Draw();
-	if(CameraManager::GetInstance()->GetCamera("MainCamera")->GetIsLerpEnd()) {
+	if (!sceneManager_->IsPlaying() || CameraManager::GetInstance()->GetCamera("MainCamera")->GetIsLerpEnd()) {
 		sprUiSpaceBackTitle_->Draw();
 	}
 	Particle2DManager::GetInstance()->Draw();

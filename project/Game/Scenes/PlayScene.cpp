@@ -176,9 +176,7 @@ void PlayScene::Draw()
 		sprUiConroller_->Draw();
 	}
 
-	if (sceneManager_->IsPlaying()) {
-		fade_.Draw();
-	}
+	fade_.Draw();
 }
 
 void PlayScene::Shutdown()
@@ -190,6 +188,8 @@ void PlayScene::Shutdown()
 	soundMgr->Unload("bgm_play");
 	CameraManager::GetInstance()->RemoveCamera("Camera1");
 	Editor::GetInstance()->Clear();
+	EmitterManager::GetInstance()->RemoveEmitter("HitEffect");
+	ParticleManager::GetInstance()->RemoveParticleGroup("HitEffect");
 }
 
 void PlayScene::DrawImGui()
@@ -299,7 +299,7 @@ void PlayScene::UpdatePlayerCamera()
 	camPos.y = cameraY_;
 	camPos.z -= cameraDistance_;
 	mainCamera->SetTranslate(camPos);
-	camMgr->Update();
+	camMgr->Update(SceneManager::GetInstance()->IsPlaying());
 }
 
 void PlayScene::LoadSound()

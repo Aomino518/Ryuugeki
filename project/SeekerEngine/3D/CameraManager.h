@@ -18,7 +18,7 @@ public:
 	};
 
 	void Init();
-	void Update();
+	void Update(bool advanceAnimation);
 	void Shutdown();
 
 	void CreateCamera(const std::string& cameraName);

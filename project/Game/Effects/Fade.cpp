@@ -4,6 +4,8 @@
 #include "Color.h"
 #include "TextureManager.h"
 #include "GameTime.h"
+#include "SceneManager.h"
+#include "CameraManager.h"
 
 void Fade::Init() {
 	// テクスチャ
@@ -43,6 +45,11 @@ void Fade::Update() {
 }
 
 void Fade::Draw() {
+	if (!SceneManager::GetInstance()->IsPlaying() ||
+		CameraManager::GetInstance()->GetIsDebug()) {
+		return;
+	}
+
 	if (status_ == Status::None) {
 		return;
 	}

@@ -56,9 +56,21 @@ private:
 	std::unique_ptr<BaseScene> nextScene_;
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 
+#ifdef USE_IMGUI
+	// 現在のモード
+	RunMode runMode_ = RunMode::Edit;
+	// 次に切り替えたいモード
+	RunMode requestedRunMode_ = RunMode::Edit;
+#else
 	// 現在のモード
 	RunMode runMode_ = RunMode::Play;
 	// 次に切り替えたいモード
 	RunMode requestedRunMode_ = RunMode::Play;
+#endif
+	std::optional<nlohmann::json> editSnapshot_;
+	std::string editSceneName_;
+
+	// 保存した編集シーンを作り直す
+	bool RestoreEditScene();
 };
 

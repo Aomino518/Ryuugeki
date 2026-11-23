@@ -14,6 +14,8 @@ class ClearScene : public BaseScene
 	// 更新
 	void Update() override;
 
+	void EditorUpdate() override;
+
 	// 描画
 	void Draw() override;
 

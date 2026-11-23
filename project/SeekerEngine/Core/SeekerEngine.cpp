@@ -83,13 +83,12 @@ void SeekerEngine::Init()
 
 void SeekerEngine::Update()
 {
-	// Resize before scene updates can record texture uploads on the command list.
 	sceneTexture_.Resize(Graphics::GetWidth(), Graphics::GetHeight());
 	Time::Update();
 	Input::GetInstance()->Update();
 	DebugDraw::Update();
 	LightManager::GetInstance()->Update();
-	CameraManager::GetInstance()->Update();
+	CameraManager::GetInstance()->Update(SceneManager::GetInstance()->IsPlaying());
 }
 
 void SeekerEngine::Shutdown()

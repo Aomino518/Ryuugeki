@@ -15,6 +15,8 @@ public:
 
 	void Update() override;
 
+	void EditorUpdate() override;
+
 	void Draw() override;
 	void DrawImGui() override;
 

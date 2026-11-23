@@ -18,6 +18,8 @@ void GameOverScene::Init()
 	// カメラマネージャー
 	//===========================
 	auto camMgr = CameraManager::GetInstance();
+	camMgr->SetActiveCameraByName("MainCamera");
+	camMgr->GetCamera("MainCamera")->SetIsLerp(false);
 	auto entityCommon = Entity3DCommon::GetInstance();
 	entityCommon->SetCameraManager(camMgr);
 	entityCommon->SetDebugCamera(camMgr->GetDebugCamera());
@@ -107,7 +109,7 @@ void GameOverScene::Update()
 	}
 
 	// カメラの更新処理
-	camMgr->Update();
+	camMgr->Update(SceneManager::GetInstance()->IsPlaying());
 
 	modelSkydome_->Update();
 	modelPlayer_->Update();
@@ -117,6 +119,25 @@ void GameOverScene::Update()
 	sprUiSpaceBackTitle_->UpdateColorBlink(Color::WHITE, Color::YELLOW);
 	sprUiSpaceBackTitle_->Update();
 	fade_.Update();
+}
+
+void GameOverScene::EditorUpdate()
+{
+	auto* camMgr = CameraManager::GetInstance();
+
+	if (auto* camera = camMgr->GetActiveCamera()) {
+		// InitやJSON読み込み後の座標を行列へ反映
+		camera->Update();
+
+		modelSkydome_->SetCamera(camera);
+		modelPlayer_->SetCamera(camera);
+	}
+
+	modelSkydome_->Update();
+	modelPlayer_->Update();
+
+	sprGameOver_->Update();
+	sprUiSpaceBackTitle_->Update();
 }
 
 void GameOverScene::Draw()

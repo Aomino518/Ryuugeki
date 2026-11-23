@@ -66,7 +66,7 @@ void TitleScene::Update()
 
 	// カメラの更新処理
 	UpdateCamera();
-	camMgr->Update();
+	camMgr->Update(SceneManager::GetInstance()->IsPlaying());
 
 	// スプライトの更新処理
 	sprTitleLogo_->Update();
@@ -74,6 +74,32 @@ void TitleScene::Update()
 	sprUiPressSpace_->Update();
 	sprUiMaou_->Update();
 	fade_.Update();
+}
+
+void TitleScene::EditorUpdate()
+{
+	auto* camMgr = CameraManager::GetInstance();
+	auto* camera = camMgr->GetActiveCamera();
+
+	if (camera) {
+		camera->Update();
+		modelPlayer_->SetCamera(camera);
+		modelSkydome_->SetCamera(camera);
+	}
+
+	modelPlayer_->Update();
+	modelSkydome_->Update();
+
+	for (auto& terrain : modelTerrains_) {
+		if (camera) {
+			terrain->SetCamera(camera);
+		}
+		terrain->Update();
+	}
+
+	sprTitleLogo_->Update();
+	sprUiPressSpace_->Update();
+	sprUiMaou_->Update();
 }
 
 void TitleScene::Draw()
@@ -173,7 +199,7 @@ void TitleScene::LoadCamera()
 	auto camMgr = CameraManager::GetInstance();
 	camMgr->SetActiveCameraByName("MainCamera");
 	auto* camera = camMgr->GetCamera("MainCamera");
-
+	camera->SetIsLerp(false);
 	auto entityCommon = Entity3DCommon::GetInstance();
 	entityCommon->SetCameraManager(camMgr);
 	entityCommon->SetDebugCamera(camMgr->GetDebugCamera());

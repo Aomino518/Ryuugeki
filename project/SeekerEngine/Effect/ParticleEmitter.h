@@ -41,6 +41,7 @@ public:
 	void SetSpawnShapeBox(const Vector3& min, const Vector3& max);
 	void SetSpawnShapeSphere(float radius);
 	void SetLocalField(AccelerationField& localField) { this->localField_ = localField; }
+	void SetTranslate(const Vector3& translate) { transform_.translate = translate; }
 
 	void DrawImGui();
 

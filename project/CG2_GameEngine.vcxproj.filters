@@ -259,6 +259,7 @@
     <ClCompile Include="Game\Objects\Player\PlayerDeadState.cpp" />
     <ClCompile Include="SeekerEngine\Input\KeyboardInput.cpp" />
     <ClCompile Include="SeekerEngine\Input\GamepadInput.cpp" />
+    <ClCompile Include="Game\Effects\JetEngineParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h">
@@ -513,6 +514,7 @@
     <ClInclude Include="SeekerEngine\Input\IInputStrategy.h" />
     <ClInclude Include="SeekerEngine\Input\KeyboardInput.h" />
     <ClInclude Include="SeekerEngine\Input\GamepadInput.h" />
+    <ClInclude Include="Game\Effects\JetEngineParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\hlsl\DebugShape3D.hlsli">

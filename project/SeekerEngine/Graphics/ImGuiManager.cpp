@@ -19,6 +19,8 @@
 #include "Editor.h"
 #include "Vector3.h"
 #include <nlohmann/json.hpp>
+#include "ImGuizmo.h"
+#include "Entity3D.h"
 
 ImGuiManager* ImGuiManager::GetInstance() {
 	static ImGuiManager instance;
@@ -69,6 +71,7 @@ void ImGuiManager::BeginFrame()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	DrawDockSpace();
+	ImGuizmo::BeginFrame();
 #endif
 }
 
@@ -737,13 +740,39 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 
 			ImGui::Image(reinterpret_cast<ImTextureID>(handle.ptr), imageSize);
 
+			const ImVec2 imageOrigin = ImGui::GetItemRectMin();
+			const bool imageHovered = ImGui::IsItemHovered();
+
+			// 現在開いているSceneウィンドウに描画する
+			ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
+			// ギズモの投影先を、画像の表示範囲に合わせる
+			ImGuizmo::SetRect(imageOrigin.x, imageOrigin.y, imageSize.x, imageSize.y);
+			// 透視投影のカメラの場合
+			ImGuizmo::SetOrthographic(false);
+
+			Entity3D* model = Editor::GetInstance()->GetSelectedModel();
+			if (model) {
+				const Transform& transform = model->GetTransform();
+				const Matrix4x4& viewMatrixData = CameraManager::GetInstance()->GetDebugCamera()->GetViewMatrix();
+				const Matrix4x4& projectionMatrixData = CameraManager::GetInstance()->GetDebugCamera()->GetViewProjectionMatrix();
+				Matrix4x4 modelWorldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+
+				ImGuizmo::Manipulate(
+					&viewMatrixData.m[0][0],
+					&projectionMatrixData.m[0][0],
+					ImGuizmo::TRANSLATE,
+					ImGuizmo::WORLD,
+					&modelWorldMatrix.m[0][0]
+				);
+			}
+
 			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
-				!ImGui::IsMouseDown(ImGuiMouseButton_Right) && !ImGui::GetIO().KeyAlt) {
+				!ImGui::IsMouseDown(ImGuiMouseButton_Right) && !ImGui::GetIO().KeyAlt &&
+				!ImGuizmo::IsOver() && !ImGuizmo::IsUsing()) {
 				const ImVec2 mouse = ImGui::GetMousePos();
-				const ImVec2 origin = ImGui::GetItemRectMin();
 				Editor::GetInstance()->PickModel(
-					(mouse.x - origin.x) / imageSize.x,
-					(mouse.y - origin.y) / imageSize.y);
+					(mouse.x - imageOrigin.x) / imageSize.x,
+					(mouse.y - imageOrigin.y) / imageSize.y);
 			}
 		}
 	}

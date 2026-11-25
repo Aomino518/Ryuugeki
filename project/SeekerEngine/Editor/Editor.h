@@ -52,6 +52,8 @@ public:
 
     void Clear();
 
+    Entity3D* GetSelectedModel() const;
+
 private:
     Editor() = default;
     ~Editor() = default;

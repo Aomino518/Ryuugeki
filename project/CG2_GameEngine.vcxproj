@@ -83,7 +83,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Objects\Enemy;$(ProjectDir)Game\Objects\Player;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Objects\Enemy;$(ProjectDir)Game\Objects\Player;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base;$(ProjectDir)externals\ImGuizmo</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -111,7 +111,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Objects\Enemy;$(ProjectDir)Game\Objects\Player;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Objects\Enemy;$(ProjectDir)Game\Objects\Player;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base;$(ProjectDir)externals\ImGuizmo</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,7 +140,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Objects\Enemy;$(ProjectDir)Game\Objects\Player;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)SeekerEngine\Core;$(ProjectDir)SeekerEngine\Audio;$(ProjectDir)SeekerEngine\Graphics;$(ProjectDir)SeekerEngine\Input;$(ProjectDir)SeekerEngine\Math;$(ProjectDir)SeekerEngine\Scene;$(ProjectDir)SeekerEngine\Utility;$(ProjectDir)resources\hlsl;$(ProjectDir)SeekerEngine\2D;$(ProjectDir)SeekerEngine\3D;$(ProjectDir)SeekerEngine\Effect;$(ProjectDir)SeekerEngine\Light;$(ProjectDir)Game\Scenes;$(ProjectDir)Game;$(ProjectDir)externals\assimp\include;$(ProjectDir)SeekerEngine\DebugShape;$(ProjectDir)externals;$(ProjectDir)SeekerEngine\Editor;$(ProjectDir)Game\Objects;$(ProjectDir)Game\Objects\Enemy;$(ProjectDir)Game\Objects\Player;$(ProjectDir)externals\imgui;$(ProjectDir)Game\Base;$(ProjectDir)externals\ImGuizmo</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -157,6 +157,11 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="externals\ImGuizmo\ImGuizmo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Game\Effects\JetEngineParticle.cpp" />
     <ClCompile Include="SeekerEngine\Input\GamepadInput.cpp" />
     <ClCompile Include="Game\Objects\Boss.cpp" />
@@ -340,6 +345,11 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="externals\ImGuizmo\ImGuizmo.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Game\Effects\JetEngineParticle.h" />
     <ClInclude Include="SeekerEngine\Input\GamepadInput.h" />
     <ClInclude Include="Game\Objects\Boss.h" />
@@ -430,6 +440,11 @@
     <ClInclude Include="SeekerEngine\Utility\GameTime.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="externals\ImGuizmo\LICENSE">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="resources\hlsl\DebugShape3D.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

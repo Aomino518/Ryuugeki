@@ -281,6 +281,21 @@ void Editor::Clear()
 	selection_ = {};
 }
 
+Entity3D* Editor::GetSelectedModel() const
+{
+	if (selection_.category != InspectorCategory::Model) {
+		return;
+	}
+
+	auto it = models_.find(selection_.name);
+	if (it == models_.end() || it->second == nullptr) {
+		return;
+	}
+	Entity3D* model = it->second;
+
+	return model;
+}
+
 void Editor::DrawHierarchy()
 {
 #ifdef USE_IMGUI

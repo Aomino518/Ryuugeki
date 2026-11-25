@@ -157,6 +157,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Effects\JetEngineParticle.cpp" />
     <ClCompile Include="SeekerEngine\Input\GamepadInput.cpp" />
     <ClCompile Include="Game\Objects\Boss.cpp" />
     <ClCompile Include="Game\Objects\Enemy\EnemyBullet.cpp" />
@@ -339,6 +340,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Effects\JetEngineParticle.h" />
     <ClInclude Include="SeekerEngine\Input\GamepadInput.h" />
     <ClInclude Include="Game\Objects\Boss.h" />
     <ClInclude Include="Game\Objects\Enemy\EnemyBullet.h" />

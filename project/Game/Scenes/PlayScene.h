@@ -10,6 +10,7 @@
 #include "UI/Reticle.h"
 #include "KeyboardInput.h"
 #include "GamepadInput.h"
+#include "Effects/JetEngineParticle.h"
 #include <array>
 
 class PlayScene : public BaseScene
@@ -96,6 +97,7 @@ private:
 
 	KeyboardInput keyboardInput_;
 	GamepadInput gamepadInput_;
+	JetEngineParticle jetParticles_[2];
 
 #ifdef _DEBUG
 	// ゲーム一時停止

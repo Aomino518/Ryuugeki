@@ -11,6 +11,8 @@ void PlayScene::Init()
 	LoadSprite();
 	LoadModel();
 	InitClass();
+	jetParticles_[0].Init("jetLeft");
+	jetParticles_[1].Init("jetRight");
 	ImGuiManager::GetInstance()->LoadScenesJson();
 	auto camMgr = CameraManager::GetInstance();
 	std::string error;
@@ -27,6 +29,7 @@ void PlayScene::Init()
 	startCamera->SetIsLerp(false);
 	startCamera->Update();
 	Entity3DCommon::GetInstance()->SetDefaultCamera(startCamera);
+
 
 	phase_ = ScenePhase::FADEIN;
 	fade_.Start(Fade::Status::FadeIn, 1.0f);
@@ -120,6 +123,17 @@ void PlayScene::Update()
 	}
 	modelSkydome_->Update();
 
+	Vector3 playerPos = player_->GetPosition();
+	Vector3 jetLeftOffSet = { 0.5f, 0.0f, -3.5f };
+	Vector3 jetRightOffSet = { -0.5f, 0.0f, -3.5f };
+	jetParticles_[0].SetOffset(jetLeftOffSet);
+	jetParticles_[1].SetOffset(jetRightOffSet);
+	for (auto& jetParticle : jetParticles_) {
+		jetParticle.Update(playerPos);
+	}
+	EmitterManager::GetInstance()->Update();
+	ParticleManager::GetInstance()->Update(CameraManager::GetInstance());
+
 	UpdateTerrain();
 
 	// スプライトの更新処理
@@ -158,6 +172,9 @@ void PlayScene::Draw()
 	modelCity_->Draw();
 	player_->Draw();
 	enemyMgr_->Draw();
+	for (auto& jetParticle : jetParticles_) {
+		jetParticle.Draw();
+	}
 
 	player_->DebugDraw();
 	enemyMgr_->DebugDraw();
@@ -190,6 +207,9 @@ void PlayScene::Shutdown()
 	Editor::GetInstance()->Clear();
 	EmitterManager::GetInstance()->RemoveEmitter("HitEffect");
 	ParticleManager::GetInstance()->RemoveParticleGroup("HitEffect");
+	for (auto& jetParticle : jetParticles_) {
+		jetParticle.Unload();
+	}
 }
 
 void PlayScene::DrawImGui()
@@ -386,7 +406,7 @@ void PlayScene::UpdateTerrain()
 {
 	auto* cameraManager = CameraManager::GetInstance();
 	auto* camera = cameraManager->GetActiveCamera();
-	
+
 	if (camera) {
 		modelCity_->SetCamera(camera);
 	}

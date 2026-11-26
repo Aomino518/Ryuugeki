@@ -284,12 +284,12 @@ void Editor::Clear()
 Entity3D* Editor::GetSelectedModel() const
 {
 	if (selection_.category != InspectorCategory::Model) {
-		return;
+		return nullptr;
 	}
 
 	auto it = models_.find(selection_.name);
 	if (it == models_.end() || it->second == nullptr) {
-		return;
+		return nullptr;
 	}
 	Entity3D* model = it->second;
 

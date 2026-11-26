@@ -741,7 +741,6 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 			ImGui::Image(reinterpret_cast<ImTextureID>(handle.ptr), imageSize);
 
 			const ImVec2 imageOrigin = ImGui::GetItemRectMin();
-			const bool imageHovered = ImGui::IsItemHovered();
 
 			// 現在開いているSceneウィンドウに描画する
 			ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
@@ -754,16 +753,24 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 			if (model) {
 				const Transform& transform = model->GetTransform();
 				const Matrix4x4& viewMatrixData = CameraManager::GetInstance()->GetDebugCamera()->GetViewMatrix();
-				const Matrix4x4& projectionMatrixData = CameraManager::GetInstance()->GetDebugCamera()->GetViewProjectionMatrix();
+				const Matrix4x4& projectionMatrixData = CameraManager::GetInstance()->GetDebugCamera()->GetProjectionMatrix();
 				Matrix4x4 modelWorldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 
-				ImGuizmo::Manipulate(
+				const bool changed = ImGuizmo::Manipulate(
 					&viewMatrixData.m[0][0],
 					&projectionMatrixData.m[0][0],
 					ImGuizmo::TRANSLATE,
 					ImGuizmo::WORLD,
 					&modelWorldMatrix.m[0][0]
 				);
+
+				if (changed) {
+					model->SetTranslate(Vector3{
+							modelWorldMatrix.m[3][0],
+							modelWorldMatrix.m[3][1],
+							modelWorldMatrix.m[3][2]
+						});
+				}
 			}
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&

@@ -793,7 +793,7 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 				!ImGui::IsMouseDown(ImGuiMouseButton_Right) && !ImGui::GetIO().KeyAlt &&
 				!ImGuizmo::IsOver() && !ImGuizmo::IsUsing()) {
 				const ImVec2 mouse = ImGui::GetMousePos();
-				Editor::GetInstance()->PickModel(
+				Editor::GetInstance()->PickObject(
 					(mouse.x - imageOrigin.x) / imageSize.x,
 					(mouse.y - imageOrigin.y) / imageSize.y);
 			}

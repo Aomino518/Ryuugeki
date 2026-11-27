@@ -20,6 +20,11 @@ public:
 
 	void Draw();
 
+	bool Pick(float x, float y) const;
+
+	void ResetPickingState() { drawnForPicking_ = false; }
+	void SetPicking(bool enable) { pickable_ = enable; }
+
 	void SetTexture(uint32_t textureId) { 
 		textureIndex_ = textureId;
 		textureSrvHandleGPU_ = TextureManager::GetInstance()->GetGPUHandle(textureId);
@@ -138,4 +143,7 @@ private:
 	// 色の点滅
 	int colorBlinkFrame_ = 0;
 	float colorBlinkSpeed_ = 0.1f;
+
+	bool drawnForPicking_ = false;
+	bool pickable_ = true;
 };

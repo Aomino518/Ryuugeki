@@ -36,6 +36,7 @@ public:
 	void Draw();
 	void BeginSceneFrame();
 	void PickModel(float u, float v);
+    void PickObject(float u, float v);
 
     // 登録
     void RegisterSprite(const std::string& name, Sprite* sprite);

@@ -38,6 +38,12 @@ void Editor::BeginSceneFrame()
 			model->ResetPickingState();
 		}
 	}
+
+	for (const auto& [name, sprite] : sprites_) {
+		if (sprite) {
+			sprite->ResetPickingState();
+		}
+	}
 }
 
 void Editor::PickModel(float u, float v)
@@ -59,6 +65,27 @@ void Editor::PickModel(float u, float v)
 		}
 	}
 	selection_ = picked;
+}
+
+void Editor::PickObject(float u, float v)
+{
+	if (!(u >= 0.0f && u < 1.0f &&
+		v >= 0.0f && v < 1.0f)) {
+		return;
+	}
+
+	const float x = u * Application::GetWidth();
+	const float y = v * Application::GetHeight();
+
+	for (const auto& [name, sprite] : sprites_) {
+		if (sprite && sprite->Pick(x, y)) {
+			selection_ = { InspectorCategory::Sprite, name };
+			return;
+		}
+	}
+
+	// Spriteに当たらなければ、既存のModel選択へ
+	PickModel(u, v);
 }
 
 void Editor::RegisterSprite(const std::string& name, Sprite* sprite)

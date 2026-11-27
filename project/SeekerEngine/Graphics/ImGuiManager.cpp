@@ -749,16 +749,32 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 			// 透視投影のカメラの場合
 			ImGuizmo::SetOrthographic(false);
 
+			bool canEdit = !SceneManager::GetInstance()->IsPlaying();
 			Entity3D* model = Editor::GetInstance()->GetSelectedModel();
-			if (model) {
+			if (canEdit && model) {
+				auto* camMgr = CameraManager::GetInstance();
 				const Transform& transform = model->GetTransform();
-				const Matrix4x4& viewMatrixData = CameraManager::GetInstance()->GetDebugCamera()->GetViewMatrix();
-				const Matrix4x4& projectionMatrixData = CameraManager::GetInstance()->GetDebugCamera()->GetProjectionMatrix();
+				Matrix4x4 view = {};
+				Matrix4x4 projection = {};
 				Matrix4x4 modelWorldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 
+				if (camMgr->GetIsDebug()) {
+					auto* camera = camMgr->GetDebugCamera();
+					if (camera) {
+						view = camera->GetViewMatrix();
+						projection = camera->GetProjectionMatrix();
+					}
+				} else {
+					auto* camera = model->GetCamera();
+					if (camera) {
+						view = camera->GetViewMatrix();
+						projection = camera->GetProjectionMatrix();
+					}
+				}
+
 				const bool changed = ImGuizmo::Manipulate(
-					&viewMatrixData.m[0][0],
-					&projectionMatrixData.m[0][0],
+					&view.m[0][0],
+					&projection.m[0][0],
 					ImGuizmo::TRANSLATE,
 					ImGuizmo::WORLD,
 					&modelWorldMatrix.m[0][0]
@@ -773,7 +789,7 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 				}
 			}
 
-			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
+			if (canEdit && ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
 				!ImGui::IsMouseDown(ImGuiMouseButton_Right) && !ImGui::GetIO().KeyAlt &&
 				!ImGuizmo::IsOver() && !ImGuizmo::IsUsing()) {
 				const ImVec2 mouse = ImGui::GetMousePos();

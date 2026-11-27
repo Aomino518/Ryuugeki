@@ -24,6 +24,10 @@ public:
 
 	const char* GetSceneName() const override { return "TITLE"; }
 
+	void OnEnterPlay() override;
+
+	void OnEnterEdit() override;
+
 private:
 	// シーンフェーズ
 	enum struct ScenePhase {
@@ -83,4 +87,7 @@ private:
 
 	// フェード
 	Fade fade_;
+
+	// Editに入る直前に使っていたゲームカメラ
+	int savedGameCameraIndex_ = 0;
 };

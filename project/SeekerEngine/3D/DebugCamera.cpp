@@ -91,8 +91,8 @@ void DebugCamera::Update()
 	Matrix4x4 matWorld = Multiply(matRot_, matTrans);
 
 	viewMatrix_ = Inverse(matWorld);
-	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(Application::GetWidth()) / float(Application::GetHeight()), 0.1f, 100.0f);
-	viewProjectionMatrix_ = Multiply(viewMatrix_, projectionMatrix);
+	projectionMatrix_ = MakePerspectiveFovMatrix(0.45f, float(Application::GetWidth()) / float(Application::GetHeight()), 0.1f, 100.0f);
+	viewProjectionMatrix_ = Multiply(viewMatrix_, projectionMatrix_);
 }
 
 Matrix4x4 DebugCamera::GetBillboardMatrix() {

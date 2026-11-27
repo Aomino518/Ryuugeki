@@ -53,7 +53,6 @@ public:
 	const BlendMode& GetBlendMode() { return mode_; }
 	const Vector3& GetLightDirection() const { return directionalLightData_->direction; }
 	const Vector3& GetPointLightPos() const { return pointLightData_->position; }
-	Camera* GetCamera() const { return camera_; }
 
 	// setter関数
 	void SetModel(const std::string& filePath);

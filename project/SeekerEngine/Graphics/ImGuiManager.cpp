@@ -19,6 +19,8 @@
 #include "Editor.h"
 #include "Vector3.h"
 #include <nlohmann/json.hpp>
+#include "ImGuizmo.h"
+#include "Entity3D.h"
 
 ImGuiManager* ImGuiManager::GetInstance() {
 	static ImGuiManager instance;
@@ -69,6 +71,7 @@ void ImGuiManager::BeginFrame()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 	DrawDockSpace();
+	ImGuizmo::BeginFrame();
 #endif
 }
 
@@ -737,13 +740,62 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 
 			ImGui::Image(reinterpret_cast<ImTextureID>(handle.ptr), imageSize);
 
-			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
-				!ImGui::IsMouseDown(ImGuiMouseButton_Right) && !ImGui::GetIO().KeyAlt) {
+			const ImVec2 imageOrigin = ImGui::GetItemRectMin();
+
+			// 現在開いているSceneウィンドウに描画する
+			ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
+			// ギズモの投影先を、画像の表示範囲に合わせる
+			ImGuizmo::SetRect(imageOrigin.x, imageOrigin.y, imageSize.x, imageSize.y);
+			// 透視投影のカメラの場合
+			ImGuizmo::SetOrthographic(false);
+
+			bool canEdit = !SceneManager::GetInstance()->IsPlaying();
+			Entity3D* model = Editor::GetInstance()->GetSelectedModel();
+			if (canEdit && model) {
+				auto* camMgr = CameraManager::GetInstance();
+				const Transform& transform = model->GetTransform();
+				Matrix4x4 view = {};
+				Matrix4x4 projection = {};
+				Matrix4x4 modelWorldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+
+				if (camMgr->GetIsDebug()) {
+					auto* camera = camMgr->GetDebugCamera();
+					if (camera) {
+						view = camera->GetViewMatrix();
+						projection = camera->GetProjectionMatrix();
+					}
+				} else {
+					auto* camera = model->GetCamera();
+					if (camera) {
+						view = camera->GetViewMatrix();
+						projection = camera->GetProjectionMatrix();
+					}
+				}
+
+				const bool changed = ImGuizmo::Manipulate(
+					&view.m[0][0],
+					&projection.m[0][0],
+					ImGuizmo::TRANSLATE,
+					ImGuizmo::WORLD,
+					&modelWorldMatrix.m[0][0]
+				);
+
+				if (changed) {
+					model->SetTranslate(Vector3{
+							modelWorldMatrix.m[3][0],
+							modelWorldMatrix.m[3][1],
+							modelWorldMatrix.m[3][2]
+						});
+				}
+			}
+
+			if (canEdit && ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
+				!ImGui::IsMouseDown(ImGuiMouseButton_Right) && !ImGui::GetIO().KeyAlt &&
+				!ImGuizmo::IsOver() && !ImGuizmo::IsUsing()) {
 				const ImVec2 mouse = ImGui::GetMousePos();
-				const ImVec2 origin = ImGui::GetItemRectMin();
-				Editor::GetInstance()->PickModel(
-					(mouse.x - origin.x) / imageSize.x,
-					(mouse.y - origin.y) / imageSize.y);
+				Editor::GetInstance()->PickObject(
+					(mouse.x - imageOrigin.x) / imageSize.x,
+					(mouse.y - imageOrigin.y) / imageSize.y);
 			}
 		}
 	}

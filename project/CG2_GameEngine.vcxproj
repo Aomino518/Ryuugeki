@@ -157,6 +157,11 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="externals\imgui\ImGuizmo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Game\Effects\JetEngineParticle.cpp" />
     <ClCompile Include="SeekerEngine\Input\GamepadInput.cpp" />
     <ClCompile Include="Game\Objects\Boss.cpp" />
@@ -340,6 +345,11 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="externals\imgui\ImGuizmo.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Game\Effects\JetEngineParticle.h" />
     <ClInclude Include="SeekerEngine\Input\GamepadInput.h" />
     <ClInclude Include="Game\Objects\Boss.h" />
@@ -430,6 +440,11 @@
     <ClInclude Include="SeekerEngine\Utility\GameTime.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="externals\imgui\LICENSE">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="resources\hlsl\DebugShape3D.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Development|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

@@ -260,6 +260,7 @@
     <ClCompile Include="SeekerEngine\Input\KeyboardInput.cpp" />
     <ClCompile Include="SeekerEngine\Input\GamepadInput.cpp" />
     <ClCompile Include="Game\Effects\JetEngineParticle.cpp" />
+    <ClCompile Include="externals\imgui\ImGuizmo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SeekerEngine\2D\AccelerationField2D.h">
@@ -515,6 +516,7 @@
     <ClInclude Include="SeekerEngine\Input\KeyboardInput.h" />
     <ClInclude Include="SeekerEngine\Input\GamepadInput.h" />
     <ClInclude Include="Game\Effects\JetEngineParticle.h" />
+    <ClInclude Include="externals\imgui\ImGuizmo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\hlsl\DebugShape3D.hlsli">
@@ -535,6 +537,7 @@
     <None Include="resources\hlsl\Object3d.hlsli">
       <Filter>resources\hlsl</Filter>
     </None>
+    <None Include="externals\imgui\LICENSE" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Game">

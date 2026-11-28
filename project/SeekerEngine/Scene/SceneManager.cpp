@@ -4,6 +4,7 @@
 #include "Editor.h"
 #include "CameraManager.h"
 #include "Graphics.h"
+#include "SoundManager.h"
 
 SceneManager* SceneManager::GetInstance() {
 	static SceneManager instance;
@@ -143,6 +144,10 @@ bool SceneManager::RestoreEditScene()
 	// オブジェクトを再生成してEditorに再登録
 	scene_->Init();
 	Editor::GetInstance()->ApplySceneJson(*editSnapshot_);
+
+	auto* sound = SoundManager::GetInstance();
+	sound->StopBGM();
+	sound->StopSE();
 
 	// 音を止め、編集カメラへ切り替える
 	scene_->OnEnterEdit();

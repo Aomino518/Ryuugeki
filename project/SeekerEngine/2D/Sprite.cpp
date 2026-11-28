@@ -164,6 +164,24 @@ void Sprite::Draw()
 	cmdList_->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 	Graphics::GetInstance()->AddDrawCallCount();
+
+	drawnForPicking_ = true;
+}
+
+bool Sprite::Pick(float x, float y) const
+{
+	if (!pickable_ || !drawnForPicking_) {
+		return false;
+	}
+
+	const Vector2 pos = GetPosition();
+	const Vector2 size = GetSize();
+	const Vector2 anchor = GetAnchorPoint();
+
+	const float left = pos.x - size.x * anchor.x;
+	const float top = pos.y - size.y * anchor.y;
+
+	return x >= left && x <= left + size.x && y >= top && y <= top + size.y;
 }
 
 void Sprite::SetBlendMode(BlendMode mode)

@@ -1,5 +1,6 @@
 #include "SoundManager.h"
-
+#include "SceneManager.h"
+ 
 SoundManager* SoundManager::GetInstance() {
 	static SoundManager instance;
 	return &instance;
@@ -37,6 +38,10 @@ void SoundManager::Load(const std::string& name, const std::string& filepath) {
 }
 
 void SoundManager::PlaySE(const std::string& name, float volume) {
+	if (!SceneManager::GetInstance()->IsPlaying()) {
+		return;
+	}
+
 	auto it = soundDatas_.find(name);
 	if (it == soundDatas_.end()) {
 		return;
@@ -46,6 +51,10 @@ void SoundManager::PlaySE(const std::string& name, float volume) {
 }
 
 void SoundManager::PlayBGM(const std::string& name, bool loop, float volume) {
+	if (!SceneManager::GetInstance()->IsPlaying()) {
+		return;
+	}
+
 	auto it = soundDatas_.find(name);
 	if (it == soundDatas_.end()) {
 		return;

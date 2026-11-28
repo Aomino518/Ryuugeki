@@ -54,6 +54,7 @@ public:
     void Clear();
 
     Entity3D* GetSelectedModel() const;
+    Sprite* GetSelectedSprite() const;
 
 private:
     Editor() = default;

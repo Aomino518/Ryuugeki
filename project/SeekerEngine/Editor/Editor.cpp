@@ -318,9 +318,22 @@ Entity3D* Editor::GetSelectedModel() const
 	if (it == models_.end() || it->second == nullptr) {
 		return nullptr;
 	}
-	Entity3D* model = it->second;
+	return it->second;
+}
 
-	return model;
+Sprite* Editor::GetSelectedSprite() const
+{
+	if (selection_.category != InspectorCategory::Sprite) {
+		return nullptr;
+	}
+
+	auto it = sprites_.find(selection_.name);
+
+	if (it == sprites_.end() || it->second == nullptr) {
+		return nullptr;
+	}
+
+	return it->second;
 }
 
 void Editor::DrawHierarchy()

@@ -21,6 +21,7 @@
 #include <nlohmann/json.hpp>
 #include "ImGuizmo.h"
 #include "Entity3D.h"
+#include "Sprite.h"
 
 ImGuiManager* ImGuiManager::GetInstance() {
 	static ImGuiManager instance;
@@ -750,6 +751,8 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 			ImGuizmo::SetOrthographic(false);
 
 			bool canEdit = !SceneManager::GetInstance()->IsPlaying();
+
+			// Entityのimguizmoの反映処理
 			Entity3D* model = Editor::GetInstance()->GetSelectedModel();
 			if (canEdit && model) {
 				auto* camMgr = CameraManager::GetInstance();
@@ -785,6 +788,35 @@ void ImGuiManager::DrawSceneWindow(uint32_t srvIndex, uint32_t textureWidth, uin
 							modelWorldMatrix.m[3][0],
 							modelWorldMatrix.m[3][1],
 							modelWorldMatrix.m[3][2]
+						});
+				}
+			}
+
+			// Spriteのimguizmoの反映処理
+			Sprite* sprite = Editor::GetInstance()->GetSelectedSprite();
+			if (canEdit && sprite) {
+				ImGuizmo::SetOrthographic(true);
+
+				const Vector2 position = sprite->GetPosition();
+				Matrix4x4 spriteWorldMatrix = MakeTranslateMatrix(Vector3{ position.x, position.y, 0.0f });
+
+				Matrix4x4 view = MakeIdentity4x4();
+				Matrix4x4 projection = MakeOrthographicMatrix(0.0f, 0.0f, 1280.0f, 720.0f, -1.0f, 1.0f);
+				// 奥域方向の移動はできないようにXとYに限定
+				const auto operation = static_cast<ImGuizmo::OPERATION>(ImGuizmo::TRANSLATE_X | ImGuizmo::TRANSLATE_Y);
+
+				const bool changed = ImGuizmo::Manipulate(
+					&view.m[0][0],
+					&projection.m[0][0],
+					operation,
+					ImGuizmo::WORLD,
+					&spriteWorldMatrix.m[0][0]
+				);
+
+				if (changed) {
+					sprite->SetPosition(Vector2{
+							spriteWorldMatrix.m[3][0],
+							spriteWorldMatrix.m[3][1]
 						});
 				}
 			}
